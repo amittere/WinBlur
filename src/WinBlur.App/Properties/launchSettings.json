@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "WinBlur.App (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "WinBlur.App (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

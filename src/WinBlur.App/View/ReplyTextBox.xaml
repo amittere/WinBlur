@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="WinBlur.App.View.ReplyTextBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="120"
+             d:DesignWidth="300">
+
+    <Grid x:Name="LayoutRoot"
+          Background="Transparent"
+          Margin="122,0,0,4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="0"
+              Grid.Column="0"
+              MinHeight="40"
+              Padding="12"
+              CornerRadius="{StaticResource OverlayCornerRadius}"
+              Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox x:Name="commentTextBox"
+                     Grid.Row="0"
+                     PlaceholderText="Enter reply..."
+                     MinWidth="244"
+                     Margin="0,0,0,8"
+                     TextWrapping="Wrap"
+                     BorderThickness="0"
+                     HorizontalAlignment="Stretch" />
+            <TextBlock x:Name="usernameText"
+                       Grid.Row="1"
+                       Text="{Binding Username, FallbackValue='JohnDoe'}"
+                       MaxLines="1"
+                       Style="{StaticResource CaptionTextBlockStyle}" />
+        </Grid>
+
+        <PersonPicture Grid.Row="0"
+                       Grid.Column="1"
+                       Width="32"
+                       Margin="8,0,0,0"
+                       VerticalAlignment="Top"
+                       DisplayName="{Binding Username, FallbackValue='JohnDoe'}"
+                       ProfilePicture="{Binding PhotoUri}" />
+
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    Spacing="4"
+                    HorizontalAlignment="Right"
+                    Margin="0,4,0,0">
+            <ProgressRing x:Name="submitProgress" Width="24" Height="24" Margin="8,0" Visibility="Collapsed"/>
+            <Button x:Name="deleteButton"
+                    Content="Delete"
+                    Visibility="Collapsed" />
+            <Button x:Name="cancelButton"
+                    Content="Cancel" />
+            <Button x:Name="submitButton"
+                    Content="Reply"
+                    Style="{StaticResource AccentButtonStyle}" />
+        </StackPanel>
+    </Grid>
+</UserControl>
