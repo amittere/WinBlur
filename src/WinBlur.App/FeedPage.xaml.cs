@@ -380,6 +380,16 @@ namespace WinBlur.App
         {
             var webView = (WebView2)sender;
             await webView.EnsureCoreWebView2Async();
+
+            var settings = webView.CoreWebView2.Settings;
+            settings.AreBrowserAcceleratorKeysEnabled = false;
+            settings.AreDefaultScriptDialogsEnabled = false;
+            settings.AreDevToolsEnabled = false;
+            settings.AreHostObjectsAllowed = false;
+            settings.IsBuiltInErrorPageEnabled = false;
+            settings.IsGeneralAutofillEnabled = false;
+            settings.IsSwipeNavigationEnabled = false;
+            settings.IsWebMessageEnabled = false;
         }
 
         private async void articleTextView_NavigationStarting(WebView2 sender, CoreWebView2NavigationStartingEventArgs args)

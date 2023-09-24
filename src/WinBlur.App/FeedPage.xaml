@@ -273,6 +273,8 @@
             <FlipView.ItemTemplate>
                 <DataTemplate x:DataType="model:Article">
                         <WebView2 x:Name="articleTextView"
+                                  CanGoBack="False"
+                                  CanGoForward="False"
                                   helpers:DependencyPropertyHelper.HtmlString="{x:Bind ViewContent, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentBackground="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentForeground="{ThemeResource TextFillColorPrimaryBrush}"

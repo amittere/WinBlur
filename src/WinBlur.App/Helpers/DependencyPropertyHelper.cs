@@ -71,7 +71,7 @@ namespace WinBlur.App.Helpers
                 htmlScrollbarColor = scrollbarColor;
                 htmlStyleHeader = string.Format(@"
                     <head>
-                        <meta name=""viewport"" content=""initial-scale=1"" />
+                        <meta name=""viewport"" content=""initial-scale=1 minimum-scale=1"" />
                         <style type=""text/css"">
                             html {{
                                 background-color: #{0};
