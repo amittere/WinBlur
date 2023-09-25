@@ -294,22 +294,20 @@ namespace WinBlur.App
                 }
             }
         }
-
-        private IconElement GetCommentsIcon(Article a)
+        private void previousArticleButton_Click(object sender, RoutedEventArgs e)
         {
-            return new FontIcon
+            if (articleDetailView.SelectedIndex != 0)
             {
-                FontSize = 20,
-                Glyph = a == null || a.ShareCount == 0 ?
-                    Converters.IconGlyphToString(Converters.IconGlyph.CommentsEmpty) :
-                    Converters.IconGlyphToString(Converters.IconGlyph.CommentsFull),
-            };
+                articleDetailView.SelectedIndex--;
+            }
         }
 
-        private string GetCommentsLabel(Article a)
+        private void nextArticleButton_Click(object sender, RoutedEventArgs e)
         {
-            if (a == null) return "Show shares";
-            return a.ShareCount == 1 ? string.Format("Show {0} share", a.ShareCount) : string.Format("Show {0} shares", a.ShareCount);
+            if (articleDetailView.SelectedIndex != (articleDetailView.Items.Count - 1))
+            {
+                articleDetailView.SelectedIndex++;
+            }
         }
 
         private void starButton_Click(object sender, RoutedEventArgs e)
@@ -1119,6 +1117,20 @@ namespace WinBlur.App
 
             // Reload comments so hopefully the PersonPicture controls work properly
             LoadComments(viewModel.SelectedArticle);
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private bool CanNavigateBack(int selectedIndex)
+        {
+            return selectedIndex != 0;
+        }
+
+        private bool CanNavigateForward(int selectedIndex)
+        {
+            return selectedIndex != (articleDetailView?.Items.Count - 1);
         }
 
         #endregion

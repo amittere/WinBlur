@@ -383,6 +383,22 @@
                           Icon="World"
                           Label="Open in browser"
                           Click="openInBrowserButton_Click" />
+            <AppBarButton x:Name="previousArticleButton"
+                          Label="Previous"
+                          IsEnabled="{x:Bind CanNavigateBack(articleDetailView.SelectedIndex), Mode=OneWay}"
+                          Click="previousArticleButton_Click">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE00E;"/>
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton x:Name="nextArticleButton"
+                          Label="Next"
+                          IsEnabled="{x:Bind CanNavigateForward(articleDetailView.SelectedIndex), Mode=OneWay}"
+                          Click="nextArticleButton_Click">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE00F;"/>
+                </AppBarButton.Icon>
+            </AppBarButton>
 
             <CommandBar.SecondaryCommands>
                 <AppBarButton x:Name="starButton"
