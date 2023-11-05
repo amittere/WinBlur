@@ -19,7 +19,6 @@ namespace WinBlur.App.Model
         #region Properties
 
         // Theme Helpers
-        private ThemeListener themeListener = new ThemeListener();
         private UISettings uiSettings = new UISettings();
         private Color accentColor;
         private DispatcherQueue dispatcherQueue;
@@ -152,7 +151,6 @@ namespace WinBlur.App.Model
 
         public Settings()
         {
-            themeListener.ThemeChanged += ThemeListener_ThemeChanged;
             accentColor = uiSettings.GetColorValue(UIColorType.Accent);
             dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             uiSettings.ColorValuesChanged += UISettings_ColorValuesChanged;
@@ -450,6 +448,7 @@ namespace WinBlur.App.Model
             Color newAccentColor = sender.GetColorValue(UIColorType.Accent);
             await dispatcherQueue.EnqueueAsync(() =>
             {
+                UpdateAppTheme();
                 if (accentColor != newAccentColor)
                 {
                     accentColor = newAccentColor;
@@ -458,25 +457,24 @@ namespace WinBlur.App.Model
             });
         }
 
-        private void ThemeListener_ThemeChanged(ThemeListener sender)
-        {
-            UpdateAppTheme();
-        }
-
         public void UpdateAppTheme()
         {
             if (App.Window.Content is FrameworkElement element)
-            { 
+            {
+                var oldTheme = element.RequestedTheme;
                 if (AppTheme2 == AppThemeMode.UseWindowsTheme)
                 {
-                    element.RequestedTheme = AppThemeToElementTheme(themeListener.CurrentTheme);
+                    element.RequestedTheme = AppThemeToElementTheme(Application.Current.RequestedTheme);
                 }
                 else
                 {
                     element.RequestedTheme = AppThemeToElementTheme((ApplicationTheme)AppTheme2);
                 }
 
-                ThemeChanged?.Invoke(this, EventArgs.Empty);
+                if (element.RequestedTheme != oldTheme)
+                {
+                    ThemeChanged?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
 
