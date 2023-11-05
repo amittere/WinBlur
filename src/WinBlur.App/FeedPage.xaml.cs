@@ -367,7 +367,7 @@ namespace WinBlur.App
             var settings = webView.CoreWebView2.Settings;
             settings.AreBrowserAcceleratorKeysEnabled = false;
             settings.AreDefaultScriptDialogsEnabled = false;
-            settings.AreDevToolsEnabled = false;
+            settings.AreDevToolsEnabled = App.TestModeHelper.TestMode;
             settings.AreHostObjectsAllowed = false;
             settings.IsBuiltInErrorPageEnabled = false;
             settings.IsGeneralAutofillEnabled = false;

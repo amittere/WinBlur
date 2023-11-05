@@ -271,7 +271,6 @@
         </StackPanel>
 
         <view:ArticleFlipView x:Name="articleDetailView"
-                              Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                               Style="{StaticResource ArticleFlipViewStyle}"
                               Grid.Row="1"
                               Grid.Column="1">
@@ -280,16 +279,21 @@
                         <WebView2 x:Name="articleTextView"
                                   CanGoBack="False"
                                   CanGoForward="False"
-                                  DefaultBackgroundColor="{ThemeResource SolidBackgroundFillColorSecondary}"
+                                  DefaultBackgroundColor="Transparent"
                                   helpers:DependencyPropertyHelper.HtmlString="{x:Bind ViewContent, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentBackground="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentForeground="{ThemeResource TextFillColorPrimaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentLinkColor="{ThemeResource ArticleContentHyperlinkBrush}"
+                                  helpers:DependencyPropertyHelper.HtmlContentScrollbarBackgroundColor="{ThemeResource ArticleContentScrollbarBackgroundBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarColor="{ThemeResource ArticleContentScrollbarBrush}"
                                   Loaded="articleTextView_Loaded"
                                   NavigationStarting="articleTextView_NavigationStarting"
                                   HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch" />
+                                  VerticalAlignment="Stretch">
+                            <WebView2.Resources>
+                                <SolidColorBrush x:Name="BrushForThemeBackgroundColor" Color="{ThemeResource LayerFillColorDefault}"/>
+                            </WebView2.Resources>
+                        </WebView2>
                 </DataTemplate>
             </FlipView.ItemTemplate>
         </view:ArticleFlipView>
@@ -350,14 +354,11 @@
                        Opacity="0.75" />
         </StackPanel>
 
-        <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource CardStrokeColorDefault}" BorderThickness="0,1,0,0"/>
-
         <CommandBar x:Name="articleCommandBar"
                     Grid.Row="0"
                     Grid.Column="1"
                     DefaultLabelPosition="Right"
                     VerticalContentAlignment="Top"
-                    Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                     Visibility="{x:Bind viewModel.SelectedArticle, Converter={StaticResource NullToCollapsedConverter}, Mode=OneWay}">
             <AppBarElementContainer>
                 <SplitButton x:Name="readingModeSplitButton" Style="{StaticResource SplitButtonCommandBarStyle}" Click="readingModeSplitButton_Click">

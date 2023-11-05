@@ -18,6 +18,7 @@
 
             <!-- Article content brushes -->
             <SolidColorBrush x:Key="ArticleContentHyperlinkBrush" Color="{StaticResource SystemAccentColorDark1}"/>
+            <SolidColorBrush x:Key="ArticleContentScrollbarBackgroundBrush" Color="#FCFCFC"/>
             <SolidColorBrush x:Key="ArticleContentScrollbarBrush" Color="#8A8A8A"/>
         </ResourceDictionary>
 
@@ -29,6 +30,7 @@
 
             <!-- Article content brushes -->
             <SolidColorBrush x:Key="ArticleContentHyperlinkBrush" Color="{StaticResource SystemAccentColorLight1}"/>
+            <SolidColorBrush x:Key="ArticleContentScrollbarBackgroundBrush" Color="#2C2C2C"/>
             <SolidColorBrush x:Key="ArticleContentScrollbarBrush" Color="#A1A1A1"/>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
@@ -265,7 +267,7 @@
     </Style>
 
     <Style x:Key="ArticleFlipViewStyle" TargetType="FlipView">
-        <Setter Property="Background" Value="{ThemeResource FlipViewBackground}" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="TabNavigation" Value="Once" />
         <Setter Property="IsTabStop" Value="False" />
