@@ -41,6 +41,12 @@ namespace WinBlur.App.Helpers
         public static SolidColorBrush GetHtmlContentLinkColor(DependencyObject obj) { return (SolidColorBrush)obj.GetValue(HtmlContentLinkColorProperty); }
         public static void SetHtmlContentLinkColor(DependencyObject obj, SolidColorBrush value) { obj.SetValue(HtmlContentLinkColorProperty, value); }
 
+        public static readonly DependencyProperty HtmlContentScrollbarBackgroundColorProperty =
+            DependencyProperty.RegisterAttached("HtmlContentScrollbarBackgroundColor", typeof(SolidColorBrush), typeof(DependencyPropertyHelper), new PropertyMetadata(null));
+
+        public static SolidColorBrush GetHtmlContentScrollbarBackgroundColor(DependencyObject obj) { return (SolidColorBrush)obj.GetValue(HtmlContentScrollbarBackgroundColorProperty); }
+        public static void SetHtmlContentScrollbarBackgroundColor(DependencyObject obj, SolidColorBrush value) { obj.SetValue(HtmlContentScrollbarBackgroundColorProperty, value); }
+
         public static readonly DependencyProperty HtmlContentScrollbarColorProperty =
             DependencyProperty.RegisterAttached("HtmlContentScrollbarColor", typeof(SolidColorBrush), typeof(DependencyPropertyHelper), new PropertyMetadata(null));
 
@@ -51,30 +57,33 @@ namespace WinBlur.App.Helpers
         private static string htmlBackgroundColor;
         private static string htmlForegroundColor;
         private static string htmlLinkColor;
+        private static string htmlScrollbarBackgroundColor;
         private static string htmlScrollbarColor;
         private static string GetHtmlStyleHeader(DependencyObject obj)
         {
             string bgColor = GetHtmlContentBackground(obj).Color.ToString();
             string fgColor = GetHtmlContentForeground(obj).Color.ToString();
             string linkColor = GetHtmlContentLinkColor(obj).Color.ToString();
+            string scrollbarBackgroundColor = GetHtmlContentScrollbarBackgroundColor(obj).Color.ToString();
             string scrollbarColor = GetHtmlContentScrollbarColor(obj).Color.ToString();
 
             if (bgColor != htmlBackgroundColor ||
                 fgColor != htmlForegroundColor ||
                 linkColor != htmlLinkColor ||
+                scrollbarBackgroundColor != htmlScrollbarBackgroundColor ||
                 scrollbarColor != htmlScrollbarColor)
             {
                 // Style changed - update strings and return
                 htmlBackgroundColor = bgColor;
                 htmlForegroundColor = fgColor;
                 htmlLinkColor = linkColor;
+                htmlScrollbarBackgroundColor = scrollbarBackgroundColor;
                 htmlScrollbarColor = scrollbarColor;
                 htmlStyleHeader = string.Format(@"
                     <head>
-                        <meta name=""viewport"" content=""initial-scale=1"" />
+                        <meta name=""viewport"" content=""initial-scale=1 minimum-scale=1"" />
                         <style type=""text/css"">
                             html {{
-                                background-color: #{0};
                                 color: #{1};
                                 font-family: ""Segoe UI Variable"", ""Segoe UI"", sans-serif;
                                 line-height: 175%;
@@ -110,18 +119,19 @@ namespace WinBlur.App.Helpers
                                 width: 10px;
                             }}
                             ::-webkit-scrollbar-track {{
-                                background: #{0};
+                                background: #{3};
                             }}
                             ::-webkit-scrollbar-thumb {{
-                                background: #{3};
+                                background: #{4};
                                 border-radius: 10px;
-                                border: 4px solid #{0};
+                                border: 4px solid #{3};
                             }}
                         </style>
                     </head>",
                     bgColor.Substring(3),
                     fgColor.Substring(3),
                     linkColor.Substring(3),
+                    scrollbarBackgroundColor.Substring(3),
                     scrollbarColor.Substring(3));
             }
             return htmlStyleHeader;

@@ -8,6 +8,7 @@
       xmlns:model="using:WinBlur.App.Model"
       xmlns:vmodel="using:WinBlur.App.ViewModel"
       xmlns:helpers="using:WinBlur.App.Helpers"
+      xmlns:view="using:WinBlur.App.View"
       mc:Ignorable="d">
 
     <Page.Resources>
@@ -269,22 +270,33 @@
                        Visibility="{x:Bind viewModel.NoArticles, Mode=OneWay}" />
         </StackPanel>
 
-        <FlipView x:Name="articleDetailView" Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}" Grid.Row="1" Grid.Column="1">
+        <view:ArticleFlipView x:Name="articleDetailView"
+                              Style="{StaticResource ArticleFlipViewStyle}"
+                              Grid.Row="1"
+                              Grid.Column="1">
             <FlipView.ItemTemplate>
                 <DataTemplate x:DataType="model:Article">
                         <WebView2 x:Name="articleTextView"
+                                  CanGoBack="False"
+                                  CanGoForward="False"
+                                  DefaultBackgroundColor="Transparent"
                                   helpers:DependencyPropertyHelper.HtmlString="{x:Bind ViewContent, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentBackground="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentForeground="{ThemeResource TextFillColorPrimaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentLinkColor="{ThemeResource ArticleContentHyperlinkBrush}"
+                                  helpers:DependencyPropertyHelper.HtmlContentScrollbarBackgroundColor="{ThemeResource ArticleContentScrollbarBackgroundBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarColor="{ThemeResource ArticleContentScrollbarBrush}"
                                   Loaded="articleTextView_Loaded"
                                   NavigationStarting="articleTextView_NavigationStarting"
                                   HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch" />
+                                  VerticalAlignment="Stretch">
+                            <WebView2.Resources>
+                                <SolidColorBrush x:Name="BrushForThemeBackgroundColor" Color="{ThemeResource LayerFillColorDefault}"/>
+                            </WebView2.Resources>
+                        </WebView2>
                 </DataTemplate>
             </FlipView.ItemTemplate>
-        </FlipView>
+        </view:ArticleFlipView>
 
         <ProgressBar x:Name="ArticleTextViewLoadingProgress"
                      Grid.Row="1"
@@ -342,14 +354,11 @@
                        Opacity="0.75" />
         </StackPanel>
 
-        <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource CardStrokeColorDefault}" BorderThickness="0,1,0,0"/>
-
         <CommandBar x:Name="articleCommandBar"
                     Grid.Row="0"
                     Grid.Column="1"
                     DefaultLabelPosition="Right"
                     VerticalContentAlignment="Top"
-                    Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                     Visibility="{x:Bind viewModel.SelectedArticle, Converter={StaticResource NullToCollapsedConverter}, Mode=OneWay}">
             <AppBarElementContainer>
                 <SplitButton x:Name="readingModeSplitButton" Style="{StaticResource SplitButtonCommandBarStyle}" Click="readingModeSplitButton_Click">

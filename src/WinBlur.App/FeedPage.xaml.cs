@@ -295,23 +295,6 @@ namespace WinBlur.App
             }
         }
 
-        private IconElement GetCommentsIcon(Article a)
-        {
-            return new FontIcon
-            {
-                FontSize = 20,
-                Glyph = a == null || a.ShareCount == 0 ?
-                    Converters.IconGlyphToString(Converters.IconGlyph.CommentsEmpty) :
-                    Converters.IconGlyphToString(Converters.IconGlyph.CommentsFull),
-            };
-        }
-
-        private string GetCommentsLabel(Article a)
-        {
-            if (a == null) return "Show shares";
-            return a.ShareCount == 1 ? string.Format("Show {0} share", a.ShareCount) : string.Format("Show {0} shares", a.ShareCount);
-        }
-
         private void starButton_Click(object sender, RoutedEventArgs e)
         {
             if (articleDetailView.SelectedItem is Article a && !a.IsStarred)
@@ -380,6 +363,16 @@ namespace WinBlur.App
         {
             var webView = (WebView2)sender;
             await webView.EnsureCoreWebView2Async();
+
+            var settings = webView.CoreWebView2.Settings;
+            settings.AreBrowserAcceleratorKeysEnabled = false;
+            settings.AreDefaultScriptDialogsEnabled = false;
+            settings.AreDevToolsEnabled = App.TestModeHelper.TestMode;
+            settings.AreHostObjectsAllowed = false;
+            settings.IsBuiltInErrorPageEnabled = false;
+            settings.IsGeneralAutofillEnabled = false;
+            settings.IsSwipeNavigationEnabled = false;
+            settings.IsWebMessageEnabled = false;
         }
 
         private async void articleTextView_NavigationStarting(WebView2 sender, CoreWebView2NavigationStartingEventArgs args)
