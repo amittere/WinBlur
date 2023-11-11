@@ -89,7 +89,7 @@ namespace WinBlur.App.Helpers
                                 line-height: 175%;
                                 max-width: 700px;
                                 margin: auto;
-                                padding: 0px 11px;
+                                padding: 0px 30px;
                             }}
                             html * {{
                                 max-width: 100%;

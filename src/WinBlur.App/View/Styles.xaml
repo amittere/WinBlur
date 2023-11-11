@@ -50,6 +50,17 @@
     <!-- Control light-weight styling -->
     <StaticResource x:Key="CommandBarBackgroundOpen" ResourceKey="ControlFillColorTransparentBrush"/>
     <Thickness x:Key="CommandBarBorderThicknessOpen">0</Thickness>
+    
+    <Style x:Key="CardGridStyle" TargetType="Grid">
+        <Setter Property="Background"
+                Value="{ThemeResource LayerFillColorDefaultBrush}" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness"
+                Value="1" />
+        <Setter Property="CornerRadius"
+                Value="8" />
+    </Style>
 
     <Style x:Key="IconButtonStyle" TargetType="Button">
         <Setter Property="FontSize" Value="16" />
@@ -564,7 +575,7 @@
                             Template="{StaticResource HorizontalPreviousTemplate}"
                             Width="16"
                             Height="38"
-                            Margin="1"
+                            Margin="12,1,1,1"
                             CornerRadius="{TemplateBinding CornerRadius}"
                             IsTabStop="False"
                             UseSystemFocusVisuals="False"
@@ -574,7 +585,7 @@
                             Template="{StaticResource HorizontalNextTemplate}"
                             Width="16"
                             Height="38"
-                            Margin="1"
+                            Margin="1,1,12,1"
                             CornerRadius="{TemplateBinding CornerRadius}"
                             IsTabStop="False"
                             UseSystemFocusVisuals="False"

@@ -197,26 +197,24 @@
             </SplitView.Pane>
 
             <SplitView.Content>
-                <Grid x:Name="ContentGrid"
-                      Background="{ThemeResource LayerFillColorDefaultBrush}"
-                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                      BorderThickness="1,1,0,0"
-                      CornerRadius="8,0,0,0">
-
+                <Grid x:Name="ContentGrid">
                     <!-- Content that appears when no feed is selected -->
-                    <StackPanel HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Spacing="10"
-                                Visibility="{x:Bind ContentFrame.CurrentSourcePageType, Converter={StaticResource NullToVisibleConverter}, Mode=OneWay}">
-                        <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                   FontSize="48"
-                                   Text="&#xE128;"
-                                   TextAlignment="Center"
-                                   Opacity="0.5"/>
-                        <TextBlock Text="Select an item to read"
-                                   Style="{StaticResource BodyStrongTextBlockStyle}"
-                                   Opacity="0.75"/>
-                    </StackPanel>
+                    <Grid Style="{StaticResource CardGridStyle}"
+                          Margin="0,0,8,8"
+                          Visibility="{x:Bind ContentFrame.CurrentSourcePageType, Converter={StaticResource NullToVisibleConverter}, Mode=OneWay}">
+                        <StackPanel HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Spacing="10">
+                            <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="48"
+                                       Text="&#xE128;"
+                                       TextAlignment="Center"
+                                       Opacity="0.5"/>
+                            <TextBlock Text="Select an item to read"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Opacity="0.75"/>
+                        </StackPanel>
+                    </Grid>
 
                     <Frame x:Name="ContentFrame">
                         <Frame.ContentTransitions>
