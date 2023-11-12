@@ -12,7 +12,7 @@ namespace WinBlur.App
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainWindow : Window
+    public sealed partial class MainWindow : WinUIEx.WindowEx
     {
         public Frame RootFrame { get { return PageFrame; } }
         public TestModeHelper TestModeHelper { get { return App.TestModeHelper; } }
@@ -35,6 +35,8 @@ namespace WinBlur.App
                 // Set background to transparent so the Mica shows through
                 ContentRoot.Background = null;
             }
+
+            PersistenceId = "WinBlur.App.MainWindow";
 
             Activated += MainWindow_Activated;
             Title = AppTitleText.Text;

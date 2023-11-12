@@ -23,7 +23,7 @@
                            Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="articleListColumn" Width="*" MinWidth="320" />
+            <ColumnDefinition x:Name="articleListColumn" Width="*" />
             <ColumnDefinition x:Name="articleDetailColumn" Width="1.618*" />
         </Grid.ColumnDefinitions>
 
