@@ -16,20 +16,20 @@ namespace WinBlur.App.Model
         public bool IsRead
         {
             get { return _isRead; }
-            set { _isRead = value; NotifyPropertyChanged("IsRead"); }
+            set { _isRead = value; NotifyPropertyChanged(nameof(IsRead)); }
         }
         private bool _isStarred;
         public bool IsStarred
         {
             get { return _isStarred; }
-            set { _isStarred = value; NotifyPropertyChanged("IsStarred"); }
+            set { _isStarred = value; NotifyPropertyChanged(nameof(IsStarred)); }
         }
 
         private string _title;
         public string Title
         {
             get { return _title; }
-            set { _title = value; NotifyPropertyChanged("Title"); }
+            set { _title = value; NotifyPropertyChanged(nameof(Title)); }
         }
 
         public string Subtitle
@@ -57,8 +57,8 @@ namespace WinBlur.App.Model
             set
             {
                 _author = value;
-                NotifyPropertyChanged("Author");
-                NotifyPropertyChanged("Subtitle");
+                NotifyPropertyChanged(nameof(Author));
+                NotifyPropertyChanged(nameof(Subtitle));
             }
         }
 
@@ -82,7 +82,7 @@ namespace WinBlur.App.Model
         public string ViewContent
         {
             get { return viewContent; }
-            set { viewContent = value; NotifyPropertyChanged("ViewContent"); }
+            set { viewContent = value; NotifyPropertyChanged(nameof(ViewContent)); }
         }
 
         public long Timestamp { get; set; }
@@ -109,8 +109,8 @@ namespace WinBlur.App.Model
             set
             {
                 _feedTitle = value;
-                NotifyPropertyChanged("FeedTitle");
-                NotifyPropertyChanged("Subtitle");
+                NotifyPropertyChanged(nameof(FeedTitle));
+                NotifyPropertyChanged(nameof(Subtitle));
             }
         }
 

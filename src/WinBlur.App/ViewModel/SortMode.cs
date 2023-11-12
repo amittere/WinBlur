@@ -45,5 +45,22 @@ namespace WinBlur.App.ViewModel
                     throw new Exception("Invalid SortMode");
             }
         }
+
+        public static string GetTooltipString(SortMode mode)
+        {
+            switch (mode)
+            {
+                case SortMode.All_Newest:
+                    return "Sort: All - Newest";
+                case SortMode.Unread_Newest:
+                    return "Sort: Unread - Newest";
+                case SortMode.All_Oldest:
+                    return "Sort: All - Oldest";
+                case SortMode.Unread_Oldest:
+                    return "Sort: Unread - Oldest";
+                default:
+                    throw new Exception("Invalid SortMode");
+            }
+        }
     }
 }

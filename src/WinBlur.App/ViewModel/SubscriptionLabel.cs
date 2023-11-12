@@ -85,8 +85,8 @@ namespace WinBlur.App.ViewModel
                     // Save setting so collapsed state persists across launch
                     App.Settings.SetFolderCompress(ToString(), _isCompressed);
 
-                    NotifyPropertyChanged("IsCompressed");
-                    NotifyPropertyChanged("ShowCounts");
+                    NotifyPropertyChanged(nameof(IsCompressed));
+                    NotifyPropertyChanged(nameof(ShowCounts));
                 }
             }
         }
@@ -113,7 +113,7 @@ namespace WinBlur.App.ViewModel
         public string Title
         {
             get { return _title; }
-            set { _title = value; NotifyPropertyChanged("Title"); }
+            set { _title = value; NotifyPropertyChanged(nameof(Title)); }
         }
 
         public bool ShowCounts
@@ -203,7 +203,7 @@ namespace WinBlur.App.ViewModel
                         if (!IsFolder && App.Client.Friends.ContainsKey(ID))
                         {
                             App.Client.Friends[ID].PsCount = value;
-                            NotifyPropertyChanged("PsCount");
+                            NotifyPropertyChanged(nameof(PsCount));
                         }
                         break;
 
@@ -211,7 +211,7 @@ namespace WinBlur.App.ViewModel
                         if (!IsFolder && App.Client.Feeds.ContainsKey(ID))
                         {
                             App.Client.Feeds[ID].PsCount = value;
-                            NotifyPropertyChanged("PsCount");
+                            NotifyPropertyChanged(nameof(PsCount));
                         }
                         break;
 
@@ -278,7 +278,7 @@ namespace WinBlur.App.ViewModel
                         if (!IsFolder && App.Client.Friends.ContainsKey(ID))
                         {
                             App.Client.Friends[ID].NtCount = value;
-                            NotifyPropertyChanged("NtCount");
+                            NotifyPropertyChanged(nameof(NtCount));
                         }
                         break;
 
@@ -286,7 +286,7 @@ namespace WinBlur.App.ViewModel
                         if (!IsFolder && App.Client.Feeds.ContainsKey(ID))
                         {
                             App.Client.Feeds[ID].NtCount = value;
-                            NotifyPropertyChanged("NtCount");
+                            NotifyPropertyChanged(nameof(NtCount));
                         }
                         break;
 
@@ -294,7 +294,7 @@ namespace WinBlur.App.ViewModel
                         if (!IsFolder && App.Client.SavedStoryTags.ContainsKey(Title))
                         {
                             App.Client.SavedStoryTags[Title] = value;
-                            NotifyPropertyChanged("NtCount");
+                            NotifyPropertyChanged(nameof(NtCount));
                         }
                         break;
 
@@ -352,7 +352,7 @@ namespace WinBlur.App.ViewModel
                         if (!IsFolder && App.Client.Friends.ContainsKey(ID))
                         {
                             App.Client.Friends[ID].NgCount = value;
-                            NotifyPropertyChanged("NgCount");
+                            NotifyPropertyChanged(nameof(NgCount));
                         }
                         break;
 
@@ -360,7 +360,7 @@ namespace WinBlur.App.ViewModel
                         if (!IsFolder && App.Client.Feeds.ContainsKey(ID))
                         {
                             App.Client.Feeds[ID].NgCount = value;
-                            NotifyPropertyChanged("NgCount");
+                            NotifyPropertyChanged(nameof(NgCount));
                         }
                         break;
 

@@ -64,24 +64,26 @@
                                 DefaultLabelPosition="Right"
                                 HorizontalContentAlignment="Right"
                                 VerticalContentAlignment="Top">
-                        <AppBarElementContainer>
-                            <SplitButton x:Name="feedModeSplitButton" Style="{StaticResource SplitButtonCommandBarStyle}" Click="feedModeSplitButton_Click">
-                                <SplitButton.Flyout>
-                                    <MenuFlyout x:Name="feedModeMenuFlyout" Placement="BottomEdgeAlignedLeft">
-                                        <RadioMenuFlyoutItem Text="All" GroupName="FeedMode" Click="FeedModeFlyoutItem_Click">
-                                            <RadioMenuFlyoutItem.DataContext>
-                                                <vmodel:FeedMode>All</vmodel:FeedMode>
-                                            </RadioMenuFlyoutItem.DataContext>
-                                        </RadioMenuFlyoutItem>
-                                        <RadioMenuFlyoutItem Text="Unread" GroupName="FeedMode" Click="FeedModeFlyoutItem_Click">
-                                            <RadioMenuFlyoutItem.DataContext>
-                                                <vmodel:FeedMode>Unread</vmodel:FeedMode>
-                                            </RadioMenuFlyoutItem.DataContext>
-                                        </RadioMenuFlyoutItem>
-                                    </MenuFlyout>
-                                </SplitButton.Flyout>
-                            </SplitButton>
-                        </AppBarElementContainer>
+                        <AppBarButton x:Name="feedModeSplitButton"
+                                      Label="Filter"
+                                      Icon="Filter"
+                                      Style="{StaticResource FlyoutAppBarButtonStyle}"
+                                      ToolTipService.ToolTip="{x:Bind vmodel:FeedModeHelpers.GetTooltipString(viewModel.FeedMode), Mode=OneWay}">
+                            <AppBarButton.Flyout>
+                                <MenuFlyout x:Name="feedModeMenuFlyout" Placement="BottomEdgeAlignedLeft">
+                                    <RadioMenuFlyoutItem Text="All" GroupName="FeedMode" Click="FeedModeFlyoutItem_Click">
+                                        <RadioMenuFlyoutItem.DataContext>
+                                            <vmodel:FeedMode>All</vmodel:FeedMode>
+                                        </RadioMenuFlyoutItem.DataContext>
+                                    </RadioMenuFlyoutItem>
+                                    <RadioMenuFlyoutItem Text="Unread" GroupName="FeedMode" Click="FeedModeFlyoutItem_Click">
+                                        <RadioMenuFlyoutItem.DataContext>
+                                            <vmodel:FeedMode>Unread</vmodel:FeedMode>
+                                        </RadioMenuFlyoutItem.DataContext>
+                                    </RadioMenuFlyoutItem>
+                                </MenuFlyout>
+                            </AppBarButton.Flyout>
+                        </AppBarButton>
                         <AppBarButton Icon="Sync"
                                       Label="Sync"
                                       ToolTipService.ToolTip="Sync"

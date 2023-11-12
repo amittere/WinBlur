@@ -252,7 +252,7 @@ namespace WinBlur.App
             var item = (RadioMenuFlyoutItem)sender;
             if (item.IsChecked)
             {
-                viewModel.UpdateFeedFilter((FeedMode)item.DataContext);
+                viewModel.FeedMode = (FeedMode)item.DataContext;
             }
         }
 

@@ -23,12 +23,12 @@ namespace WinBlur.App.Model
                 if (value && !IsLiked)
                 {
                     Likes.Add(App.Client.MyUserID);
-                    NotifyPropertyChanged("IsLiked");
+                    NotifyPropertyChanged(nameof(IsLiked));
                 }
                 else if (!value && IsLiked)
                 {
                     Likes.Remove(App.Client.MyUserID);
-                    NotifyPropertyChanged("IsLiked");
+                    NotifyPropertyChanged(nameof(IsLiked));
                 }
             }
         }

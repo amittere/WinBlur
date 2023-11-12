@@ -56,14 +56,40 @@
 
             <CommandBar x:Name="articleListCommandBar"
                         Grid.Row="0"
-                        IsDynamicOverflowEnabled="False"
-                        OverflowButtonVisibility="Collapsed"
-                        DefaultLabelPosition="Bottom">
-                <AppBarElementContainer>
-                    <SplitButton x:Name="sortModeSplitButton"
-                                 Style="{StaticResource SplitButtonCommandBarStyle}"
-                                 Click="sortModeSplitButton_Click">
-                        <SplitButton.Flyout>
+                        IsDynamicOverflowEnabled="True"
+                        DefaultLabelPosition="Right">
+                <AppBarButton x:Name="markFeedAsReadButton"
+                              Label="Mark as read"
+                              LabelPosition="Collapsed"
+                              Icon="Bullets"
+                              Click="markFeedAsReadButton_Click"
+                              ToolTipService.ToolTip="Mark as read"
+                              IsEnabled="{x:Bind viewModel.CanMarkAsRead}">
+                    <FlyoutBase.AttachedFlyout>
+                        <Flyout Placement="Bottom">
+                            <StackPanel Width="200">
+                                <TextBlock Text="Mark these articles as read?"
+                                           Style="{StaticResource BaseTextBlockStyle}"
+                                           Margin="0,0,0,5" />
+                                <TextBlock Text="You can turn this prompt off in settings."
+                                           TextWrapping="WrapWholeWords"
+                                           Margin="0,0,0,20" />
+                                <Button x:Name="markFeedAsReadSubmitButton"
+                                        Content="Yes"
+                                        Width="75"
+                                        Click="markFeedAsReadSubmitButton_Click" />
+                            </StackPanel>
+                        </Flyout>
+                    </FlyoutBase.AttachedFlyout>
+                </AppBarButton>
+
+                <CommandBar.SecondaryCommands>
+                    <AppBarButton x:Name="sortModeSplitButton"
+                                  Label="Sort"
+                                  Icon="Sort"
+                                  Style="{StaticResource FlyoutAppBarButtonStyle}"
+                                  ToolTipService.ToolTip="{x:Bind vmodel:SortModeHelpers.GetTooltipString(viewModel.SortMode), Mode=OneWay}">
+                        <AppBarButton.Flyout>
                             <MenuFlyout x:Name="sortModeMenuFlyout"
                                         Placement="BottomEdgeAlignedLeft">
                                 <RadioMenuFlyoutItem Text="All - Newest"
@@ -95,40 +121,17 @@
                                     </RadioMenuFlyoutItem.DataContext>
                                 </RadioMenuFlyoutItem>
                             </MenuFlyout>
-                        </SplitButton.Flyout>
-                    </SplitButton>
-                </AppBarElementContainer>
-                <AppBarButton x:Name="markFeedAsReadButton"
-                              Label="Mark as read"
-                              Icon="Bullets"
-                              Click="markFeedAsReadButton_Click"
-                              ToolTipService.ToolTip="Mark as read"
-                              IsEnabled="{x:Bind viewModel.CanMarkAsRead}">
-                    <FlyoutBase.AttachedFlyout>
-                        <Flyout Placement="Bottom">
-                            <StackPanel Width="200">
-                                <TextBlock Text="Mark these articles as read?"
-                                           Style="{StaticResource BaseTextBlockStyle}"
-                                           Margin="0,0,0,5" />
-                                <TextBlock Text="You can turn this prompt off in settings."
-                                           TextWrapping="WrapWholeWords"
-                                           Margin="0,0,0,20" />
-                                <Button x:Name="markFeedAsReadSubmitButton"
-                                        Content="Yes"
-                                        Width="75"
-                                        Click="markFeedAsReadSubmitButton_Click" />
-                            </StackPanel>
-                        </Flyout>
-                    </FlyoutBase.AttachedFlyout>
-                </AppBarButton>
-                <AppBarButton x:Name="syncFeedButton"
-                              Icon="Refresh"
-                              Label="Refresh"
-                              ToolTipService.ToolTip="Refresh"
-                              Click="syncFeedButton_Click" />
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+                    <AppBarButton x:Name="syncFeedButton"
+                                  Icon="Refresh"
+                                  Label="Refresh"
+                                  LabelPosition="Collapsed"
+                                  ToolTipService.ToolTip="Refresh"
+                                  Click="syncFeedButton_Click" />
+                </CommandBar.SecondaryCommands>
 
                 <CommandBar.Content>
-                    <Grid>
                         <TextBlock x:Name="FeedTitleText"
                                    Text="{x:Bind viewModel.Subscription.Title, Mode=OneWay}"
                                    ToolTipService.ToolTip="{x:Bind viewModel.Subscription.Title, Mode=OneWay}"
@@ -137,7 +140,6 @@
                                    Margin="22,10,12,10"
                                    TextWrapping="NoWrap"
                                    TextTrimming="CharacterEllipsis" />
-                    </Grid>
                 </CommandBar.Content>
             </CommandBar>
 
@@ -296,33 +298,36 @@
                         DefaultLabelPosition="Right"
                         VerticalContentAlignment="Top"
                         Visibility="{x:Bind viewModel.SelectedArticle, Converter={StaticResource NullToCollapsedConverter}, Mode=OneWay}">
-                <AppBarElementContainer>
-                    <SplitButton x:Name="readingModeSplitButton"
-                                 Style="{StaticResource SplitButtonCommandBarStyle}"
-                                 Click="readingModeSplitButton_Click">
-                        <SplitButton.Flyout>
-                            <MenuFlyout x:Name="readingModeMenuFlyout"
-                                        Placement="BottomEdgeAlignedLeft">
-                                <RadioMenuFlyoutItem Text="Feed"
-                                                     GroupName="ReadingMode"
-                                                     Click="ReadingModeFlyoutItem_Click">
-                                    <RadioMenuFlyoutItem.DataContext>
-                                        <vmodel:ReadingMode>Feed</vmodel:ReadingMode>
-                                    </RadioMenuFlyoutItem.DataContext>
-                                </RadioMenuFlyoutItem>
-                                <RadioMenuFlyoutItem Text="Text"
-                                                     GroupName="ReadingMode"
-                                                     Click="ReadingModeFlyoutItem_Click">
-                                    <RadioMenuFlyoutItem.DataContext>
-                                        <vmodel:ReadingMode>Text</vmodel:ReadingMode>
-                                    </RadioMenuFlyoutItem.DataContext>
-                                </RadioMenuFlyoutItem>
-                            </MenuFlyout>
-                        </SplitButton.Flyout>
-                    </SplitButton>
-                </AppBarElementContainer>
+                <AppBarButton x:Name="readingModeSplitButton"
+                              Label="Reading mode"
+                              Style="{StaticResource FlyoutAppBarButtonStyle}"
+                              ToolTipService.ToolTip="{x:Bind vmodel:ReadingModeHelpers.GetTooltipString(viewModel.ReadingMode), Mode=OneWay}">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE736;" />
+                    </AppBarButton.Icon>
+                    <AppBarButton.Flyout>
+                        <MenuFlyout x:Name="readingModeMenuFlyout"
+                                    Placement="BottomEdgeAlignedLeft">
+                            <RadioMenuFlyoutItem Text="Feed"
+                                                 GroupName="ReadingMode"
+                                                 Click="ReadingModeFlyoutItem_Click">
+                                <RadioMenuFlyoutItem.DataContext>
+                                    <vmodel:ReadingMode>Feed</vmodel:ReadingMode>
+                                </RadioMenuFlyoutItem.DataContext>
+                            </RadioMenuFlyoutItem>
+                            <RadioMenuFlyoutItem Text="Text"
+                                                 GroupName="ReadingMode"
+                                                 Click="ReadingModeFlyoutItem_Click">
+                                <RadioMenuFlyoutItem.DataContext>
+                                    <vmodel:ReadingMode>Text</vmodel:ReadingMode>
+                                </RadioMenuFlyoutItem.DataContext>
+                            </RadioMenuFlyoutItem>
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
                 <AppBarToggleButton x:Name="commentsButton"
                                     Label="View shares"
+                                    ToolTipService.ToolTip="View comments and shares"
                                     Click="commentsButton_Click">
                     <Grid>
                         <FontIcon Glyph="&#xE15F;" />
@@ -331,36 +336,42 @@
                                    Visibility="{x:Bind viewModel.SelectedArticle.HasShares, Mode=OneWay}" />
                     </Grid>
                 </AppBarToggleButton>
-                <AppBarButton x:Name="openInBrowserButton"
-                              Icon="World"
-                              Label="Open in browser"
-                              Click="openInBrowserButton_Click" />
 
                 <CommandBar.SecondaryCommands>
-                    <AppBarButton x:Name="starButton"
-                                  Icon="Favorite"
-                                  Label="Save article"
-                                  Click="starButton_Click"
-                                  Visibility="{x:Bind viewModel.SelectedArticle.IsStarred, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}" />
-                    <AppBarButton x:Name="unstarButton"
-                                  Icon="UnFavorite"
-                                  Label="Unsave article"
-                                  Click="unstarButton_Click"
-                                  Visibility="{x:Bind viewModel.SelectedArticle.IsStarred, Mode=OneWay}" />
-                    <AppBarButton x:Name="shareButton"
-                                  Icon="Share"
-                                  Label="Share article"
-                                  Click="shareButton_Click" />
+                    <AppBarButton x:Name="openInBrowserButton"
+                                  Icon="World"
+                                  Label="Open in browser"
+                                  ToolTipService.ToolTip="Open article in browser"
+                                  Click="openInBrowserButton_Click" />
                     <AppBarButton x:Name="readButton"
                                   Label="Mark as read"
                                   Icon="Accept"
+                                  ToolTipService.ToolTip="Mark article as read"
                                   Click="readButton_Click"
                                   Visibility="{x:Bind viewModel.SelectedArticle.IsRead, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}" />
                     <AppBarButton x:Name="unreadButton"
                                   Icon="Cancel"
                                   Label="Mark as unread"
+                                  ToolTipService.ToolTip="Mark article as unread"
                                   Click="unreadButton_Click"
                                   Visibility="{x:Bind viewModel.SelectedArticle.IsRead, Mode=OneWay}" />
+                    <AppBarButton x:Name="starButton"
+                                  Icon="Favorite"
+                                  Label="Save article"
+                                  ToolTipService.ToolTip="Save article"
+                                  Click="starButton_Click"
+                                  Visibility="{x:Bind viewModel.SelectedArticle.IsStarred, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}" />
+                    <AppBarButton x:Name="unstarButton"
+                                  Icon="UnFavorite"
+                                  Label="Unsave article"
+                                  ToolTipService.ToolTip="Unsave article"
+                                  Click="unstarButton_Click"
+                                  Visibility="{x:Bind viewModel.SelectedArticle.IsStarred, Mode=OneWay}" />
+                    <AppBarButton x:Name="shareButton"
+                                  Icon="Share"
+                                  Label="Share article"
+                                  ToolTipService.ToolTip="Share article to other apps"
+                                  Click="shareButton_Click" />
                 </CommandBar.SecondaryCommands>
             </CommandBar>
 
