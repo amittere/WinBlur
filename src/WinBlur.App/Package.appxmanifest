@@ -10,7 +10,7 @@
   <Identity
     Name="3463AndrewMittereder.Hypersonic"
     Publisher="CN=D1BE7840-19AA-4258-8F7A-BD6EABD3FD93"
-    Version="2.0.0.0" />
+    Version="2.1.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="1db47d94-e33a-464e-b656-03a9d5f4b445" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
