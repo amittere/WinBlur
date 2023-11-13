@@ -19,6 +19,7 @@ If you are interested in contributing, please reach out to winblurapp@outlook.co
 - [Windows UI Library](https://learn.microsoft.com/en-us/windows/apps/winui/winui3/)
 - [Windows Community Toolkit](https://github.com/CommunityToolkit/WindowsCommunityToolkit)
 - [Newtonsoft Json.NET](https://www.newtonsoft.com/json)
+- [WinUIEx](https://github.com/dotMorten/WinUIEx)
 
 ## Support
 Please reach out to winblurapp@outlook.com for support or feedback.
