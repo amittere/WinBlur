@@ -8,8 +8,8 @@
                 mc:Ignorable="d"
                 Width="1280"
                 Height="800"
-                MinWidth="340"
-                MinHeight="340">
+                MinWidth="640"
+                MinHeight="480">
     <Grid x:Name="ContentRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
