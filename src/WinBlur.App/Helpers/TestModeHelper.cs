@@ -11,7 +11,7 @@ namespace WinBlur.App.Helpers
         public bool TestMode
         {
             get { return testMode; }
-            set { testMode = value; NotifyPropertyChanged("TestMode"); }
+            set { testMode = value; NotifyPropertyChanged(nameof(TestMode)); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

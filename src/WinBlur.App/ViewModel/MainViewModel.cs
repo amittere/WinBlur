@@ -13,14 +13,6 @@ using WinBlur.Shared;
 
 namespace WinBlur.App.ViewModel
 {
-    public enum FeedMode
-    {
-        All,
-        Unread,
-        Focus,
-        Saved
-    }
-
     public class MainViewModel : INotifyPropertyChanged
     {
         #region Fields
@@ -38,7 +30,7 @@ namespace WinBlur.App.ViewModel
         public string Username
         {
             get { return _username; }
-            set { _username = value; NotifyPropertyChanged("Username"); }
+            set { _username = value; NotifyPropertyChanged(nameof(Username)); }
         }
 
         private SubscriptionLabel _selectedSubscription;
@@ -51,8 +43,23 @@ namespace WinBlur.App.ViewModel
             set
             {
                 _selectedSubscription = value;
-                FilterSubscriptions(App.Settings.FeedFilterMode);
-                NotifyPropertyChanged("SelectedSubscription");
+                FilterSubscriptions(FeedMode);
+                NotifyPropertyChanged(nameof(SelectedSubscription));
+            }
+        }
+
+        public FeedMode FeedMode
+        {
+            get { return App.Settings.FeedFilterMode; }
+            set
+            {
+                // Update setting
+                if (App.Settings.FeedFilterMode != value)
+                {
+                    App.Settings.FeedFilterMode = value;
+                }
+                FilterSubscriptions(value);
+                NotifyPropertyChanged(nameof(FeedMode));
             }
         }
 
@@ -60,7 +67,7 @@ namespace WinBlur.App.ViewModel
         public bool IsLoading
         {
             get { return _isLoading; }
-            set { _isLoading = value; NotifyPropertyChanged("IsLoading"); }
+            set { _isLoading = value; NotifyPropertyChanged(nameof(IsLoading)); }
         }
 
         // Total Site Unread Count tracking (for app badge)
@@ -357,17 +364,6 @@ namespace WinBlur.App.ViewModel
             label.IsCompressed = isCompressed;
         }
 
-        public void UpdateFeedFilter(FeedMode mode)
-        {
-            // Update setting
-            if (App.Settings.FeedFilterMode != mode)
-            {
-                App.Settings.FeedFilterMode = mode;
-            }
-
-            FilterSubscriptions(mode);
-        }
-
         private bool FilterFeed(FeedMode mode, SubscriptionLabel label)
         {
             switch (mode)
@@ -428,7 +424,7 @@ namespace WinBlur.App.ViewModel
             FilterSubscriptionsHelper(mode, label);
 
             // Work around a platform issue where sometimes the TreeView loses its selection after filtering.
-            NotifyPropertyChanged("SelectedSubscription");
+            NotifyPropertyChanged(nameof(SelectedSubscription));
         }
 
         public bool FilterSubscriptionsHelper(FeedMode mode, SubscriptionLabel label)

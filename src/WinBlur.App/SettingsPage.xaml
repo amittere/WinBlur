@@ -206,6 +206,7 @@
                                     <HyperlinkButton Content="Windows UI Library" NavigateUri="https://learn.microsoft.com/en-us/windows/apps/winui/winui3"/>
                                     <HyperlinkButton Content="Newtonsoft Json.NET" NavigateUri="https://www.newtonsoft.com/json" />
                                     <HyperlinkButton Content="Windows Community Toolkit" NavigateUri="https://github.com/CommunityToolkit/WindowsCommunityToolkit"/>
+                                    <HyperlinkButton Content="WinUIEx" NavigateUri="https://github.com/dotMorten/WinUIEx"/>
                                 </StackPanel>
                             </labs:SettingsCard>
                         </labs:SettingsExpander.Items>

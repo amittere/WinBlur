@@ -17,21 +17,21 @@ namespace WinBlur.App.Model
         public int PsCount
         {
             get { return _psCount; }
-            set { _psCount = value; NotifyPropertyChanged("PsCount"); }
+            set { _psCount = value; NotifyPropertyChanged(nameof(PsCount)); }
         }
 
         private int _ntCount;
         public int NtCount
         {
             get { return _ntCount; }
-            set { _ntCount = value; NotifyPropertyChanged("NtCount"); }
+            set { _ntCount = value; NotifyPropertyChanged(nameof(NtCount)); }
         }
 
         private int _ngCount;
         public int NgCount
         {
             get { return _ngCount; }
-            set { _ngCount = value; NotifyPropertyChanged("NgCount"); }
+            set { _ngCount = value; NotifyPropertyChanged(nameof(NgCount)); }
         }
 
         public Uri FaviconURL { get; set; }

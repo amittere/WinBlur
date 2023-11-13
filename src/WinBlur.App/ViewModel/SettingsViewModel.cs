@@ -13,17 +13,17 @@ namespace WinBlur.App.ViewModel
         public int FolderSortMode
         {
             get { return (int)App.Settings.FolderSortMode; }
-            set { App.Settings.FolderSortMode = (SortMode)value; NotifyPropertyChanged("FolderSortMode"); }
+            set { App.Settings.FolderSortMode = (SortMode)value; NotifyPropertyChanged(nameof(FolderSortMode)); }
         }
         public int FeedSortMode
         {
             get { return (int)App.Settings.FeedSortMode; }
-            set { App.Settings.FeedSortMode = (SortMode)value; NotifyPropertyChanged("FeedSortMode"); }
+            set { App.Settings.FeedSortMode = (SortMode)value; NotifyPropertyChanged(nameof(FeedSortMode)); }
         }
         public int DefaultReadingMode
         {
             get { return (int)App.Settings.DefaultReadingMode; }
-            set { App.Settings.DefaultReadingMode = (ReadingMode)value; NotifyPropertyChanged("DefaultReadingMode"); }
+            set { App.Settings.DefaultReadingMode = (ReadingMode)value; NotifyPropertyChanged(nameof(DefaultReadingMode)); }
         }
         public bool BackgroundTaskEnabled
         {
@@ -32,7 +32,7 @@ namespace WinBlur.App.ViewModel
             {
                 App.Settings.BackgroundTaskEnabled = value;
                 BackgroundTaskManager.RegisterBackgroundTask();
-                NotifyPropertyChanged("BackgroundTaskEnabled");
+                NotifyPropertyChanged(nameof(BackgroundTaskEnabled));
             }
         }
         public int BackgroundTaskUpdateFreq
@@ -42,18 +42,18 @@ namespace WinBlur.App.ViewModel
             {
                 App.Settings.BackgroundTaskUpdateFreq = PickerIndexToBackgroundTaskFreq(value);
                 BackgroundTaskManager.RegisterBackgroundTask();
-                NotifyPropertyChanged("BackgroundTaskUpdateFreq");
+                NotifyPropertyChanged(nameof(BackgroundTaskUpdateFreq));
             }
         }
         public bool ReadAllPromptEnabled
         {
             get { return App.Settings.ReadAllPromptEnabled; }
-            set { App.Settings.ReadAllPromptEnabled = value; NotifyPropertyChanged("ReadAllPromptEnabled"); }
+            set { App.Settings.ReadAllPromptEnabled = value; NotifyPropertyChanged(nameof(ReadAllPromptEnabled)); }
         }
         public bool GoToNextSubscriptionAfterMarkingAsRead
         {
             get { return App.Settings.GoToNextSubscriptionAfterMarkingAsRead; }
-            set { App.Settings.GoToNextSubscriptionAfterMarkingAsRead = value; NotifyPropertyChanged("GoToNextSubscriptionAfterMarkingAsRead"); }
+            set { App.Settings.GoToNextSubscriptionAfterMarkingAsRead = value; NotifyPropertyChanged(nameof(GoToNextSubscriptionAfterMarkingAsRead)); }
         }
         public MarkAsReadMode MarkAsRead
         {
@@ -61,10 +61,10 @@ namespace WinBlur.App.ViewModel
             set
             {
                 App.Settings.MarkAsRead = value;
-                NotifyPropertyChanged("MarkAsRead");
-                NotifyPropertyChanged("MarkAsReadNever");
-                NotifyPropertyChanged("MarkAsReadWhenSelectionChanges");
-                NotifyPropertyChanged("MarkAsReadAfterDelay");
+                NotifyPropertyChanged(nameof(MarkAsRead));
+                NotifyPropertyChanged(nameof(MarkAsReadNever));
+                NotifyPropertyChanged(nameof(MarkAsReadWhenSelectionChanges));
+                NotifyPropertyChanged(nameof(MarkAsReadAfterDelay));
             }
         }
         public bool MarkAsReadNever
@@ -90,7 +90,7 @@ namespace WinBlur.App.ViewModel
                 if (int.TryParse(value, out int intValue))
                 {
                     App.Settings.MarkAsReadDelay = intValue;
-                    NotifyPropertyChanged("MarkAsReadDelay");
+                    NotifyPropertyChanged(nameof(MarkAsReadDelay));
                 }
             }
         }
@@ -101,18 +101,18 @@ namespace WinBlur.App.ViewModel
             {
                 App.Settings.AppTheme2 = (AppThemeMode)value;
                 App.Settings.UpdateAppTheme();
-                NotifyPropertyChanged("AppTheme");
+                NotifyPropertyChanged(nameof(AppTheme));
             }
         }
         public bool OpenLinksInBrowser
         {
             get { return App.Settings.OpenLinksInBrowser; }
-            set { App.Settings.OpenLinksInBrowser = value; NotifyPropertyChanged("OpenLinksInBrowser"); }
+            set { App.Settings.OpenLinksInBrowser = value; NotifyPropertyChanged(nameof(OpenLinksInBrowser)); }
         }
         public bool ShowImagePreviews
         {
             get { return App.Settings.ShowImagePreviews; }
-            set { App.Settings.ShowImagePreviews = value; NotifyPropertyChanged("ShowImagePreviews"); }
+            set { App.Settings.ShowImagePreviews = value; NotifyPropertyChanged(nameof(ShowImagePreviews)); }
         }
 
         public bool ShowFeedFilterClearOverrides
@@ -208,7 +208,7 @@ namespace WinBlur.App.ViewModel
                     count++;
                 }
             }
-            NotifyPropertyChanged("ShowFeedFilterClearOverrides");
+            NotifyPropertyChanged(nameof(ShowFeedFilterClearOverrides));
 
             return count;
         }
@@ -227,7 +227,7 @@ namespace WinBlur.App.ViewModel
                     count++;
                 }
             }
-            NotifyPropertyChanged("ShowFolderFilterClearOverrides");
+            NotifyPropertyChanged(nameof(ShowFolderFilterClearOverrides));
 
             return count;
         }
@@ -236,7 +236,7 @@ namespace WinBlur.App.ViewModel
         {
             int count = App.Settings.ReadingModeSettings.Count;
             App.Settings.ReadingModeSettings.Clear();
-            NotifyPropertyChanged("ShowReadingModeClearOverrides");
+            NotifyPropertyChanged(nameof(ShowReadingModeClearOverrides));
             return count;
         }
 

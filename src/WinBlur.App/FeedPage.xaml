@@ -18,13 +18,12 @@
 
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition x:Name="CommentsRow" Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition x:Name="CommentsRow"
+                           Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="articleListColumn" Width="*" MinWidth="320" />
+            <ColumnDefinition x:Name="articleListColumn" Width="*" />
             <ColumnDefinition x:Name="articleDetailColumn" Width="1.618*" />
         </Grid.ColumnDefinitions>
 
@@ -44,238 +43,343 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <CommandBar x:Name="articleListCommandBar"
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    IsDynamicOverflowEnabled="False"
-                    OverflowButtonVisibility="Collapsed"
-                    DefaultLabelPosition="Bottom">
-            <AppBarElementContainer>
-                <SplitButton x:Name="sortModeSplitButton" Style="{StaticResource SplitButtonCommandBarStyle}" Click="sortModeSplitButton_Click">
-                    <SplitButton.Flyout>
-                        <MenuFlyout x:Name="sortModeMenuFlyout" Placement="BottomEdgeAlignedLeft">
-                            <RadioMenuFlyoutItem Text="All - Newest" GroupName="SortMode" Click="SortModeFlyoutItem_Click">
+        <!-- Article list card -->
+        <Grid Grid.Column="0"
+              Grid.Row="0"
+              Grid.RowSpan="2"
+              Style="{StaticResource CardGridStyle}"
+              Margin="0,0,8,8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <CommandBar x:Name="articleListCommandBar"
+                        Grid.Row="0"
+                        IsDynamicOverflowEnabled="True"
+                        DefaultLabelPosition="Right">
+                <AppBarButton x:Name="markFeedAsReadButton"
+                              Label="Mark as read"
+                              LabelPosition="Collapsed"
+                              Icon="Bullets"
+                              Click="markFeedAsReadButton_Click"
+                              ToolTipService.ToolTip="Mark as read"
+                              IsEnabled="{x:Bind viewModel.CanMarkAsRead}">
+                    <FlyoutBase.AttachedFlyout>
+                        <Flyout Placement="Bottom">
+                            <StackPanel Width="200">
+                                <TextBlock Text="Mark these articles as read?"
+                                           Style="{StaticResource BaseTextBlockStyle}"
+                                           Margin="0,0,0,5" />
+                                <TextBlock Text="You can turn this prompt off in settings."
+                                           TextWrapping="WrapWholeWords"
+                                           Margin="0,0,0,20" />
+                                <Button x:Name="markFeedAsReadSubmitButton"
+                                        Content="Yes"
+                                        Width="75"
+                                        Click="markFeedAsReadSubmitButton_Click" />
+                            </StackPanel>
+                        </Flyout>
+                    </FlyoutBase.AttachedFlyout>
+                </AppBarButton>
+
+                <CommandBar.SecondaryCommands>
+                    <AppBarButton x:Name="sortModeSplitButton"
+                                  Label="Sort"
+                                  Icon="Sort"
+                                  Style="{StaticResource FlyoutAppBarButtonStyle}"
+                                  ToolTipService.ToolTip="{x:Bind vmodel:SortModeHelpers.GetTooltipString(viewModel.SortMode), Mode=OneWay}">
+                        <AppBarButton.Flyout>
+                            <MenuFlyout x:Name="sortModeMenuFlyout"
+                                        Placement="BottomEdgeAlignedLeft">
+                                <RadioMenuFlyoutItem Text="All - Newest"
+                                                     GroupName="SortMode"
+                                                     Click="SortModeFlyoutItem_Click">
+                                    <RadioMenuFlyoutItem.DataContext>
+                                        <vmodel:SortMode>All_Newest</vmodel:SortMode>
+                                    </RadioMenuFlyoutItem.DataContext>
+                                </RadioMenuFlyoutItem>
+                                <RadioMenuFlyoutItem Text="All - Oldest"
+                                                     GroupName="SortMode"
+                                                     Click="SortModeFlyoutItem_Click">
+                                    <RadioMenuFlyoutItem.DataContext>
+                                        <vmodel:SortMode>All_Oldest</vmodel:SortMode>
+                                    </RadioMenuFlyoutItem.DataContext>
+                                </RadioMenuFlyoutItem>
+                                <RadioMenuFlyoutItem Text="Unread - Newest"
+                                                     GroupName="SortMode"
+                                                     Click="SortModeFlyoutItem_Click">
+                                    <RadioMenuFlyoutItem.DataContext>
+                                        <vmodel:SortMode>Unread_Newest</vmodel:SortMode>
+                                    </RadioMenuFlyoutItem.DataContext>
+                                </RadioMenuFlyoutItem>
+                                <RadioMenuFlyoutItem Text="Unread - Oldest"
+                                                     GroupName="SortMode"
+                                                     Click="SortModeFlyoutItem_Click">
+                                    <RadioMenuFlyoutItem.DataContext>
+                                        <vmodel:SortMode>Unread_Oldest</vmodel:SortMode>
+                                    </RadioMenuFlyoutItem.DataContext>
+                                </RadioMenuFlyoutItem>
+                            </MenuFlyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+                    <AppBarButton x:Name="syncFeedButton"
+                                  Icon="Refresh"
+                                  Label="Refresh"
+                                  LabelPosition="Collapsed"
+                                  ToolTipService.ToolTip="Refresh"
+                                  Click="syncFeedButton_Click" />
+                </CommandBar.SecondaryCommands>
+
+                <CommandBar.Content>
+                        <TextBlock x:Name="FeedTitleText"
+                                   Text="{x:Bind viewModel.Subscription.Title, Mode=OneWay}"
+                                   ToolTipService.ToolTip="{x:Bind viewModel.Subscription.Title, Mode=OneWay}"
+                                   Style="{StaticResource SubtitleTextBlockStyle}"
+                                   HorizontalAlignment="Left"
+                                   Margin="22,10,12,10"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis" />
+                </CommandBar.Content>
+            </CommandBar>
+
+            <RefreshContainer x:Name="ArticleListRefresh"
+                              Grid.Row="1"
+                              RefreshRequested="ArticleListRefresh_RefreshRequested">
+                <ListView x:Name="articleListView"
+                          SelectionMode="None"
+                          IsItemClickEnabled="True"
+                          SingleSelectionFollowsFocus="False"
+                          DataFetchSize="6"
+                          Margin="0,0,0,0"
+                          Padding="6,0,10,0"
+                          IncrementalLoadingThreshold="1"
+                          ItemsSource="{Binding Source={StaticResource articleListViewSource}}"
+                          ItemClick="articleListView_ItemClick">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="model:Article">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Vertical"
+                                            Grid.Column="1"
+                                            Margin="4,0"
+                                            Padding="0,10,15,10">
+                                    <TextBlock Text="{x:Bind Title}"
+                                               Grid.Row="0"
+                                               Grid.Column="1"
+                                               Margin="0,0,0,2"
+                                               TextWrapping="WrapWholeWords"
+                                               Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
+                                               Style="{StaticResource BaseTextBlockStyle}" />
+                                    <TextBlock Text="{x:Bind Subtitle}"
+                                               Grid.Row="1"
+                                               Grid.Column="1"
+                                               TextWrapping="WrapWholeWords"
+                                               Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                    <TextBlock Text="{x:Bind ShortDate}"
+                                               Grid.Row="2"
+                                               Grid.Column="1"
+                                               TextWrapping="WrapWholeWords"
+                                               Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                </StackPanel>
+                                <TextBlock Text="&#xE082;"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           Grid.Column="2"
+                                           Margin="0,15,10,0"
+                                           Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
+                                           Visibility="{x:Bind IsStarred, Converter={StaticResource BoolToVisibleConverter}, Mode=OneWay}" />
+                                <Border Grid.Column="3"
+                                        VerticalAlignment="Stretch"
+                                        Margin="0,2,-8,2"
+                                        CornerRadius="{StaticResource ControlCornerRadius}"
+                                        Visibility="{x:Bind ShowImagePreview}">
+                                    <Image Grid.Column="3"
+                                           Width="75"
+                                           VerticalAlignment="Stretch"
+                                           Stretch="UniformToFill"
+                                           Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
+                                           Visibility="{x:Bind ImageThumbnail, Converter={StaticResource NullToCollapsedConverter}}">
+                                        <Image.Source>
+                                            <BitmapImage DecodePixelWidth="192"
+                                                         UriSource="{x:Bind ImageThumbnail}" />
+                                        </Image.Source>
+                                    </Image>
+                                </Border>
+
+                                <Grid.ContextFlyout>
+                                    <CommandBarFlyout Placement="BottomEdgeAlignedLeft">
+                                        <CommandBarFlyout.SecondaryCommands>
+                                            <AppBarButton Icon="Accept"
+                                                          Label="Mark as read"
+                                                          Click="ReadFlyoutItem_Click"
+                                                          Visibility="{x:Bind IsRead, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}" />
+                                            <AppBarButton Icon="Cancel"
+                                                          Label="Mark as unread"
+                                                          Click="UnreadFlyoutItem_Click"
+                                                          Visibility="{x:Bind IsRead, Mode=OneWay}" />
+                                            <AppBarButton Icon="Favorite"
+                                                          Label="Save"
+                                                          Click="SaveFlyoutItem_Click"
+                                                          Visibility="{x:Bind IsStarred, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}" />
+                                            <AppBarButton Icon="UnFavorite"
+                                                          Label="Unsave"
+                                                          Click="UnsaveFlyoutItem_Click"
+                                                          Visibility="{x:Bind IsStarred, Mode=OneWay}" />
+                                            <AppBarButton Icon="Share"
+                                                          Label="Share"
+                                                          Click="ShareFlyoutItem_Click" />
+                                            <AppBarSeparator />
+                                            <AppBarButton Icon="{tk:FontIcon Glyph=&#xE010;}"
+                                                          Label="Mark newer articles as read"
+                                                          Click="ReadNewerFlyoutItem_Click"
+                                                          Visibility="{Binding Source={StaticResource viewModel}, Path=SortModeIsNewestFirst}" />
+                                            <AppBarButton Icon="{tk:FontIcon Glyph=&#xE010;}"
+                                                          Label="Mark older articles as read"
+                                                          Click="ReadOlderFlyoutItem_Click"
+                                                          Visibility="{Binding Source={StaticResource viewModel}, Path=SortModeIsNewestFirst, Converter={StaticResource BoolToCollapsedConverter}}" />
+                                            <AppBarButton Icon="{tk:FontIcon Glyph=&#xE011;}"
+                                                          Label="Mark newer articles as read"
+                                                          Click="ReadNewerFlyoutItem_Click"
+                                                          Visibility="{Binding Source={StaticResource viewModel}, Path=SortModeIsNewestFirst, Converter={StaticResource BoolToCollapsedConverter}}" />
+                                            <AppBarButton Icon="{tk:FontIcon Glyph=&#xE011;}"
+                                                          Label="Mark older articles as read"
+                                                          Click="ReadOlderFlyoutItem_Click"
+                                                          Visibility="{Binding Source={StaticResource viewModel}, Path=SortModeIsNewestFirst}" />
+                                        </CommandBarFlyout.SecondaryCommands>
+                                    </CommandBarFlyout>
+                                </Grid.ContextFlyout>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </RefreshContainer>
+
+            <ProgressBar x:Name="ArticleListRefreshProgress"
+                         Grid.Row="1"
+                         VerticalAlignment="Top"
+                         IsIndeterminate="True"
+                         Visibility="{x:Bind viewModel.IsLoading, Mode=OneWay}" />
+
+            <StackPanel Orientation="Vertical"
+                        HorizontalAlignment="Center"
+                        Grid.Row="1">
+                <TextBlock x:Name="noArticlesText"
+                           Text="No articles"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           Margin="20"
+                           Visibility="{x:Bind viewModel.NoArticles, Mode=OneWay}" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Article content card -->
+        <Grid Grid.Column="1"
+              Grid.Row="0"
+              Style="{StaticResource CardGridStyle}"
+              Margin="0,0,8,8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <CommandBar x:Name="articleCommandBar"
+                        Grid.Row="0"
+                        DefaultLabelPosition="Right"
+                        VerticalContentAlignment="Top"
+                        Visibility="{x:Bind viewModel.SelectedArticle, Converter={StaticResource NullToCollapsedConverter}, Mode=OneWay}">
+                <AppBarButton x:Name="readingModeSplitButton"
+                              Label="Reading mode"
+                              Style="{StaticResource FlyoutAppBarButtonStyle}"
+                              ToolTipService.ToolTip="{x:Bind vmodel:ReadingModeHelpers.GetTooltipString(viewModel.ReadingMode), Mode=OneWay}">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE736;" />
+                    </AppBarButton.Icon>
+                    <AppBarButton.Flyout>
+                        <MenuFlyout x:Name="readingModeMenuFlyout"
+                                    Placement="BottomEdgeAlignedLeft">
+                            <RadioMenuFlyoutItem Text="Feed"
+                                                 GroupName="ReadingMode"
+                                                 Click="ReadingModeFlyoutItem_Click">
                                 <RadioMenuFlyoutItem.DataContext>
-                                    <vmodel:SortMode>All_Newest</vmodel:SortMode>
+                                    <vmodel:ReadingMode>Feed</vmodel:ReadingMode>
                                 </RadioMenuFlyoutItem.DataContext>
                             </RadioMenuFlyoutItem>
-                            <RadioMenuFlyoutItem Text="All - Oldest" GroupName="SortMode" Click="SortModeFlyoutItem_Click">
+                            <RadioMenuFlyoutItem Text="Text"
+                                                 GroupName="ReadingMode"
+                                                 Click="ReadingModeFlyoutItem_Click">
                                 <RadioMenuFlyoutItem.DataContext>
-                                    <vmodel:SortMode>All_Oldest</vmodel:SortMode>
-                                </RadioMenuFlyoutItem.DataContext>
-                            </RadioMenuFlyoutItem>
-                            <RadioMenuFlyoutItem Text="Unread - Newest" GroupName="SortMode" Click="SortModeFlyoutItem_Click">
-                                <RadioMenuFlyoutItem.DataContext>
-                                    <vmodel:SortMode>Unread_Newest</vmodel:SortMode>
-                                </RadioMenuFlyoutItem.DataContext>
-                            </RadioMenuFlyoutItem>
-                            <RadioMenuFlyoutItem Text="Unread - Oldest" GroupName="SortMode" Click="SortModeFlyoutItem_Click">
-                                <RadioMenuFlyoutItem.DataContext>
-                                    <vmodel:SortMode>Unread_Oldest</vmodel:SortMode>
+                                    <vmodel:ReadingMode>Text</vmodel:ReadingMode>
                                 </RadioMenuFlyoutItem.DataContext>
                             </RadioMenuFlyoutItem>
                         </MenuFlyout>
-                    </SplitButton.Flyout>
-                </SplitButton>
-            </AppBarElementContainer>
-            <AppBarButton x:Name="markFeedAsReadButton"
-                          Label="Mark as read"
-                          Icon="Bullets"
-                          Click="markFeedAsReadButton_Click"
-                          ToolTipService.ToolTip="Mark as read"
-                          IsEnabled="{x:Bind viewModel.CanMarkAsRead}">
-                <FlyoutBase.AttachedFlyout>
-                    <Flyout Placement="Bottom">
-                        <StackPanel Width="200">
-                            <TextBlock Text="Mark these articles as read?"
-                                       Style="{StaticResource BaseTextBlockStyle}"
-                                       Margin="0,0,0,5" />
-                            <TextBlock Text="You can turn this prompt off in settings."
-                                       TextWrapping="WrapWholeWords"
-                                       Margin="0,0,0,20" />
-                            <Button x:Name="markFeedAsReadSubmitButton"
-                                    Content="Yes"
-                                    Width="75"
-                                    Click="markFeedAsReadSubmitButton_Click" />
-                        </StackPanel>
-                    </Flyout>
-                </FlyoutBase.AttachedFlyout>
-            </AppBarButton>
-            <AppBarButton x:Name="syncFeedButton"
-                          Icon="Refresh"
-                          Label="Refresh"
-                          ToolTipService.ToolTip="Refresh"
-                          Click="syncFeedButton_Click" />
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarToggleButton x:Name="commentsButton"
+                                    Label="View shares"
+                                    ToolTipService.ToolTip="View comments and shares"
+                                    Click="commentsButton_Click">
+                    <Grid>
+                        <FontIcon Glyph="&#xE15F;" />
+                        <InfoBadge Value="{x:Bind viewModel.SelectedArticle.ShareCount, Mode=OneWay}"
+                                   Margin="20,-20,0,0"
+                                   Visibility="{x:Bind viewModel.SelectedArticle.HasShares, Mode=OneWay}" />
+                    </Grid>
+                </AppBarToggleButton>
 
-            <CommandBar.Content>
-                <Grid>
-                    <TextBlock x:Name="FeedTitleText"
-                               Text="{x:Bind viewModel.Subscription.Title, Mode=OneWay}"
-                               ToolTipService.ToolTip="{x:Bind viewModel.Subscription.Title, Mode=OneWay}"
-                               Style="{StaticResource SubtitleTextBlockStyle}"
-                               HorizontalAlignment="Left"
-                               Margin="22,10,12,10"
-                               TextWrapping="NoWrap"
-                               TextTrimming="CharacterEllipsis" />
-                </Grid>
-            </CommandBar.Content>
-        </CommandBar>
+                <CommandBar.SecondaryCommands>
+                    <AppBarButton x:Name="openInBrowserButton"
+                                  Icon="World"
+                                  Label="Open in browser"
+                                  ToolTipService.ToolTip="Open article in browser"
+                                  Click="openInBrowserButton_Click" />
+                    <AppBarButton x:Name="readButton"
+                                  Label="Mark as read"
+                                  Icon="Accept"
+                                  ToolTipService.ToolTip="Mark article as read"
+                                  Click="readButton_Click"
+                                  Visibility="{x:Bind viewModel.SelectedArticle.IsRead, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}" />
+                    <AppBarButton x:Name="unreadButton"
+                                  Icon="Cancel"
+                                  Label="Mark as unread"
+                                  ToolTipService.ToolTip="Mark article as unread"
+                                  Click="unreadButton_Click"
+                                  Visibility="{x:Bind viewModel.SelectedArticle.IsRead, Mode=OneWay}" />
+                    <AppBarButton x:Name="starButton"
+                                  Icon="Favorite"
+                                  Label="Save article"
+                                  ToolTipService.ToolTip="Save article"
+                                  Click="starButton_Click"
+                                  Visibility="{x:Bind viewModel.SelectedArticle.IsStarred, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}" />
+                    <AppBarButton x:Name="unstarButton"
+                                  Icon="UnFavorite"
+                                  Label="Unsave article"
+                                  ToolTipService.ToolTip="Unsave article"
+                                  Click="unstarButton_Click"
+                                  Visibility="{x:Bind viewModel.SelectedArticle.IsStarred, Mode=OneWay}" />
+                    <AppBarButton x:Name="shareButton"
+                                  Icon="Share"
+                                  Label="Share article"
+                                  ToolTipService.ToolTip="Share article to other apps"
+                                  Click="shareButton_Click" />
+                </CommandBar.SecondaryCommands>
+            </CommandBar>
 
-        <Border Grid.Row="0"
-                Grid.RowSpan="4"
-                Grid.Column="0"
-                BorderBrush="{ThemeResource ControlStrokeColorDefault}"
-                BorderThickness="0,0,1,0"
-                IsHitTestVisible="False" />
-
-        <RefreshContainer x:Name="ArticleListRefresh"
-                          Grid.Row="1"
-                          Grid.RowSpan="3"
-                          Grid.Column="0"
-                          RefreshRequested="ArticleListRefresh_RefreshRequested">
-            <ListView x:Name="articleListView"
-                      SelectionMode="None"
-                      IsItemClickEnabled="True"
-                      SingleSelectionFollowsFocus="False"
-                      DataFetchSize="6"
-                      Margin="0,0,0,0"
-                      Padding="6,0,10,0"
-                      IncrementalLoadingThreshold="1"
-                      ItemsSource="{Binding Source={StaticResource articleListViewSource}}"
-                      ItemClick="articleListView_ItemClick">
-                <ListView.ItemTemplate>
+            <view:ArticleFlipView x:Name="articleDetailView"
+                                  Style="{StaticResource ArticleFlipViewStyle}"
+                                  Grid.Row="1">
+                <FlipView.ItemTemplate>
                     <DataTemplate x:DataType="model:Article">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Orientation="Vertical"
-                                        Grid.Column="1"
-                                        Margin="4,0"
-                                        Padding="0,10,15,10">
-                                <TextBlock Text="{x:Bind Title}"
-                                           Grid.Row="0"
-                                           Grid.Column="1"
-                                           Margin="0,0,0,2"
-                                           TextWrapping="WrapWholeWords"
-                                           Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
-                                           Style="{StaticResource BaseTextBlockStyle}" />
-                                <TextBlock Text="{x:Bind Subtitle}"
-                                           Grid.Row="1"
-                                           Grid.Column="1"
-                                           TextWrapping="WrapWholeWords"
-                                           Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
-                                           Style="{StaticResource CaptionTextBlockStyle}" />
-                                <TextBlock Text="{x:Bind ShortDate}"
-                                           Grid.Row="2"
-                                           Grid.Column="1"
-                                           TextWrapping="WrapWholeWords"
-                                           Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
-                                           Style="{StaticResource CaptionTextBlockStyle}" />
-                            </StackPanel>
-                            <TextBlock Text="&#xE082;"
-                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                       Grid.Column="2"
-                                       Margin="0,15,10,0"
-                                       Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
-                                       Visibility="{x:Bind IsStarred, Converter={StaticResource BoolToVisibleConverter}, Mode=OneWay}" />
-                            <Border Grid.Column="3"
-                                    VerticalAlignment="Stretch"
-                                    Margin="0,2,-8,2"
-                                    CornerRadius="{StaticResource ControlCornerRadius}"
-                                    Visibility="{x:Bind ShowImagePreview}">
-                                <Image Grid.Column="3"
-                                       Width="75"
-                                       VerticalAlignment="Stretch"
-                                       Stretch="UniformToFill"
-                                       Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
-                                       Visibility="{x:Bind ImageThumbnail, Converter={StaticResource NullToCollapsedConverter}}">
-                                    <Image.Source>
-                                        <BitmapImage DecodePixelWidth="192"
-                                                     UriSource="{x:Bind ImageThumbnail}" />
-                                    </Image.Source>
-                                </Image>
-                            </Border>
-
-                            <Grid.ContextFlyout>
-                                <CommandBarFlyout Placement="BottomEdgeAlignedLeft">
-                                    <CommandBarFlyout.SecondaryCommands>
-                                        <AppBarButton Icon="Accept"
-                                                      Label="Mark as read"
-                                                      Click="ReadFlyoutItem_Click"
-                                                      Visibility="{x:Bind IsRead, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}" />
-                                        <AppBarButton Icon="Cancel"
-                                                      Label="Mark as unread"
-                                                      Click="UnreadFlyoutItem_Click"
-                                                      Visibility="{x:Bind IsRead, Mode=OneWay}" />
-                                        <AppBarButton Icon="Favorite"
-                                                      Label="Save"
-                                                      Click="SaveFlyoutItem_Click"
-                                                      Visibility="{x:Bind IsStarred, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}"/>
-                                        <AppBarButton Icon="UnFavorite"
-                                                      Label="Unsave"
-                                                      Click="UnsaveFlyoutItem_Click"
-                                                      Visibility="{x:Bind IsStarred, Mode=OneWay}" />
-                                        <AppBarButton Icon="Share"
-                                                      Label="Share"
-                                                      Click="ShareFlyoutItem_Click"/>
-                                        <AppBarSeparator/>
-                                        <AppBarButton Icon="{tk:FontIcon Glyph=&#xE010;}"
-                                                      Label="Mark newer articles as read"
-                                                      Click="ReadNewerFlyoutItem_Click"
-                                                      Visibility="{Binding Source={StaticResource viewModel}, Path=SortModeIsNewestFirst}"/>
-                                        <AppBarButton Icon="{tk:FontIcon Glyph=&#xE010;}"
-                                                      Label="Mark older articles as read"
-                                                      Click="ReadOlderFlyoutItem_Click"
-                                                      Visibility="{Binding Source={StaticResource viewModel}, Path=SortModeIsNewestFirst, Converter={StaticResource BoolToCollapsedConverter}}"/>
-                                        <AppBarButton Icon="{tk:FontIcon Glyph=&#xE011;}"
-                                                      Label="Mark newer articles as read"
-                                                      Click="ReadNewerFlyoutItem_Click"
-                                                      Visibility="{Binding Source={StaticResource viewModel}, Path=SortModeIsNewestFirst, Converter={StaticResource BoolToCollapsedConverter}}"/>
-                                        <AppBarButton Icon="{tk:FontIcon Glyph=&#xE011;}"
-                                                      Label="Mark older articles as read"
-                                                      Click="ReadOlderFlyoutItem_Click"
-                                                      Visibility="{Binding Source={StaticResource viewModel}, Path=SortModeIsNewestFirst}"/>
-                                    </CommandBarFlyout.SecondaryCommands>
-                                </CommandBarFlyout>
-                            </Grid.ContextFlyout>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </RefreshContainer>
-
-        <ProgressBar x:Name="ArticleListRefreshProgress"
-                     Grid.Row="1"
-                     Grid.Column="0"
-                     VerticalAlignment="Top"
-                     IsIndeterminate="True"
-                     Visibility="{x:Bind viewModel.IsLoading, Mode=OneWay}" />
-
-        <StackPanel Orientation="Vertical"
-                    HorizontalAlignment="Center"
-                    Grid.Row="1">
-            <TextBlock x:Name="noArticlesText"
-                       Text="No articles"
-                       Style="{StaticResource BodyTextBlockStyle}"
-                       Margin="20"
-                       Visibility="{x:Bind viewModel.NoArticles, Mode=OneWay}" />
-        </StackPanel>
-
-        <view:ArticleFlipView x:Name="articleDetailView"
-                              Style="{StaticResource ArticleFlipViewStyle}"
-                              Grid.Row="1"
-                              Grid.Column="1">
-            <FlipView.ItemTemplate>
-                <DataTemplate x:DataType="model:Article">
                         <WebView2 x:Name="articleTextView"
                                   CanGoBack="False"
                                   CanGoForward="False"
@@ -283,140 +387,79 @@
                                   helpers:DependencyPropertyHelper.HtmlString="{x:Bind ViewContent, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentBackground="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentForeground="{ThemeResource TextFillColorPrimaryBrush}"
-                                  helpers:DependencyPropertyHelper.HtmlContentLinkColor="{ThemeResource ArticleContentHyperlinkBrush}"
+                                  helpers:DependencyPropertyHelper.HtmlContentLinkColor="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarBackgroundColor="{ThemeResource ArticleContentScrollbarBackgroundBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarColor="{ThemeResource ArticleContentScrollbarBrush}"
                                   Loaded="articleTextView_Loaded"
                                   NavigationStarting="articleTextView_NavigationStarting"
                                   HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch">
+                                  VerticalAlignment="Stretch"
+                                  Margin="0,0,0,8">
                             <WebView2.Resources>
-                                <SolidColorBrush x:Name="BrushForThemeBackgroundColor" Color="{ThemeResource LayerFillColorDefault}"/>
+                                <SolidColorBrush x:Name="BrushForThemeBackgroundColor"
+                                                 Color="{ThemeResource LayerFillColorDefault}" />
                             </WebView2.Resources>
                         </WebView2>
-                </DataTemplate>
-            </FlipView.ItemTemplate>
-        </view:ArticleFlipView>
+                    </DataTemplate>
+                </FlipView.ItemTemplate>
+            </view:ArticleFlipView>
 
-        <ProgressBar x:Name="ArticleTextViewLoadingProgress"
-                     Grid.Row="1"
-                     Grid.Column="1"
-                     VerticalAlignment="Top"
-                     IsIndeterminate="True"
-                     Visibility="{x:Bind viewModel.IsLoadingOriginalText, Mode=OneWay}" />
+            <ProgressBar x:Name="ArticleTextViewLoadingProgress"
+                         Grid.Row="1"
+                         VerticalAlignment="Top"
+                         IsIndeterminate="True"
+                         Visibility="{x:Bind viewModel.IsLoadingOriginalText, Mode=OneWay}" />
 
+            <!-- Content that appears when no article is selected -->
+            <StackPanel Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="10"
+                        Visibility="{x:Bind viewModel.SelectedArticle, Converter={StaticResource NullToVisibleConverter}, Mode=OneWay}">
+                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}"
+                           FontSize="48"
+                           Text="&#xE12A;"
+                           TextAlignment="Center"
+                           Opacity="0.5" />
+                <TextBlock Text="Select an article to read"
+                           Style="{StaticResource BodyStrongTextBlockStyle}"
+                           Opacity="0.75" />
+            </StackPanel>
+        </Grid>
+        
+        <!-- Comments card -->
         <Grid x:Name="ArticleCommentsGrid"
-                      Grid.Row="2"
-                      Grid.Column="1"
-                      Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
-                      BorderBrush="{ThemeResource ControlStrokeColorDefault}"
-                      BorderThickness="0,1,0,0"
-                      Visibility="{x:Bind viewModel.CommentsVisible, Mode=OneWay}">
+              Grid.Row="1"
+              Grid.Column="1"
+              Style="{StaticResource CardGridStyle}"
+              Margin="0,0,8,8"
+              Visibility="{x:Bind viewModel.CommentsVisible, Mode=OneWay}">
             <ListView x:Name="CommentsListView"
                       SelectionMode="None"
                       IsItemClickEnabled="False"
-                      Padding="0,10,0,24">
+                      Padding="16,10,16,24">
                 <ListView.ItemContainerTransitions>
                     <TransitionCollection />
                 </ListView.ItemContainerTransitions>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
-                        <Setter Property="MaxWidth" Value="708"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="MaxWidth"
+                                Value="708" />
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Stretch" />
                     </Style>
                 </ListView.ItemContainerStyle>
             </ListView>
         </Grid>
+
         <toolkit:GridSplitter x:Name="ArticleCommentsSplitter"
-                              Grid.Row="2"
+                              Grid.Row="1"
                               Grid.Column="1"
                               Style="{StaticResource HorizGridSplitterStyle}"
-                              Margin="0,-8,0,0"
+                              Margin="0,-12,0,0"
                               ResizeDirection="Rows"
                               ResizeBehavior="PreviousAndCurrent"
                               VerticalAlignment="Top"
-                              Visibility="{x:Bind viewModel.CommentsVisible, Mode=OneWay}"/>
-
-        <!-- Content that appears when no article is selected -->
-        <StackPanel Grid.Row="1"
-                    Grid.Column="1"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Spacing="10"
-                    Visibility="{x:Bind viewModel.SelectedArticle, Converter={StaticResource NullToVisibleConverter}, Mode=OneWay}">
-            <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}"
-                       FontSize="48"
-                       Text="&#xE12A;"
-                       TextAlignment="Center"
-                       Opacity="0.5" />
-            <TextBlock Text="Select an article to read"
-                       Style="{StaticResource BodyStrongTextBlockStyle}"
-                       Opacity="0.75" />
-        </StackPanel>
-
-        <CommandBar x:Name="articleCommandBar"
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    DefaultLabelPosition="Right"
-                    VerticalContentAlignment="Top"
-                    Visibility="{x:Bind viewModel.SelectedArticle, Converter={StaticResource NullToCollapsedConverter}, Mode=OneWay}">
-            <AppBarElementContainer>
-                <SplitButton x:Name="readingModeSplitButton" Style="{StaticResource SplitButtonCommandBarStyle}" Click="readingModeSplitButton_Click">
-                    <SplitButton.Flyout>
-                        <MenuFlyout x:Name="readingModeMenuFlyout" Placement="BottomEdgeAlignedLeft">
-                            <RadioMenuFlyoutItem Text="Feed" GroupName="ReadingMode" Click="ReadingModeFlyoutItem_Click">
-                                <RadioMenuFlyoutItem.DataContext>
-                                    <vmodel:ReadingMode>Feed</vmodel:ReadingMode>
-                                </RadioMenuFlyoutItem.DataContext>
-                            </RadioMenuFlyoutItem>
-                            <RadioMenuFlyoutItem Text="Text" GroupName="ReadingMode" Click="ReadingModeFlyoutItem_Click">
-                                <RadioMenuFlyoutItem.DataContext>
-                                    <vmodel:ReadingMode>Text</vmodel:ReadingMode>
-                                </RadioMenuFlyoutItem.DataContext>
-                            </RadioMenuFlyoutItem>
-                        </MenuFlyout>
-                    </SplitButton.Flyout>
-                </SplitButton>
-            </AppBarElementContainer>
-            <AppBarToggleButton x:Name="commentsButton"
-                                Label="View shares"
-                                Click="commentsButton_Click">
-                <Grid>
-                    <FontIcon Glyph="&#xE15F;"/>
-                    <InfoBadge Value="{x:Bind viewModel.SelectedArticle.ShareCount, Mode=OneWay}" Margin="20,-20,0,0" Visibility="{x:Bind viewModel.SelectedArticle.HasShares, Mode=OneWay}"/>
-                </Grid>
-            </AppBarToggleButton>
-            <AppBarButton x:Name="openInBrowserButton"
-                          Icon="World"
-                          Label="Open in browser"
-                          Click="openInBrowserButton_Click" />
-
-            <CommandBar.SecondaryCommands>
-                <AppBarButton x:Name="starButton"
-                              Icon="Favorite"
-                              Label="Save article"
-                              Click="starButton_Click"
-                              Visibility="{x:Bind viewModel.SelectedArticle.IsStarred, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}" />
-                <AppBarButton x:Name="unstarButton"
-                              Icon="UnFavorite"
-                              Label="Unsave article"
-                              Click="unstarButton_Click"
-                              Visibility="{x:Bind viewModel.SelectedArticle.IsStarred, Mode=OneWay}" />
-                <AppBarButton x:Name="shareButton"
-                              Icon="Share"
-                              Label="Share article"
-                              Click="shareButton_Click" />
-                <AppBarButton x:Name="readButton"
-                              Label="Mark as read"
-                              Icon="Accept"
-                              Click="readButton_Click"
-                              Visibility="{x:Bind viewModel.SelectedArticle.IsRead, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}" />
-                <AppBarButton x:Name="unreadButton"
-                              Icon="Cancel"
-                              Label="Mark as unread"
-                              Click="unreadButton_Click"
-                              Visibility="{x:Bind viewModel.SelectedArticle.IsRead, Mode=OneWay}" />
-            </CommandBar.SecondaryCommands>
-        </CommandBar>
+                              Visibility="{x:Bind viewModel.CommentsVisible, Mode=OneWay}" />
     </Grid>
 </Page>

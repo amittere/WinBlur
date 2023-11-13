@@ -64,24 +64,26 @@
                                 DefaultLabelPosition="Right"
                                 HorizontalContentAlignment="Right"
                                 VerticalContentAlignment="Top">
-                        <AppBarElementContainer>
-                            <SplitButton x:Name="feedModeSplitButton" Style="{StaticResource SplitButtonCommandBarStyle}" Click="feedModeSplitButton_Click">
-                                <SplitButton.Flyout>
-                                    <MenuFlyout x:Name="feedModeMenuFlyout" Placement="BottomEdgeAlignedLeft">
-                                        <RadioMenuFlyoutItem Text="All" GroupName="FeedMode" Click="FeedModeFlyoutItem_Click">
-                                            <RadioMenuFlyoutItem.DataContext>
-                                                <vmodel:FeedMode>All</vmodel:FeedMode>
-                                            </RadioMenuFlyoutItem.DataContext>
-                                        </RadioMenuFlyoutItem>
-                                        <RadioMenuFlyoutItem Text="Unread" GroupName="FeedMode" Click="FeedModeFlyoutItem_Click">
-                                            <RadioMenuFlyoutItem.DataContext>
-                                                <vmodel:FeedMode>Unread</vmodel:FeedMode>
-                                            </RadioMenuFlyoutItem.DataContext>
-                                        </RadioMenuFlyoutItem>
-                                    </MenuFlyout>
-                                </SplitButton.Flyout>
-                            </SplitButton>
-                        </AppBarElementContainer>
+                        <AppBarButton x:Name="feedModeSplitButton"
+                                      Label="Filter"
+                                      Icon="Filter"
+                                      Style="{StaticResource FlyoutAppBarButtonStyle}"
+                                      ToolTipService.ToolTip="{x:Bind vmodel:FeedModeHelpers.GetTooltipString(viewModel.FeedMode), Mode=OneWay}">
+                            <AppBarButton.Flyout>
+                                <MenuFlyout x:Name="feedModeMenuFlyout" Placement="BottomEdgeAlignedLeft">
+                                    <RadioMenuFlyoutItem Text="All" GroupName="FeedMode" Click="FeedModeFlyoutItem_Click">
+                                        <RadioMenuFlyoutItem.DataContext>
+                                            <vmodel:FeedMode>All</vmodel:FeedMode>
+                                        </RadioMenuFlyoutItem.DataContext>
+                                    </RadioMenuFlyoutItem>
+                                    <RadioMenuFlyoutItem Text="Unread" GroupName="FeedMode" Click="FeedModeFlyoutItem_Click">
+                                        <RadioMenuFlyoutItem.DataContext>
+                                            <vmodel:FeedMode>Unread</vmodel:FeedMode>
+                                        </RadioMenuFlyoutItem.DataContext>
+                                    </RadioMenuFlyoutItem>
+                                </MenuFlyout>
+                            </AppBarButton.Flyout>
+                        </AppBarButton>
                         <AppBarButton Icon="Sync"
                                       Label="Sync"
                                       ToolTipService.ToolTip="Sync"
@@ -197,26 +199,24 @@
             </SplitView.Pane>
 
             <SplitView.Content>
-                <Grid x:Name="ContentGrid"
-                      Background="{ThemeResource LayerFillColorDefaultBrush}"
-                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                      BorderThickness="1,1,0,0"
-                      CornerRadius="8,0,0,0">
-
+                <Grid x:Name="ContentGrid">
                     <!-- Content that appears when no feed is selected -->
-                    <StackPanel HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Spacing="10"
-                                Visibility="{x:Bind ContentFrame.CurrentSourcePageType, Converter={StaticResource NullToVisibleConverter}, Mode=OneWay}">
-                        <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                   FontSize="48"
-                                   Text="&#xE128;"
-                                   TextAlignment="Center"
-                                   Opacity="0.5"/>
-                        <TextBlock Text="Select an item to read"
-                                   Style="{StaticResource BodyStrongTextBlockStyle}"
-                                   Opacity="0.75"/>
-                    </StackPanel>
+                    <Grid Style="{StaticResource CardGridStyle}"
+                          Margin="0,0,8,8"
+                          Visibility="{x:Bind ContentFrame.CurrentSourcePageType, Converter={StaticResource NullToVisibleConverter}, Mode=OneWay}">
+                        <StackPanel HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Spacing="10">
+                            <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="48"
+                                       Text="&#xE128;"
+                                       TextAlignment="Center"
+                                       Opacity="0.5"/>
+                            <TextBlock Text="Select an item to read"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Opacity="0.75"/>
+                        </StackPanel>
+                    </Grid>
 
                     <Frame x:Name="ContentFrame">
                         <Frame.ContentTransitions>

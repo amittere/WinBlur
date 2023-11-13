@@ -10,12 +10,6 @@ using WinBlur.App.Model;
 
 namespace WinBlur.App.ViewModel
 {
-    public enum ReadingMode
-    {
-        Feed,
-        Text
-    }
-
     internal class FeedViewModel : INotifyPropertyChanged
     {
         private readonly ReadArticleQueue readArticleQueue = new ReadArticleQueue();
@@ -80,6 +74,7 @@ namespace WinBlur.App.ViewModel
                         App.Settings.SetSortMode(idStr, value);
                     }
                 }
+                NotifyPropertyChanged(nameof(SortMode));
             }
         }
 
@@ -122,13 +117,14 @@ namespace WinBlur.App.ViewModel
                         App.Settings.SetReadingMode(idStr, value);
                     }
                 }
+                NotifyPropertyChanged(nameof(ReadingMode));
             }
         }
 
         public int ReadingModeIndex
         {
             get { return (int)ReadingMode; }
-            set { ReadingMode = (ReadingMode)value; NotifyPropertyChanged("ReadingModeIndex"); }
+            set { ReadingMode = (ReadingMode)value; NotifyPropertyChanged(nameof(ReadingModeIndex)); }
         }
 
 
@@ -146,7 +142,7 @@ namespace WinBlur.App.ViewModel
                 }
 
                 _selectedArticle = value;
-                NotifyPropertyChanged("SelectedArticle");
+                NotifyPropertyChanged(nameof(SelectedArticle));
 
                 if (App.Settings.MarkAsRead == MarkAsReadMode.AfterDelay)
                 {
@@ -185,7 +181,7 @@ namespace WinBlur.App.ViewModel
         public bool IsLoading
         {
             get { return _isLoading; }
-            set { _isLoading = value; NotifyPropertyChanged("IsLoading"); }
+            set { _isLoading = value; NotifyPropertyChanged(nameof(IsLoading)); }
         }
 
         public bool CanMarkAsRead
@@ -209,14 +205,14 @@ namespace WinBlur.App.ViewModel
         public bool CommentsVisible
         {
             get { return commentsVisible; }
-            set { commentsVisible = value; NotifyPropertyChanged("CommentsVisible"); }
+            set { commentsVisible = value; NotifyPropertyChanged(nameof(CommentsVisible)); }
         }
 
         private bool isLoadingOriginalText = false;
         public bool IsLoadingOriginalText
         {
             get { return isLoadingOriginalText; }
-            set { isLoadingOriginalText = value; NotifyPropertyChanged("IsLoadingOriginalText"); }
+            set { isLoadingOriginalText = value; NotifyPropertyChanged(nameof(IsLoadingOriginalText)); }
         }
 
         public FeedViewModel()
@@ -250,7 +246,7 @@ namespace WinBlur.App.ViewModel
             ArticleList = new IncrementalLoadingCollection<ArticleSource, Article>(
                 articleSource, 6, OnStartLoading, OnEndLoading, OnErrorLoading);
 
-            NotifyPropertyChanged("NoArticles");
+            NotifyPropertyChanged(nameof(NoArticles));
         }
 
         private void OnStartLoading()
@@ -261,12 +257,12 @@ namespace WinBlur.App.ViewModel
         private void OnEndLoading()
         {
             IsLoading = false;
-            NotifyPropertyChanged("NoArticles");
+            NotifyPropertyChanged(nameof(NoArticles));
         }
 
         private void OnErrorLoading(Exception e)
         {
-            NotifyPropertyChanged("NoArticles");
+            NotifyPropertyChanged(nameof(NoArticles));
         }
 
         public async Task MarkArticlesAsReadAsync(long timestamp, bool directionOlder)

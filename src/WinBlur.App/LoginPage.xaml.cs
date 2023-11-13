@@ -26,14 +26,14 @@ namespace WinBlur.App
         public bool IsSigningIn
         {
             get { return _isSigningIn; }
-            set { _isSigningIn = value; NotifyPropertyChanged("IsSigningIn"); }
+            set { _isSigningIn = value; NotifyPropertyChanged(nameof(IsSigningIn)); }
         }
 
         private string _signInProgressText;
         public string SignInProgressText
         {
             get { return _signInProgressText; }
-            set { _signInProgressText = value; NotifyPropertyChanged("SignInProgressText"); }
+            set { _signInProgressText = value; NotifyPropertyChanged(nameof(SignInProgressText)); }
         }
 
         #endregion Properties
