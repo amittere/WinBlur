@@ -387,7 +387,7 @@
                                   helpers:DependencyPropertyHelper.HtmlString="{x:Bind ViewContent, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentBackground="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentForeground="{ThemeResource TextFillColorPrimaryBrush}"
-                                  helpers:DependencyPropertyHelper.HtmlContentLinkColor="{ThemeResource ArticleContentHyperlinkBrush}"
+                                  helpers:DependencyPropertyHelper.HtmlContentLinkColor="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarBackgroundColor="{ThemeResource ArticleContentScrollbarBackgroundBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarColor="{ThemeResource ArticleContentScrollbarBrush}"
                                   Loaded="articleTextView_Loaded"
