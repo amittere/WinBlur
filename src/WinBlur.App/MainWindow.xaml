@@ -10,7 +10,11 @@
                 Height="800"
                 MinWidth="640"
                 MinHeight="480">
-    <Grid x:Name="ContentRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <winex:WindowEx.SystemBackdrop>
+        <MicaBackdrop />
+    </winex:WindowEx.SystemBackdrop>
+
+    <Grid x:Name="ContentRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="*"/>
