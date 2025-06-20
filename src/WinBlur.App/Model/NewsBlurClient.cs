@@ -905,6 +905,7 @@ namespace WinBlur.App.Model
                     Author = WebUtility.HtmlDecode(author),
                     ContentHeader = CreateContentHeader(title, subtitle, date),
                     Content = ParseHelper.ParseValueRef(t["story_content"], ""),
+                    ViewContent = "",
                     OriginalText = null,
                     Timestamp = ParseHelper.ParseValueStruct<long>(t["story_timestamp"], 0),
                     ShortDate = ParseHelper.ParseValueRef<string>(t["short_parsed_date"], null),
@@ -924,7 +925,6 @@ namespace WinBlur.App.Model
                     PublicComments = new List<Comment>(),
                     PublicShares = new List<int>(),
                 };
-                a.ViewContent = a.ContentHeader;
 
                 if (t["intelligence"] is JObject intel)
                 {
