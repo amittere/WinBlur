@@ -70,6 +70,11 @@ namespace WinBlur.App.ViewModel
             set { _isLoading = value; NotifyPropertyChanged(nameof(IsLoading)); }
         }
 
+        // Keep track of whether we are actively filtering subscriptions,
+        // so that we don't save the compressed state of folders when they are changed programmatically
+        // (e.g. when filtering subscriptions).
+        private bool _isFiltering = false;
+
         // Total Site Unread Count tracking (for app badge)
         private SubscriptionLabel allSitesLabel;
 
@@ -360,8 +365,19 @@ namespace WinBlur.App.ViewModel
 
         private void SetCompressedState(SubscriptionLabel label)
         {
-            App.Settings.FolderCompressSettings.TryGetValue(label.ToString(), out bool isCompressed);
-            label.IsCompressed = isCompressed;
+            if (label.IsCompressible)
+            {
+                App.Settings.FolderCompressSettings.TryGetValue(label.ToString(), out bool isCompressed);
+                label.IsCompressed = isCompressed;
+            }
+        }
+
+        public void SaveCompressedStateForLabel(SubscriptionLabel label)
+        {
+            if (!_isFiltering && label.IsCompressible)
+            {
+                App.Settings.SetFolderCompress(label.ToString(), label.IsCompressed);
+            }
         }
 
         private bool FilterFeed(FeedMode mode, SubscriptionLabel label)
@@ -421,10 +437,12 @@ namespace WinBlur.App.ViewModel
 
         private void FilterSubscriptions(FeedMode mode, SubscriptionLabel label = null)
         {
+            _isFiltering = true;
             FilterSubscriptionsHelper(mode, label);
 
             // Work around a platform issue where sometimes the TreeView loses its selection after filtering.
             NotifyPropertyChanged(nameof(SelectedSubscription));
+            _isFiltering = false;
         }
 
         public bool FilterSubscriptionsHelper(FeedMode mode, SubscriptionLabel label)
@@ -477,6 +495,7 @@ namespace WinBlur.App.ViewModel
                         {
                             // Current item should be added
                             filteredChildren.Insert(idx2, label1);
+                            SetCompressedState(label1);
                             idx2++;
                         }
                     }
@@ -504,6 +523,7 @@ namespace WinBlur.App.ViewModel
                             {
                                 // Current item should be added.
                                 filteredChildren.Insert(idx2, label1);
+                                SetCompressedState(label1);
                                 idx2++;
                             }
                             // else: Current item should be skipped.

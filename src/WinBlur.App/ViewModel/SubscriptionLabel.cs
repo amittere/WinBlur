@@ -82,9 +82,6 @@ namespace WinBlur.App.ViewModel
                 {
                     _isCompressed = value;
 
-                    // Save setting so collapsed state persists across launch
-                    App.Settings.SetFolderCompress(ToString(), _isCompressed);
-
                     NotifyPropertyChanged(nameof(IsCompressed));
                     NotifyPropertyChanged(nameof(ShowCounts));
                 }
