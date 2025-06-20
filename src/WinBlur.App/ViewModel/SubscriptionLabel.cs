@@ -376,10 +376,8 @@ namespace WinBlur.App.ViewModel
             FolderDepth = 0;
             ParentFolder = null;
             ParentLabel = null;
+            IsCompressed = false;
             PhotoUri = null;
-
-            // Set underlying field directly to avoid accidentally saving this value to Settings.
-            _isCompressed = false;
         }
 
         #region Object

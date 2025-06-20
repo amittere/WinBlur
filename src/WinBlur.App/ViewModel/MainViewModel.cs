@@ -365,8 +365,11 @@ namespace WinBlur.App.ViewModel
 
         private void SetCompressedState(SubscriptionLabel label)
         {
-            App.Settings.FolderCompressSettings.TryGetValue(label.ToString(), out bool isCompressed);
-            label.IsCompressed = isCompressed;
+            if (label.IsCompressible)
+            {
+                App.Settings.FolderCompressSettings.TryGetValue(label.ToString(), out bool isCompressed);
+                label.IsCompressed = isCompressed;
+            }
         }
 
         public void SaveCompressedStateForLabel(SubscriptionLabel label)
@@ -492,6 +495,7 @@ namespace WinBlur.App.ViewModel
                         {
                             // Current item should be added
                             filteredChildren.Insert(idx2, label1);
+                            SetCompressedState(label1);
                             idx2++;
                         }
                     }
@@ -519,6 +523,7 @@ namespace WinBlur.App.ViewModel
                             {
                                 // Current item should be added.
                                 filteredChildren.Insert(idx2, label1);
+                                SetCompressedState(label1);
                                 idx2++;
                             }
                             // else: Current item should be skipped.
