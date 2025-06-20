@@ -66,14 +66,12 @@ namespace WinBlur.App.Model
         public string Content { get; set; } // HTML content from the RSS feed
         public string OriginalText { get; set; } // Result of NewsBlur's "Original Text"
 
-        public string FeedContent { get { return string.Concat(ContentHeader, Content); } }
+        public string FeedContent { get { return Content; } }
         public string TextContent
         {
             get
             {
-                return (OriginalText != null) ?
-                    string.Concat(ContentHeader, OriginalText) :
-                    string.Concat(ContentHeader, "<div>Failed to get the story's original text.</div>");
+                return (OriginalText != null) ? OriginalText : "<div>Failed to get the story's original text.</div>";
             }
         }
 

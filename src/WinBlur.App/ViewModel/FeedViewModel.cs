@@ -361,7 +361,7 @@ namespace WinBlur.App.ViewModel
         {
             foreach (Article a in ArticleList)
             {
-                a.ViewContent = a.ContentHeader;
+                a.ViewContent = "";
                 if (SelectedArticle == a)
                 {
                     a.ViewContent = ReadingMode == ReadingMode.Text ? a.TextContent : a.FeedContent;

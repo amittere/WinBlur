@@ -1,27 +1,41 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using System;
 
 namespace WinBlur.App.Helpers
 {
     class DependencyPropertyHelper
     {
-        // "HtmlString" attached property for a WebView
-        public static readonly DependencyProperty HtmlStringProperty =
-           DependencyProperty.RegisterAttached("HtmlString", typeof(string), typeof(DependencyPropertyHelper), new PropertyMetadata("", OnHtmlStringChanged));
+        public static readonly DependencyProperty HtmlContentProperty =
+           DependencyProperty.RegisterAttached("HtmlContent", typeof(string), typeof(DependencyPropertyHelper), new PropertyMetadata("", OnHtmlContentChanged));
 
-        // Getter and Setter
-        public static string GetHtmlString(DependencyObject obj) { return (string)obj.GetValue(HtmlStringProperty); }
-        public static void SetHtmlString(DependencyObject obj, string value) { obj.SetValue(HtmlStringProperty, value); }
+        public static string GetHtmlContent(DependencyObject obj) { return (string)obj.GetValue(HtmlContentProperty); }
+        public static void SetHtmlContent(DependencyObject obj, string value) { obj.SetValue(HtmlContentProperty, value); }
 
-        // Handler for property changes in the DataContext : set the WebView
-        private static void OnHtmlStringChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        private static void OnHtmlContentChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             if (obj is WebView2 wv && wv.IsLoaded && wv.CoreWebView2 != null)
             {
-                wv.NavigateToString(string.Concat(GetHtmlStyleHeader(obj), (string)e.NewValue));
+                string style = GetHtmlStyleHeader(obj);
+                string header = GetHtmlContentHeader(obj);
+                try
+                {
+                    wv.NavigateToString(string.Concat(style, header, (string)e.NewValue));
+                }
+                catch (Exception)
+                {
+                    wv.NavigateToString(string.Concat(style, header, "<div>Failed to load story. Try a different reading mode.</div>"));
+                }
             }
         }
+
+
+        public static readonly DependencyProperty HtmlContentHeaderProperty =
+            DependencyProperty.RegisterAttached("HtmlContentHeader", typeof(string), typeof(DependencyPropertyHelper), new PropertyMetadata(""));
+
+        public static string GetHtmlContentHeader(DependencyObject obj) { return (string)obj.GetValue(HtmlContentHeaderProperty); }
+        public static void SetHtmlContentHeader(DependencyObject obj, string value) { obj.SetValue(HtmlContentHeaderProperty, value); }
 
         public static readonly DependencyProperty HtmlContentBackgroundProperty =
             DependencyProperty.RegisterAttached("HtmlContentBackground", typeof(SolidColorBrush), typeof(DependencyPropertyHelper), new PropertyMetadata(null));
