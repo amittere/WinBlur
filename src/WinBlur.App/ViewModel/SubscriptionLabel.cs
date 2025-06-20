@@ -82,9 +82,6 @@ namespace WinBlur.App.ViewModel
                 {
                     _isCompressed = value;
 
-                    // Save setting so collapsed state persists across launch
-                    App.Settings.SetFolderCompress(ToString(), _isCompressed);
-
                     NotifyPropertyChanged(nameof(IsCompressed));
                     NotifyPropertyChanged(nameof(ShowCounts));
                 }
@@ -379,8 +376,10 @@ namespace WinBlur.App.ViewModel
             FolderDepth = 0;
             ParentFolder = null;
             ParentLabel = null;
-            IsCompressed = false;
             PhotoUri = null;
+
+            // Set underlying field directly to avoid accidentally saving this value to Settings.
+            _isCompressed = false;
         }
 
         #region Object

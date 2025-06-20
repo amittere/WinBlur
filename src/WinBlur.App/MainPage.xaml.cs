@@ -132,6 +132,22 @@ namespace WinBlur.App
             splitView.IsPaneOpen = !splitView.IsPaneOpen;
         }
 
+        private void TreeView_Expanding(TreeView sender, TreeViewExpandingEventArgs args)
+        {
+            if (args.Item is SubscriptionLabel label)
+            {
+                viewModel.SaveCompressedStateForLabel(label);
+            }
+        }
+
+        private void TreeView_Collapsed(TreeView sender, TreeViewCollapsedEventArgs args)
+        {
+            if (args.Item is SubscriptionLabel label)
+            {
+                viewModel.SaveCompressedStateForLabel(label);
+            }
+        }
+
         private void TreeView_ItemInvoked(TreeView sender, TreeViewItemInvokedEventArgs args)
         {
             if (args.InvokedItem is SubscriptionLabel label && label != TreeView.SelectedItem)
@@ -869,6 +885,5 @@ namespace WinBlur.App
         }
 
         #endregion
-
     }
 }

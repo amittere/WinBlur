@@ -119,6 +119,8 @@
                                   CanReorderItems="False"
                                   ItemsSource="{x:Bind viewModel.FilteredSubscriptions, Mode=OneWay}"
                                   SelectedItem="{x:Bind viewModel.SelectedSubscription, Mode=OneWay}"
+                                  Expanding="TreeView_Expanding"
+                                  Collapsed="TreeView_Collapsed"
                                   ItemInvoked="TreeView_ItemInvoked">
                             <TreeView.ItemTemplate>
                                 <DataTemplate x:DataType="vmodel:SubscriptionLabel">
