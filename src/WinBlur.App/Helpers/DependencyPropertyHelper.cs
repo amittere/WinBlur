@@ -124,6 +124,9 @@ namespace WinBlur.App.Helpers
                                 margin-top: 0px;
                                 margin-bottom: 8px;
                             }}
+                            .winblur-title-link {{
+                                color: #{1};
+                            }}
                             .winblur-caption {{
                                 font-size: 12px;
                                 line-height: 18px;

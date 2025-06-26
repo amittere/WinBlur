@@ -893,17 +893,18 @@ namespace WinBlur.App.Model
                     subtitle = Feeds[feedID].Title + " - " + author;
                 }
                 string date = ParseHelper.ParseValueRef<string>(t["long_parsed_date"], null);
+                Uri articleLink = ParseHelper.ParseValueRef<Uri>(t["story_permalink"], null);
 
                 Article a = new Article
                 {
                     ID = ParseHelper.ParseValueRef<string>(t["id"], null),
                     Hash = hash,
-                    ArticleLink = ParseHelper.ParseValueRef<Uri>(t["story_permalink"], null),
+                    ArticleLink = articleLink,
                     IsRead = ParseHelper.ParseValueStruct(t["read_status"], 0) == 1,
                     IsStarred = ParseHelper.ParseValueStruct(t["starred"], false),
                     Title = WebUtility.HtmlDecode(title).Replace('\n', ' '),
                     Author = WebUtility.HtmlDecode(author),
-                    ContentHeader = CreateContentHeader(title, subtitle, date),
+                    ContentHeader = CreateContentHeader(title, subtitle, date, articleLink),
                     Content = ParseHelper.ParseValueRef(t["story_content"], ""),
                     ViewContent = "",
                     OriginalText = null,
@@ -1409,11 +1410,12 @@ namespace WinBlur.App.Model
             }
         }
 
-        private string CreateContentHeader(string title, string subtitle, string date)
+        private string CreateContentHeader(string title, string subtitle, string date, Uri articleLink)
         {
             return string.Format(@"
-                <div class=""winblur-title"">{0}</div>
-                <div class=""winblur-caption"">{1}<br>{2}</div>",
+                <div class=""winblur-title""><a class=""winblur-title-link"" href={0}>{1}</a></div>
+                <div class=""winblur-caption"">{2}<br>{3}</div>",
+                articleLink,
                 title,
                 subtitle,
                 date);
