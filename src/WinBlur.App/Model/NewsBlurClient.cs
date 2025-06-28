@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using WinBlur.App.ViewModel;
 using WinBlur.Shared;
 using Windows.Security.Credentials;
 using Windows.UI;
@@ -907,6 +908,8 @@ namespace WinBlur.App.Model
                     ContentHeader = CreateContentHeader(title, subtitle, date, articleLink),
                     Content = ParseHelper.ParseValueRef(t["story_content"], ""),
                     ViewContent = "",
+                    WebViewBackgroundColor = ReadingThemeViewModel.GetWebViewBackgroundColorForReadingTheme(App.Settings.ReadingTheme),
+                    ContentBackgroundColor = ReadingThemeViewModel.GetContentBackgroundColorForReadingTheme(App.Settings.ReadingTheme),
                     OriginalText = null,
                     Timestamp = ParseHelper.ParseValueStruct<long>(t["story_timestamp"], 0),
                     ShortDate = ParseHelper.ParseValueRef<string>(t["short_parsed_date"], null),

@@ -1,7 +1,9 @@
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
+using Windows.UI;
 
 namespace WinBlur.App.Helpers
 {
@@ -75,7 +77,17 @@ namespace WinBlur.App.Helpers
         private static string htmlScrollbarColor;
         private static string GetHtmlStyleHeader(DependencyObject obj)
         {
-            string bgColor = GetHtmlContentBackground(obj).Color.ToString();
+            string bgColor;
+            Color backgroundColor = GetHtmlContentBackground(obj).Color;
+            if (backgroundColor == Colors.Transparent)
+            {
+                bgColor = "transparent";
+            }
+            else
+            {
+                bgColor = "#" + backgroundColor.ToString().Substring(3);
+            }
+
             string fgColor = GetHtmlContentForeground(obj).Color.ToString();
             string linkColor = GetHtmlContentLinkColor(obj).Color.ToString();
             string scrollbarBackgroundColor = GetHtmlContentScrollbarBackgroundColor(obj).Color.ToString();
@@ -145,7 +157,7 @@ namespace WinBlur.App.Helpers
                             }}
                         </style>
                     </head>",
-                    bgColor.Substring(3),
+                    bgColor,
                     fgColor.Substring(3),
                     linkColor.Substring(3),
                     scrollbarBackgroundColor.Substring(3),

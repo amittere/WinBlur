@@ -1,3 +1,5 @@
+using Microsoft.UI;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -81,6 +83,20 @@ namespace WinBlur.App.Model
         {
             get { return viewContent; }
             set { viewContent = value; NotifyPropertyChanged(nameof(ViewContent)); }
+        }
+
+        private Color webViewBackgroundColor;
+        public Color WebViewBackgroundColor
+        {
+            get { return webViewBackgroundColor; }
+            set { webViewBackgroundColor = value; NotifyPropertyChanged(nameof(WebViewBackgroundColor)); }
+        }
+
+        private Color contentBackgroundColor;
+        public Color ContentBackgroundColor
+        {
+            get { return contentBackgroundColor; }
+            set { contentBackgroundColor = value; NotifyPropertyChanged(nameof(ContentBackgroundColor)); }
         }
 
         public long Timestamp { get; set; }

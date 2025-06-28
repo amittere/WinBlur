@@ -284,7 +284,8 @@
         </Grid>
 
         <!-- Article content card -->
-        <Grid Grid.Column="1"
+        <Grid x:Name="ArticleContent"
+              Grid.Column="1"
               Grid.Row="0"
               Style="{StaticResource CardGridStyle}"
               Margin="0,0,8,8">
@@ -323,6 +324,27 @@
                                 </RadioMenuFlyoutItem.DataContext>
                             </RadioMenuFlyoutItem>
                         </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+
+                <AppBarButton x:Name="StyleButton"
+                              Label="Style"
+                              Style="{StaticResource FlyoutAppBarButtonStyle}"
+                              Icon="Font">
+                    <AppBarButton.Flyout>
+                        <Flyout>
+                            <StackPanel Width="250">
+                                <TextBlock Text="Color Theme"
+                                           Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                <RadioButtons ItemsSource="{x:Bind readingThemes}"
+                                              SelectedItem="{x:Bind selectedReadingTheme}"
+                                              SelectionChanged="ReadingTheme_SelectionChanged" />
+                                <MenuFlyoutSeparator Margin="0,8"/>
+                                <TextBlock Text="Text Size"
+                                           Margin="0,8,0,0"
+                                           Style="{StaticResource BodyStrongTextBlockStyle}" />
+                            </StackPanel>
+                        </Flyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>
                 <AppBarToggleButton x:Name="commentsButton"
@@ -383,7 +405,7 @@
                         <WebView2 x:Name="articleTextView"
                                   CanGoBack="False"
                                   CanGoForward="False"
-                                  DefaultBackgroundColor="Transparent"
+                                  DefaultBackgroundColor="{x:Bind ContentBackgroundColor, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContent="{x:Bind ViewContent, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentHeader="{x:Bind ContentHeader, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentBackground="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
@@ -398,7 +420,7 @@
                                   Margin="0,0,0,8">
                             <WebView2.Resources>
                                 <SolidColorBrush x:Name="BrushForThemeBackgroundColor"
-                                                 Color="{ThemeResource LayerFillColorDefault}" />
+                                                 Color="{x:Bind WebViewBackgroundColor, Mode=OneWay}" />
                             </WebView2.Resources>
                         </WebView2>
                     </DataTemplate>

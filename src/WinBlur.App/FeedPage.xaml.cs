@@ -4,10 +4,12 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WinBlur.App.Helpers;
 using WinBlur.App.Model;
@@ -15,6 +17,7 @@ using WinBlur.App.View;
 using WinBlur.App.ViewModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
+using Windows.UI;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -26,6 +29,9 @@ namespace WinBlur.App
     public sealed partial class FeedPage : Page
     {
         private FeedViewModel viewModel;
+
+        private List<ReadingThemeViewModel> readingThemes;
+        private ReadingThemeViewModel selectedReadingTheme;
 
         private Article _shareArticle;
 
@@ -50,6 +56,15 @@ namespace WinBlur.App
 
             IntPtr result = dataTransferManagerInterop.GetForWindow(App.WindowHandle, s_dataTransferManagerIid);
             dataTransferManager = WinRT.MarshalInterface<DataTransferManager>.FromAbi(result);
+
+            readingThemes = new List<ReadingThemeViewModel>
+            {
+                new ReadingThemeViewModel { Label = "System", ThemeMode = ReadingThemeMode.UseWindowsTheme },
+                new ReadingThemeViewModel { Label = "Light", ThemeMode = ReadingThemeMode.Light },
+                new ReadingThemeViewModel { Label = "Dark", ThemeMode = ReadingThemeMode.Dark },
+            };
+            selectedReadingTheme = readingThemes.Find(r => r.ThemeMode == App.Settings.ReadingTheme);
+            UpdateReadingTheme();
         }
 
         /// <summary>
@@ -428,31 +443,39 @@ namespace WinBlur.App
 
         private async Task<bool> LoadTextView()
         {
-            if (articleDetailView == null) return false;
-            if (!(articleDetailView.SelectedItem is Article article)) return false;
+            if (GetActiveWebView() != null &&
+                articleDetailView?.SelectedItem is Article article)
+            {
+                // switch to text view, grabbing it from the web if necessary
+                await viewModel.GetOriginalText(article);
 
-            // switch to text view, grabbing it from the web if necessary
-            await viewModel.GetOriginalText(article);
-
-            // Get the webview hosting the story content
-            if (!(articleDetailView.ContainerFromIndex(articleDetailView.SelectedIndex) is FrameworkElement container)) return false;
-            if (!(container.FindDescendant("articleTextView") is WebView2 view)) return false;
-            if (!view.IsLoaded || view.CoreWebView2 == null) return false;
-
-            article.ViewContent = article.TextContent;
-            return true;
+                article.ViewContent = article.TextContent;
+                return true;
+            }
+            return false;
         }
 
         private bool LoadFeedView()
         {
-            if (articleDetailView == null) return false;
-            if (!(articleDetailView.SelectedItem is Article article)) return false;
-            if (!(articleDetailView.ContainerFromIndex(articleDetailView.SelectedIndex) is FrameworkElement container)) return false;
-            if (!(container.FindDescendant("articleTextView") is WebView2 view)) return false;
-            if (!view.IsLoaded || view.CoreWebView2 == null) return false;
+            if (GetActiveWebView() != null &&
+                articleDetailView?.SelectedItem is Article article)
+            {
+                article.ViewContent = article.FeedContent;
+                return true;
+            }
+            return false;
+        }
 
-            article.ViewContent = article.FeedContent;
-            return true;
+        private WebView2 GetActiveWebView()
+        {
+            if (articleDetailView?.ContainerFromIndex(articleDetailView.SelectedIndex) is FrameworkElement container &&
+                container.FindDescendant("articleTextView") is WebView2 view &&
+                view.IsLoaded &&
+                view.CoreWebView2 != null)
+            {
+                return view;
+            }
+            return null;
         }
 
         private void readingModeSplitButton_Click(SplitButton sender, SplitButtonClickEventArgs args)
@@ -1093,15 +1116,47 @@ namespace WinBlur.App
 
         #endregion
 
-        #region Theme
+        #region Reading Style
+
+        private void ReadingTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems[0] is ReadingThemeViewModel option)
+            {
+                if (option != selectedReadingTheme)
+                {
+                    selectedReadingTheme = option;
+                    UpdateReadingTheme();
+                }
+            }
+        }
+
+        private void UpdateReadingTheme()
+        {
+            App.Settings.ReadingTheme = selectedReadingTheme.ThemeMode;
+
+            ArticleContent.RequestedTheme = selectedReadingTheme.RequestedTheme;
+            ArticleContent.Background = new SolidColorBrush(
+                ReadingThemeViewModel.GetWebViewBackgroundColorForReadingTheme(selectedReadingTheme.ThemeMode));
+
+            OnReadingThemeChanged();
+        }
 
         private void Settings_ThemeChanged(object sender, EventArgs e)
         {
-            // Walk through all articles updating their ViewContent to match the new theme.
-            viewModel.RefreshArticleContent();
+            ArticleContent.RequestedTheme = selectedReadingTheme.RequestedTheme;
+            OnReadingThemeChanged();
+        }
 
-            // Reload comments so hopefully the PersonPicture controls work properly
-            LoadComments(viewModel.SelectedArticle);
+        private void OnReadingThemeChanged()
+        {
+            if (viewModel != null)
+            {
+                // Walk through all articles updating their ViewContent to match the new theme.
+                viewModel.RefreshArticleContent();
+
+                // Reload comments so hopefully the PersonPicture controls work properly
+                LoadComments(viewModel.SelectedArticle);
+            }
         }
 
         #endregion
