@@ -910,6 +910,7 @@ namespace WinBlur.App.Model
                     ViewContent = "",
                     WebViewBackgroundColor = ReadingThemeViewModel.GetWebViewBackgroundColorForReadingTheme(App.Settings.ReadingTheme),
                     ContentBackgroundColor = ReadingThemeViewModel.GetContentBackgroundColorForReadingTheme(App.Settings.ReadingTheme),
+                    ContentForegroundBrush = ReadingThemeViewModel.GetContentForegroundBrushForReadingTheme(App.Settings.ReadingTheme),
                     OriginalText = null,
                     Timestamp = ParseHelper.ParseValueStruct<long>(t["story_timestamp"], 0),
                     ShortDate = ParseHelper.ParseValueRef<string>(t["short_parsed_date"], null),

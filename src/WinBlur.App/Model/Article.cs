@@ -85,6 +85,8 @@ namespace WinBlur.App.Model
             set { viewContent = value; NotifyPropertyChanged(nameof(ViewContent)); }
         }
 
+        // Article theming
+
         private Color webViewBackgroundColor;
         public Color WebViewBackgroundColor
         {
@@ -97,6 +99,14 @@ namespace WinBlur.App.Model
         {
             get { return contentBackgroundColor; }
             set { contentBackgroundColor = value; NotifyPropertyChanged(nameof(ContentBackgroundColor)); }
+        }
+
+        // Null color => use normal theme value
+        private SolidColorBrush contentForegroundBrush;
+        public SolidColorBrush ContentForegroundBrush
+        {
+            get { return contentForegroundBrush; }
+            set { contentForegroundBrush = value; NotifyPropertyChanged(nameof(ContentForegroundBrush)); }
         }
 
         public long Timestamp { get; set; }

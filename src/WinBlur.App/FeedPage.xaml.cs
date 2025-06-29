@@ -60,8 +60,10 @@ namespace WinBlur.App
             readingThemes = new List<ReadingThemeViewModel>
             {
                 new ReadingThemeViewModel { Label = "System", ThemeMode = ReadingThemeMode.UseWindowsTheme },
+                new ReadingThemeViewModel { Label = "Sepia", ThemeMode = ReadingThemeMode.Sepia },
                 new ReadingThemeViewModel { Label = "Light", ThemeMode = ReadingThemeMode.Light },
                 new ReadingThemeViewModel { Label = "Dark", ThemeMode = ReadingThemeMode.Dark },
+                new ReadingThemeViewModel { Label = "Black", ThemeMode = ReadingThemeMode.Black }
             };
             selectedReadingTheme = readingThemes.Find(r => r.ThemeMode == App.Settings.ReadingTheme);
             UpdateReadingTheme();
@@ -1144,6 +1146,8 @@ namespace WinBlur.App
         private void Settings_ThemeChanged(object sender, EventArgs e)
         {
             ArticleContent.RequestedTheme = selectedReadingTheme.RequestedTheme;
+            ArticleContent.Background = new SolidColorBrush(
+                ReadingThemeViewModel.GetWebViewBackgroundColorForReadingTheme(selectedReadingTheme.ThemeMode));
             OnReadingThemeChanged();
         }
 

@@ -409,7 +409,7 @@
                                   helpers:DependencyPropertyHelper.HtmlContent="{x:Bind ViewContent, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentHeader="{x:Bind ContentHeader, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentBackground="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
-                                  helpers:DependencyPropertyHelper.HtmlContentForeground="{ThemeResource TextFillColorPrimaryBrush}"
+                                  helpers:DependencyPropertyHelper.HtmlContentForeground="{x:Bind ContentForegroundBrush, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentLinkColor="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarBackgroundColor="{ThemeResource ArticleContentScrollbarBackgroundBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarColor="{ThemeResource ArticleContentScrollbarBrush}"

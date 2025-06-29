@@ -361,10 +361,12 @@ namespace WinBlur.App.ViewModel
         {
             var viewBackgroundColor = ReadingThemeViewModel.GetWebViewBackgroundColorForReadingTheme(App.Settings.ReadingTheme);
             var contentBackgroundColor = ReadingThemeViewModel.GetContentBackgroundColorForReadingTheme(App.Settings.ReadingTheme);
+            var contentForegroundColor = ReadingThemeViewModel.GetContentForegroundBrushForReadingTheme(App.Settings.ReadingTheme);
             foreach (Article a in ArticleList)
             {
                 a.WebViewBackgroundColor = viewBackgroundColor;
                 a.ContentBackgroundColor = contentBackgroundColor;
+                a.ContentForegroundBrush = contentForegroundColor;
                 a.ViewContent = "";
                 if (SelectedArticle == a)
                 {

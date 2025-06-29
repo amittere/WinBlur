@@ -45,11 +45,11 @@ namespace WinBlur.App.ViewModel
             switch (themeMode)
             {
                 case ReadingThemeMode.UseWindowsTheme:
-                    return (App.Current.Resources["ArticleContentBackgroundBrush_System"] as SolidColorBrush).Color;
+                    return (App.Current.Resources["ArticleContentBackgroundBrush"] as SolidColorBrush).Color;
                 case ReadingThemeMode.Light:
                     return Color.FromArgb(255, 238, 238, 238); // #EEEEEE
                 case ReadingThemeMode.Sepia:
-                    return Color.FromArgb(255, 255, 245, 220); // #FFF5DC
+                    return Color.FromArgb(255, 240, 192, 149); // #F0C095
                 case ReadingThemeMode.Dark:
                     return Color.FromArgb(255, 28, 28, 28); // #1C1C1C
                 case ReadingThemeMode.Black:
@@ -69,6 +69,25 @@ namespace WinBlur.App.ViewModel
                     return Colors.Transparent;
                 default:
                     return GetWebViewBackgroundColorForReadingTheme(themeMode);
+            }
+        }
+
+        static SolidColorBrush sepiaForegroundBrush = new SolidColorBrush(Color.FromArgb(255, 42, 20, 9)); // #2A1409
+        public static SolidColorBrush GetContentForegroundBrushForReadingTheme(ReadingThemeMode themeMode)
+        {
+            switch (themeMode)
+            {
+                case ReadingThemeMode.UseWindowsTheme:
+                    return App.Current.Resources["ArticleContentForegroundBrush"] as SolidColorBrush;
+                case ReadingThemeMode.Light:
+                    return ((ResourceDictionary)App.Current.Resources.ThemeDictionaries["Light"])["TextFillColorPrimaryBrush"] as SolidColorBrush;
+                case ReadingThemeMode.Dark:
+                case ReadingThemeMode.Black:
+                    return ((ResourceDictionary)App.Current.Resources.ThemeDictionaries["Default"])["TextFillColorPrimaryBrush"] as SolidColorBrush;
+                case ReadingThemeMode.Sepia:
+                    return sepiaForegroundBrush;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(themeMode), themeMode, "Invalid reading theme mode specified.");
             }
         }
 
