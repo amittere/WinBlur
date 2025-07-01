@@ -138,6 +138,17 @@ namespace WinBlur.App.ViewModel
             }
         }
 
+        public double ReadingLineHeight
+        {
+            get => App.Settings.ReadingLineHeight;
+            set
+            {
+                App.Settings.ReadingLineHeight = value;
+                NotifyPropertyChanged(nameof(ReadingLineHeight));
+                RefreshArticleContent();
+            }
+        }
+
         private Article _selectedArticle;
         public Article SelectedArticle
         {
@@ -378,6 +389,7 @@ namespace WinBlur.App.ViewModel
                 a.ContentBackgroundColor = contentBackgroundColor;
                 a.ContentForegroundBrush = contentForegroundColor;
                 a.ContentTextSize = ReadingTextSize;
+                a.ContentLineHeight = ReadingLineHeight;
                 a.ViewContent = "";
                 if (SelectedArticle == a)
                 {

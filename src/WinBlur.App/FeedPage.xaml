@@ -363,10 +363,35 @@
                                                Style="{StaticResource CaptionTextBlockStyle}" />
                                 </Grid>
                                 <Slider Value="{x:Bind viewModel.ReadingTextSize, Mode=TwoWay}"
+                                        IsThumbToolTipEnabled="False"
                                         Minimum="8"
                                         Maximum="24"
                                         StepFrequency="2"
                                         TickFrequency="4"
+                                        TickPlacement="TopLeft" />
+                                <TextBlock Text="Line Height"
+                                           Margin="0,12,0,0"
+                                           Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                               Text="Narrow"
+                                               TextAlignment="Left"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="Wide"
+                                               TextAlignment="Right"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                </Grid>
+                                <Slider Value="{x:Bind viewModel.ReadingLineHeight, Mode=TwoWay}"
+                                        IsThumbToolTipEnabled="False"
+                                        Minimum="1.0"
+                                        Maximum="2.5"
+                                        StepFrequency="0.25"
+                                        TickFrequency="0.75"
                                         TickPlacement="TopLeft" />
                             </StackPanel>
                         </Flyout>
@@ -438,6 +463,7 @@
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarBackgroundColor="{ThemeResource ArticleContentScrollbarBackgroundBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarColor="{ThemeResource ArticleContentScrollbarBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentTextSize="{x:Bind ContentTextSize, Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentLineHeight="{x:Bind ContentLineHeight, Mode=OneWay}"
                                   Loaded="articleTextView_Loaded"
                                   NavigationStarting="articleTextView_NavigationStarting"
                                   HorizontalAlignment="Stretch"

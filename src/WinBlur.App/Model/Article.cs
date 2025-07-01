@@ -116,6 +116,12 @@ namespace WinBlur.App.Model
             set { contentTextSize = value; NotifyPropertyChanged(nameof(ContentTextSize)); }
         }
 
+        private double contentLineHeight = App.Settings.ReadingLineHeight;
+        public double ContentLineHeight
+        {
+            get { return contentLineHeight; }
+            set { contentLineHeight = value; NotifyPropertyChanged(nameof(ContentLineHeight)); }
+        }
 
         public long Timestamp { get; set; }
         public string ShortDate { get; set; }
