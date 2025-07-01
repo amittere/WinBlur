@@ -127,6 +127,16 @@ namespace WinBlur.App.ViewModel
             set { ReadingMode = (ReadingMode)value; NotifyPropertyChanged(nameof(ReadingModeIndex)); }
         }
 
+        public int ReadingTextSize
+        {
+            get => App.Settings.ReadingTextSize;
+            set
+            {
+                App.Settings.ReadingTextSize = value;
+                NotifyPropertyChanged(nameof(ReadingTextSize));
+                RefreshArticleContent();
+            }
+        }
 
         private Article _selectedArticle;
         public Article SelectedArticle
@@ -367,6 +377,7 @@ namespace WinBlur.App.ViewModel
                 a.WebViewBackgroundColor = viewBackgroundColor;
                 a.ContentBackgroundColor = contentBackgroundColor;
                 a.ContentForegroundBrush = contentForegroundColor;
+                a.ContentTextSize = ReadingTextSize;
                 a.ViewContent = "";
                 if (SelectedArticle == a)
                 {

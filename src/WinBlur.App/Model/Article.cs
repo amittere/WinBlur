@@ -109,6 +109,14 @@ namespace WinBlur.App.Model
             set { contentForegroundBrush = value; NotifyPropertyChanged(nameof(ContentForegroundBrush)); }
         }
 
+        private int contentTextSize = App.Settings.ReadingTextSize;
+        public int ContentTextSize
+        {
+            get { return contentTextSize; }
+            set { contentTextSize = value; NotifyPropertyChanged(nameof(ContentTextSize)); }
+        }
+
+
         public long Timestamp { get; set; }
         public string ShortDate { get; set; }
         public string LongDate { get; set; }

@@ -42,7 +42,6 @@
     <SolidColorBrush x:Key="ArticleContentBackgroundBrush" Color="{ThemeResource LayerFillColorDefault}" />
     <SolidColorBrush x:Key="ArticleContentForegroundBrush" Color="{ThemeResource TextFillColorPrimary}"/>
 
-
     <!-- Red accent color shades -->
     <Color x:Key="RedAccentColor">#FFE61717</Color>
     <Color x:Key="RedAccentColorSemilight">#FFE64545</Color>

@@ -39,12 +39,6 @@ namespace WinBlur.App.Helpers
         public static string GetHtmlContentHeader(DependencyObject obj) { return (string)obj.GetValue(HtmlContentHeaderProperty); }
         public static void SetHtmlContentHeader(DependencyObject obj, string value) { obj.SetValue(HtmlContentHeaderProperty, value); }
 
-        public static readonly DependencyProperty HtmlContentBackgroundProperty =
-            DependencyProperty.RegisterAttached("HtmlContentBackground", typeof(SolidColorBrush), typeof(DependencyPropertyHelper), new PropertyMetadata(null));
-
-        public static SolidColorBrush GetHtmlContentBackground(DependencyObject obj) { return (SolidColorBrush)obj.GetValue(HtmlContentBackgroundProperty); }
-        public static void SetHtmlContentBackground(DependencyObject obj, SolidColorBrush value) { obj.SetValue(HtmlContentBackgroundProperty, value); }
-
         public static readonly DependencyProperty HtmlContentForegroundProperty =
             DependencyProperty.RegisterAttached("HtmlContentForeground", typeof(SolidColorBrush), typeof(DependencyPropertyHelper), new PropertyMetadata(null));
 
@@ -69,50 +63,51 @@ namespace WinBlur.App.Helpers
         public static SolidColorBrush GetHtmlContentScrollbarColor(DependencyObject obj) { return (SolidColorBrush)obj.GetValue(HtmlContentScrollbarColorProperty); }
         public static void SetHtmlContentScrollbarColor(DependencyObject obj, SolidColorBrush value) { obj.SetValue(HtmlContentScrollbarColorProperty, value); }
 
+        public static readonly DependencyProperty HtmlContentTextSizeProperty =
+            DependencyProperty.RegisterAttached("HtmlContentTextSize", typeof(int), typeof(DependencyPropertyHelper), new PropertyMetadata(App.Settings.ReadingTextSize));
+
+        public static int GetHtmlContentTextSize(DependencyObject obj) { return (int)obj.GetValue(HtmlContentTextSizeProperty); }
+        public static void SetHtmlContentTextSize(DependencyObject obj, int value) { obj.SetValue(HtmlContentTextSizeProperty, value); }
+
         private static string htmlStyleHeader;
-        private static string htmlBackgroundColor;
         private static string htmlForegroundColor;
         private static string htmlLinkColor;
         private static string htmlScrollbarBackgroundColor;
         private static string htmlScrollbarColor;
+        private static int htmlTextSize;
         private static string GetHtmlStyleHeader(DependencyObject obj)
         {
-            string bgColor;
-            Color backgroundColor = GetHtmlContentBackground(obj).Color;
-            if (backgroundColor == Colors.Transparent)
-            {
-                bgColor = "transparent";
-            }
-            else
-            {
-                bgColor = "#" + backgroundColor.ToString().Substring(3);
-            }
-
             string fgColor = GetHtmlContentForeground(obj).Color.ToString();
             string linkColor = GetHtmlContentLinkColor(obj).Color.ToString();
             string scrollbarBackgroundColor = GetHtmlContentScrollbarBackgroundColor(obj).Color.ToString();
             string scrollbarColor = GetHtmlContentScrollbarColor(obj).Color.ToString();
+            int textSize = GetHtmlContentTextSize(obj);
 
-            if (bgColor != htmlBackgroundColor ||
-                fgColor != htmlForegroundColor ||
+            if (fgColor != htmlForegroundColor ||
                 linkColor != htmlLinkColor ||
                 scrollbarBackgroundColor != htmlScrollbarBackgroundColor ||
-                scrollbarColor != htmlScrollbarColor)
+                scrollbarColor != htmlScrollbarColor ||
+                textSize != htmlTextSize)
             {
                 // Style changed - update strings and return
-                htmlBackgroundColor = bgColor;
                 htmlForegroundColor = fgColor;
                 htmlLinkColor = linkColor;
                 htmlScrollbarBackgroundColor = scrollbarBackgroundColor;
                 htmlScrollbarColor = scrollbarColor;
+                htmlTextSize = textSize;
+
+                // Convert text size from px to em to easily support relative sizing
+                float textSizeEm = textSize / 16f; // Assuming 16px is the base font size
+
                 htmlStyleHeader = string.Format(@"
                     <head>
                         <meta name=""viewport"" content=""initial-scale=1 minimum-scale=1"" />
                         <style type=""text/css"">
                             html {{
-                                color: #{1};
+                                color: #{0};
                                 font-family: ""Segoe UI Variable"", ""Segoe UI"", sans-serif;
-                                line-height: 175%;
+                                font-size: {4}em;
+                                line-height: 1.75;
                                 max-width: 700px;
                                 margin: auto;
                                 padding: 0px 30px;
@@ -123,45 +118,45 @@ namespace WinBlur.App.Helpers
                                 height: auto;
                             }}
                             a {{
-                                color: #{2};
+                                color: #{1};
                                 text-decoration: none;
                             }}
                             a:hover {{
                                 text-decoration: underline;
                             }}
                             .winblur-title {{
-                                font-size: 20px;
+                                font-size: 125%;
                                 font-weight: 600;
-                                line-height: 26px;
+                                line-height: 1.3;
                                 margin-top: 0px;
                                 margin-bottom: 8px;
                             }}
                             .winblur-title-link {{
-                                color: #{1};
+                                color: #{0};
                             }}
                             .winblur-caption {{
-                                font-size: 12px;
-                                line-height: 18px;
+                                font-size: 75%;
+                                line-height: 1.5;
                                 margin-bottom: 24px;
                             }}
                             ::-webkit-scrollbar {{
                                 width: 10px;
                             }}
                             ::-webkit-scrollbar-track {{
-                                background: #{3};
+                                background: #{2};
                             }}
                             ::-webkit-scrollbar-thumb {{
-                                background: #{4};
+                                background: #{3};
                                 border-radius: 10px;
                                 border: 4px solid #{3};
                             }}
                         </style>
                     </head>",
-                    bgColor,
                     fgColor.Substring(3),
                     linkColor.Substring(3),
                     scrollbarBackgroundColor.Substring(3),
-                    scrollbarColor.Substring(3));
+                    scrollbarColor.Substring(3),
+                    textSizeEm);
             }
             return htmlStyleHeader;
         }

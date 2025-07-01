@@ -343,6 +343,14 @@
                                 <TextBlock Text="Text Size"
                                            Margin="0,8,0,0"
                                            Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                <Slider Minimum="8"
+                                        Maximum="24"
+                                        Value="{x:Bind viewModel.ReadingTextSize, Mode=TwoWay}"
+                                        StepFrequency="2"
+                                        TickFrequency="4"
+                                        TickPlacement="TopLeft"
+                                        SnapsTo="StepValues"
+                                        Margin="0,8,0,0" />
                             </StackPanel>
                         </Flyout>
                     </AppBarButton.Flyout>
@@ -408,11 +416,11 @@
                                   DefaultBackgroundColor="{x:Bind ContentBackgroundColor, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContent="{x:Bind ViewContent, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentHeader="{x:Bind ContentHeader, Mode=OneWay}"
-                                  helpers:DependencyPropertyHelper.HtmlContentBackground="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentForeground="{x:Bind ContentForegroundBrush, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentLinkColor="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarBackgroundColor="{ThemeResource ArticleContentScrollbarBackgroundBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarColor="{ThemeResource ArticleContentScrollbarBrush}"
+                                  helpers:DependencyPropertyHelper.HtmlContentTextSize="{x:Bind ContentTextSize, Mode=OneWay}"
                                   Loaded="articleTextView_Loaded"
                                   NavigationStarting="articleTextView_NavigationStarting"
                                   HorizontalAlignment="Stretch"

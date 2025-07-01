@@ -126,6 +126,14 @@ namespace WinBlur.App.Model
             set { readingTheme = value; SaveSetting(ApplicationData.Current.LocalSettings, (int)value); }
         }
 
+        private int readingTextSize;
+        public int ReadingTextSize
+        {
+            get { return readingTextSize; }
+            set { readingTextSize = value; SaveSetting(ApplicationData.Current.LocalSettings, (int)value); }
+        }
+
+
         private FeedMode feedFilterMode = FeedMode.All;
         public FeedMode FeedFilterMode
         {
@@ -231,6 +239,7 @@ namespace WinBlur.App.Model
             showImagePreviews = LoadSetting(container, nameof(ShowImagePreviews), ShowImagePreviews);
             appTheme2 = LoadSetting(container, nameof(AppTheme2), AppTheme2);
             readingTheme = LoadSetting(container, nameof(ReadingTheme), ReadingTheme);
+            readingTextSize = LoadSetting(container, nameof(ReadingTextSize), ReadingTextSize);
 
             var sortModeSettings = LoadSetting<ApplicationDataCompositeValue>(container, nameof(SortModeSettings), null);
             if (sortModeSettings != null)
@@ -285,6 +294,7 @@ namespace WinBlur.App.Model
             SaveSetting(container, ShowImagePreviews, nameof(ShowImagePreviews));
             SaveSetting(container, (int)AppTheme2, nameof(AppTheme2));
             SaveSetting(container, (int)ReadingTheme, nameof(ReadingTheme));
+            SaveSetting(container, ReadingTextSize, nameof(ReadingTextSize));
 
             // Sort mode settings
             if (SortModeSettings.Count > 0)
