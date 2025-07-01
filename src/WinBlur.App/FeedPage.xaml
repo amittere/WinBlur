@@ -343,14 +343,31 @@
                                 <TextBlock Text="Text Size"
                                            Margin="0,8,0,0"
                                            Style="{StaticResource BodyStrongTextBlockStyle}" />
-                                <Slider Minimum="8"
+                                <Grid Margin="6,8,6,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                               Text="S"
+                                               TextAlignment="Left"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="M"
+                                               TextAlignment="Center"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                    <TextBlock Grid.Column="2"
+                                               Text="L"
+                                               TextAlignment="Right"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                </Grid>
+                                <Slider Value="{x:Bind viewModel.ReadingTextSize, Mode=TwoWay}"
+                                        Minimum="8"
                                         Maximum="24"
-                                        Value="{x:Bind viewModel.ReadingTextSize, Mode=TwoWay}"
                                         StepFrequency="2"
                                         TickFrequency="4"
-                                        TickPlacement="TopLeft"
-                                        SnapsTo="StepValues"
-                                        Margin="0,8,0,0" />
+                                        TickPlacement="TopLeft" />
                             </StackPanel>
                         </Flyout>
                     </AppBarButton.Flyout>

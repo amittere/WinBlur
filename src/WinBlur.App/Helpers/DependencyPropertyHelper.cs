@@ -129,7 +129,7 @@ namespace WinBlur.App.Helpers
                                 font-weight: 600;
                                 line-height: 1.3;
                                 margin-top: 0px;
-                                margin-bottom: 8px;
+                                margin-bottom: 0.4em;
                             }}
                             .winblur-title-link {{
                                 color: #{0};
