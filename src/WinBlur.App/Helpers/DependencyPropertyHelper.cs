@@ -75,6 +75,12 @@ namespace WinBlur.App.Helpers
         public static double GetHtmlContentLineHeight(DependencyObject obj) { return (double)obj.GetValue(HtmlContentLineHeightProperty); }
         public static void SetHtmlContentLineHeight(DependencyObject obj, double value) { obj.SetValue(HtmlContentLineHeightProperty, value); }
 
+        public static readonly DependencyProperty HtmlContentColumnWidthProperty =
+            DependencyProperty.RegisterAttached("HtmlContentColumnWidth", typeof(int), typeof(DependencyPropertyHelper), new PropertyMetadata(App.Settings.ReadingColumnWidth));
+
+        public static int GetHtmlContentColumnWidth(DependencyObject obj) { return (int)obj.GetValue(HtmlContentColumnWidthProperty); }
+        public static void SetHtmlContentColumnWidth(DependencyObject obj, int value) { obj.SetValue(HtmlContentColumnWidthProperty, value); }
+
         private static string htmlStyleHeader;
         private static string htmlForegroundColor;
         private static string htmlLinkColor;
@@ -82,6 +88,8 @@ namespace WinBlur.App.Helpers
         private static string htmlScrollbarColor;
         private static int htmlTextSize;
         private static double htmlLineHeight;
+        private static int htmlColumnWidth;
+
         private static string GetHtmlStyleHeader(DependencyObject obj)
         {
             string fgColor = GetHtmlContentForeground(obj).Color.ToString();
@@ -90,13 +98,15 @@ namespace WinBlur.App.Helpers
             string scrollbarColor = GetHtmlContentScrollbarColor(obj).Color.ToString();
             int textSize = GetHtmlContentTextSize(obj);
             double lineHeight = GetHtmlContentLineHeight(obj);
+            int columnWidth = GetHtmlContentColumnWidth(obj);
 
             if (fgColor != htmlForegroundColor ||
                 linkColor != htmlLinkColor ||
                 scrollbarBackgroundColor != htmlScrollbarBackgroundColor ||
                 scrollbarColor != htmlScrollbarColor ||
                 textSize != htmlTextSize ||
-                lineHeight != htmlLineHeight)
+                lineHeight != htmlLineHeight ||
+                columnWidth != htmlColumnWidth)
             {
                 // Style changed - update strings and return
                 htmlForegroundColor = fgColor;
@@ -105,6 +115,7 @@ namespace WinBlur.App.Helpers
                 htmlScrollbarColor = scrollbarColor;
                 htmlTextSize = textSize;
                 htmlLineHeight = lineHeight;
+                htmlColumnWidth = columnWidth;
 
                 // Convert text size from px to em to easily support relative sizing
                 float textSizeEm = textSize / 16f; // Assuming 16px is the base font size
@@ -118,7 +129,7 @@ namespace WinBlur.App.Helpers
                                 font-family: ""Segoe UI Variable"", ""Segoe UI"", sans-serif;
                                 font-size: {4}em;
                                 line-height: {5};
-                                max-width: 700px;
+                                max-width: {6}px;
                                 margin: auto;
                                 padding: 0px 30px;
                             }}
@@ -167,7 +178,8 @@ namespace WinBlur.App.Helpers
                     scrollbarBackgroundColor.Substring(3),
                     scrollbarColor.Substring(3),
                     textSizeEm,
-                    lineHeight);
+                    lineHeight,
+                    columnWidth);
             }
             return htmlStyleHeader;
         }

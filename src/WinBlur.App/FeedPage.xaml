@@ -393,6 +393,30 @@
                                         StepFrequency="0.25"
                                         TickFrequency="0.75"
                                         TickPlacement="TopLeft" />
+                                <TextBlock Text="Column Width"
+                                           Margin="0,12,0,0"
+                                           Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                               Text="Narrow"
+                                               TextAlignment="Left"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="Wide"
+                                               TextAlignment="Right"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                </Grid>
+                                <Slider Value="{x:Bind viewModel.ReadingColumnWidth, Mode=TwoWay}"
+                                        IsThumbToolTipEnabled="False"
+                                        Minimum="400"
+                                        Maximum="1000"
+                                        StepFrequency="100"
+                                        TickFrequency="300"
+                                        TickPlacement="TopLeft" />
                             </StackPanel>
                         </Flyout>
                     </AppBarButton.Flyout>
@@ -464,6 +488,7 @@
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarColor="{ThemeResource ArticleContentScrollbarBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentTextSize="{x:Bind ContentTextSize, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentLineHeight="{x:Bind ContentLineHeight, Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentColumnWidth="{x:Bind ContentColumnWidth, Mode=OneWay}"
                                   Loaded="articleTextView_Loaded"
                                   NavigationStarting="articleTextView_NavigationStarting"
                                   HorizontalAlignment="Stretch"

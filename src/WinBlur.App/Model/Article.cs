@@ -123,6 +123,13 @@ namespace WinBlur.App.Model
             set { contentLineHeight = value; NotifyPropertyChanged(nameof(ContentLineHeight)); }
         }
 
+        private int contentColumnWidth = App.Settings.ReadingColumnWidth;
+        public int ContentColumnWidth
+        {
+            get { return contentColumnWidth; }
+            set { contentColumnWidth = value; NotifyPropertyChanged(nameof(ContentColumnWidth)); }
+        }
+
         public long Timestamp { get; set; }
         public string ShortDate { get; set; }
         public string LongDate { get; set; }

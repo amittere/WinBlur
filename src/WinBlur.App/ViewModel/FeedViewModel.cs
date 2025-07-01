@@ -149,6 +149,17 @@ namespace WinBlur.App.ViewModel
             }
         }
 
+        public int ReadingColumnWidth
+        {
+            get => App.Settings.ReadingColumnWidth;
+            set
+            {
+                App.Settings.ReadingColumnWidth = value;
+                NotifyPropertyChanged(nameof(ReadingColumnWidth));
+                RefreshArticleContent();
+            }
+        }
+
         private Article _selectedArticle;
         public Article SelectedArticle
         {
@@ -390,6 +401,7 @@ namespace WinBlur.App.ViewModel
                 a.ContentForegroundBrush = contentForegroundColor;
                 a.ContentTextSize = ReadingTextSize;
                 a.ContentLineHeight = ReadingLineHeight;
+                a.ContentColumnWidth = ReadingColumnWidth;
                 a.ViewContent = "";
                 if (SelectedArticle == a)
                 {

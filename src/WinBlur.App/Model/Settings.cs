@@ -140,6 +140,13 @@ namespace WinBlur.App.Model
             set { readingLineHeight = value; SaveSetting(ApplicationData.Current.LocalSettings, (int)value); }
         }
 
+        private int readingColumnWidth = 700;
+        public int ReadingColumnWidth
+        {
+            get { return readingColumnWidth; }
+            set { readingColumnWidth = value; SaveSetting(ApplicationData.Current.LocalSettings, (int)value); }
+        }
+
         private FeedMode feedFilterMode = FeedMode.All;
         public FeedMode FeedFilterMode
         {
@@ -247,6 +254,7 @@ namespace WinBlur.App.Model
             readingTheme = LoadSetting(container, nameof(ReadingTheme), ReadingTheme);
             readingTextSize = LoadSetting(container, nameof(ReadingTextSize), ReadingTextSize);
             readingLineHeight = LoadSetting(container, nameof(ReadingLineHeight), ReadingLineHeight);
+            readingColumnWidth = LoadSetting(container, nameof(ReadingColumnWidth), ReadingColumnWidth);
 
             var sortModeSettings = LoadSetting<ApplicationDataCompositeValue>(container, nameof(SortModeSettings), null);
             if (sortModeSettings != null)
@@ -303,6 +311,7 @@ namespace WinBlur.App.Model
             SaveSetting(container, (int)ReadingTheme, nameof(ReadingTheme));
             SaveSetting(container, ReadingTextSize, nameof(ReadingTextSize));
             SaveSetting(container, ReadingLineHeight, nameof(ReadingLineHeight));
+            SaveSetting(container, ReadingColumnWidth, nameof(ReadingColumnWidth));
 
             // Sort mode settings
             if (SortModeSettings.Count > 0)
