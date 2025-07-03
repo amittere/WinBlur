@@ -333,15 +333,34 @@
                               Icon="Font">
                     <AppBarButton.Flyout>
                         <Flyout>
-                            <StackPanel Width="250">
+                            <StackPanel MinWidth="250" MaxWidth="300">
                                 <TextBlock Text="Color Theme"
                                            Style="{StaticResource BodyStrongTextBlockStyle}" />
                                 <RadioButtons ItemsSource="{x:Bind readingThemes}"
+                                              MaxColumns="2"
                                               SelectedItem="{x:Bind selectedReadingTheme}"
                                               SelectionChanged="ReadingTheme_SelectionChanged" />
                                 <MenuFlyoutSeparator Margin="0,8"/>
-                                <TextBlock Text="Text Size"
+                                <TextBlock Text="Font"
                                            Margin="0,8,0,0"
+                                           Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                <RadioButtons ItemsSource="{x:Bind viewModel.ReadingFonts}"
+                                              MaxColumns="2"
+                                              SelectedItem="{x:Bind viewModel.SelectedReadingFont, Mode=TwoWay}">
+                                    <RadioButtons.ItemTemplate>
+                                        <DataTemplate x:DataType="vmodel:ReadingFontViewModel">
+                                            <RadioButton Style="{StaticResource FontRadioButtonStyle}">
+                                                <TextBlock Text="{x:Bind Label}"
+                                                           FontFamily="{x:Bind FontFamily}"
+                                                           FontWeight="{x:Bind FontWeight}"
+                                                           TextLineBounds="Tight"
+                                                           VerticalAlignment="Center" />
+                                            </RadioButton>
+                                        </DataTemplate>
+                                    </RadioButtons.ItemTemplate>
+                                </RadioButtons>
+                                <TextBlock Text="Text Size"
+                                           Margin="0,12,0,0"
                                            Style="{StaticResource BodyStrongTextBlockStyle}" />
                                 <Grid Margin="6,8,6,0">
                                     <Grid.ColumnDefinitions>
@@ -369,6 +388,7 @@
                                         StepFrequency="2"
                                         TickFrequency="4"
                                         TickPlacement="TopLeft" />
+                                <MenuFlyoutSeparator Margin="0,8" />
                                 <TextBlock Text="Line Height"
                                            Margin="0,12,0,0"
                                            Style="{StaticResource BodyStrongTextBlockStyle}" />
@@ -486,6 +506,8 @@
                                   helpers:DependencyPropertyHelper.HtmlContentLinkColor="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarBackgroundColor="{ThemeResource ArticleContentScrollbarBackgroundBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarColor="{ThemeResource ArticleContentScrollbarBrush}"
+                                  helpers:DependencyPropertyHelper.HtmlContentFontFamily="{x:Bind ContentFontFamily, Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentFontWeight="{x:Bind ContentFontWeight,Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentTextSize="{x:Bind ContentTextSize, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentLineHeight="{x:Bind ContentLineHeight, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentColumnWidth="{x:Bind ContentColumnWidth, Mode=OneWay}"

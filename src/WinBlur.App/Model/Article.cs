@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using WinBlur.App.ViewModel;
 using Windows.UI;
 
 namespace WinBlur.App.Model
@@ -107,6 +108,20 @@ namespace WinBlur.App.Model
         {
             get { return contentForegroundBrush; }
             set { contentForegroundBrush = value; NotifyPropertyChanged(nameof(ContentForegroundBrush)); }
+        }
+
+        private string contentFontFamily = App.Settings.ReadingFont;
+        public string ContentFontFamily
+        {
+            get { return contentFontFamily; }
+            set { contentFontFamily = value; NotifyPropertyChanged(nameof(ContentFontFamily)); }
+        }
+
+        private int contentFontWeight = App.Settings.ReadingFontWeight;
+        public int ContentFontWeight
+        {
+            get { return contentFontWeight; }
+            set { contentFontWeight = value; NotifyPropertyChanged(nameof(ContentFontWeight)); }
         }
 
         private int contentTextSize = App.Settings.ReadingTextSize;

@@ -1,9 +1,12 @@
 using CommunityToolkit.WinUI;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using WinBlur.App.Helpers;
 using WinBlur.App.Model;
@@ -125,6 +128,42 @@ namespace WinBlur.App.ViewModel
         {
             get { return (int)ReadingMode; }
             set { ReadingMode = (ReadingMode)value; NotifyPropertyChanged(nameof(ReadingModeIndex)); }
+        }
+
+        public List<ReadingFontViewModel> ReadingFonts { get; set; } = new List<ReadingFontViewModel>
+        {
+            new ReadingFontViewModel
+            {
+                Label = FontFamily.XamlAutoFontFamily.Source,
+                FontFamily = FontFamily.XamlAutoFontFamily
+            },
+            new ReadingFontViewModel
+            {
+                Label = "Bahnschrift",
+                FontFamily = new FontFamily("Bahnschrift"),
+                FontWeight = FontWeights.SemiLight
+            },
+            new ReadingFontViewModel { Label = "Tahoma", FontFamily = new FontFamily("Tahoma") },
+            new ReadingFontViewModel { Label = "Georgia", FontFamily = new FontFamily("Georgia") },
+            new ReadingFontViewModel { Label = "Consolas", FontFamily = new FontFamily("Consolas") },
+        };
+
+        private ReadingFontViewModel selectedReadingFont;
+        public ReadingFontViewModel SelectedReadingFont
+        {
+            get => selectedReadingFont;
+            set
+            {
+                selectedReadingFont = value;
+                NotifyPropertyChanged(nameof(SelectedReadingFont));
+
+                if (selectedReadingFont != null)
+                {
+                    App.Settings.ReadingFont = selectedReadingFont.FontFamily.Source;
+                    App.Settings.ReadingFontWeight = selectedReadingFont.FontWeight.Weight;
+                    RefreshArticleContent();
+                }
+            }
         }
 
         public int ReadingTextSize
@@ -251,6 +290,10 @@ namespace WinBlur.App.ViewModel
         {
             markAsReadTimer.Interval = new TimeSpan(0, 0, App.Settings.MarkAsReadDelay);
             markAsReadTimer.Tick += MarkAsReadTimer_Tick;
+
+            // Set selected font to the view model that matches the saved setting.
+            // Fallback to first font (system default font) if not found.
+            selectedReadingFont = ReadingFonts.FirstOrDefault(f => f.FontFamily.Source == App.Settings.ReadingFont, ReadingFonts[0]);
         }
 
         private void MarkAsReadTimer_Tick(object sender, object e)
@@ -399,6 +442,8 @@ namespace WinBlur.App.ViewModel
                 a.WebViewBackgroundColor = viewBackgroundColor;
                 a.ContentBackgroundColor = contentBackgroundColor;
                 a.ContentForegroundBrush = contentForegroundColor;
+                a.ContentFontFamily = SelectedReadingFont.FontFamily.Source;
+                a.ContentFontWeight = SelectedReadingFont.FontWeight.Weight;
                 a.ContentTextSize = ReadingTextSize;
                 a.ContentLineHeight = ReadingLineHeight;
                 a.ContentColumnWidth = ReadingColumnWidth;

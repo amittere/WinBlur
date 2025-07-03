@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
+using WinBlur.App.ViewModel;
 using Windows.UI;
 
 namespace WinBlur.App.Helpers
@@ -63,6 +64,18 @@ namespace WinBlur.App.Helpers
         public static SolidColorBrush GetHtmlContentScrollbarColor(DependencyObject obj) { return (SolidColorBrush)obj.GetValue(HtmlContentScrollbarColorProperty); }
         public static void SetHtmlContentScrollbarColor(DependencyObject obj, SolidColorBrush value) { obj.SetValue(HtmlContentScrollbarColorProperty, value); }
 
+        public static readonly DependencyProperty HtmlContentFontFamilyProperty =
+            DependencyProperty.RegisterAttached("HtmlContentFontFamily", typeof(string), typeof(DependencyPropertyHelper), new PropertyMetadata(App.Settings.ReadingFont));
+
+        public static string GetHtmlContentFontFamily(DependencyObject obj) { return (string)obj.GetValue(HtmlContentFontFamilyProperty); }
+        public static void SetHtmlContentFontFamily(DependencyObject obj, string value) { obj.SetValue(HtmlContentFontFamilyProperty, value); }
+
+        public static readonly DependencyProperty HtmlContentFontWeightProperty =
+            DependencyProperty.RegisterAttached("HtmlContentFontWeight", typeof(int), typeof(DependencyPropertyHelper), new PropertyMetadata(ReadingFontViewModel.DefaultFontWeight));
+
+        public static int GetHtmlContentFontWeight(DependencyObject obj) { return (int)obj.GetValue(HtmlContentFontWeightProperty); }
+        public static void SetHtmlContentFontWeight(DependencyObject obj, int value) { obj.SetValue(HtmlContentFontWeightProperty, value); }
+
         public static readonly DependencyProperty HtmlContentTextSizeProperty =
             DependencyProperty.RegisterAttached("HtmlContentTextSize", typeof(int), typeof(DependencyPropertyHelper), new PropertyMetadata(App.Settings.ReadingTextSize));
 
@@ -86,6 +99,8 @@ namespace WinBlur.App.Helpers
         private static string htmlLinkColor;
         private static string htmlScrollbarBackgroundColor;
         private static string htmlScrollbarColor;
+        private static string htmlFontFamily;
+        private static int htmlFontWeight;
         private static int htmlTextSize;
         private static double htmlLineHeight;
         private static int htmlColumnWidth;
@@ -96,6 +111,8 @@ namespace WinBlur.App.Helpers
             string linkColor = GetHtmlContentLinkColor(obj).Color.ToString();
             string scrollbarBackgroundColor = GetHtmlContentScrollbarBackgroundColor(obj).Color.ToString();
             string scrollbarColor = GetHtmlContentScrollbarColor(obj).Color.ToString();
+            string fontFamily = GetHtmlContentFontFamily(obj);
+            int fontWeight = GetHtmlContentFontWeight(obj);
             int textSize = GetHtmlContentTextSize(obj);
             double lineHeight = GetHtmlContentLineHeight(obj);
             int columnWidth = GetHtmlContentColumnWidth(obj);
@@ -104,6 +121,8 @@ namespace WinBlur.App.Helpers
                 linkColor != htmlLinkColor ||
                 scrollbarBackgroundColor != htmlScrollbarBackgroundColor ||
                 scrollbarColor != htmlScrollbarColor ||
+                fontFamily != htmlFontFamily ||
+                fontWeight != htmlFontWeight ||
                 textSize != htmlTextSize ||
                 lineHeight != htmlLineHeight ||
                 columnWidth != htmlColumnWidth)
@@ -113,12 +132,14 @@ namespace WinBlur.App.Helpers
                 htmlLinkColor = linkColor;
                 htmlScrollbarBackgroundColor = scrollbarBackgroundColor;
                 htmlScrollbarColor = scrollbarColor;
+                htmlFontFamily = string.Format("\"{0}\", sans-serif", fontFamily);
+                htmlFontWeight = fontWeight;
                 htmlTextSize = textSize;
                 htmlLineHeight = lineHeight;
                 htmlColumnWidth = columnWidth;
 
                 // Convert text size from px to em to easily support relative sizing
-                float textSizeEm = textSize / 16f; // Assuming 16px is the base font size
+                float textSizeEm = textSize / 16f;
 
                 htmlStyleHeader = string.Format(@"
                     <head>
@@ -126,8 +147,9 @@ namespace WinBlur.App.Helpers
                         <style type=""text/css"">
                             html {{
                                 color: #{0};
-                                font-family: ""Segoe UI Variable"", ""Segoe UI"", sans-serif;
+                                font-family: {7};
                                 font-size: {4}em;
+                                font-weight: {8};
                                 line-height: {5};
                                 max-width: {6}px;
                                 margin: auto;
@@ -173,13 +195,15 @@ namespace WinBlur.App.Helpers
                             }}
                         </style>
                     </head>",
-                    fgColor.Substring(3),
-                    linkColor.Substring(3),
-                    scrollbarBackgroundColor.Substring(3),
-                    scrollbarColor.Substring(3),
+                    htmlForegroundColor.Substring(3),
+                    htmlLinkColor.Substring(3),
+                    htmlScrollbarBackgroundColor.Substring(3),
+                    htmlScrollbarColor.Substring(3),
                     textSizeEm,
-                    lineHeight,
-                    columnWidth);
+                    htmlLineHeight,
+                    htmlColumnWidth,
+                    htmlFontFamily,
+                    htmlFontWeight);
             }
             return htmlStyleHeader;
         }

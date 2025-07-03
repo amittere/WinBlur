@@ -1,7 +1,9 @@
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.UI.Helpers;
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -126,25 +128,39 @@ namespace WinBlur.App.Model
             set { readingTheme = value; SaveSetting(ApplicationData.Current.LocalSettings, (int)value); }
         }
 
+        private string readingFont = FontFamily.XamlAutoFontFamily.Source;
+        public string ReadingFont
+        {
+            get { return readingFont; }
+            set { readingFont = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
+        }
+
+        private int readingFontWeight = FontWeights.Normal.Weight;
+        public int ReadingFontWeight
+        {
+            get { return readingFontWeight; }
+            set { readingFontWeight = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
+        }
+
         private int readingTextSize = 16;
         public int ReadingTextSize
         {
             get { return readingTextSize; }
-            set { readingTextSize = value; SaveSetting(ApplicationData.Current.LocalSettings, (int)value); }
+            set { readingTextSize = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
         }
 
         private double readingLineHeight = 1.75;
         public double ReadingLineHeight
         {
             get { return readingLineHeight; }
-            set { readingLineHeight = value; SaveSetting(ApplicationData.Current.LocalSettings, (int)value); }
+            set { readingLineHeight = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
         }
 
         private int readingColumnWidth = 700;
         public int ReadingColumnWidth
         {
             get { return readingColumnWidth; }
-            set { readingColumnWidth = value; SaveSetting(ApplicationData.Current.LocalSettings, (int)value); }
+            set { readingColumnWidth = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
         }
 
         private FeedMode feedFilterMode = FeedMode.All;
@@ -255,6 +271,8 @@ namespace WinBlur.App.Model
             readingTextSize = LoadSetting(container, nameof(ReadingTextSize), ReadingTextSize);
             readingLineHeight = LoadSetting(container, nameof(ReadingLineHeight), ReadingLineHeight);
             readingColumnWidth = LoadSetting(container, nameof(ReadingColumnWidth), ReadingColumnWidth);
+            readingFont = LoadSetting(container, nameof(ReadingFont), ReadingFont);
+            readingFontWeight = LoadSetting(container, nameof(ReadingFontWeight), ReadingFontWeight);
 
             var sortModeSettings = LoadSetting<ApplicationDataCompositeValue>(container, nameof(SortModeSettings), null);
             if (sortModeSettings != null)
@@ -312,6 +330,8 @@ namespace WinBlur.App.Model
             SaveSetting(container, ReadingTextSize, nameof(ReadingTextSize));
             SaveSetting(container, ReadingLineHeight, nameof(ReadingLineHeight));
             SaveSetting(container, ReadingColumnWidth, nameof(ReadingColumnWidth));
+            SaveSetting(container, ReadingFont, nameof(ReadingFont));
+            SaveSetting(container, ReadingFontWeight, nameof(ReadingFontWeight));
 
             // Sort mode settings
             if (SortModeSettings.Count > 0)

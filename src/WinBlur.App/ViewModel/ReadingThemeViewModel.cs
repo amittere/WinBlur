@@ -49,7 +49,7 @@ namespace WinBlur.App.ViewModel
                 case ReadingThemeMode.Light:
                     return Color.FromArgb(255, 238, 238, 238); // #EEEEEE
                 case ReadingThemeMode.Sepia:
-                    return Color.FromArgb(255, 240, 192, 149); // #F0C095
+                    return Color.FromArgb(255, 227, 206, 185); // #e3ceb9
                 case ReadingThemeMode.Dark:
                     return Color.FromArgb(255, 28, 28, 28); // #1C1C1C
                 case ReadingThemeMode.Black:
