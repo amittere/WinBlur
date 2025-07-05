@@ -30,9 +30,6 @@ namespace WinBlur.App
     {
         private FeedViewModel viewModel;
 
-        private List<ReadingThemeViewModel> readingThemes;
-        private ReadingThemeViewModel selectedReadingTheme;
-
         private Article _shareArticle;
 
         private CommentTextBox activeCommentTextBox;
@@ -56,17 +53,6 @@ namespace WinBlur.App
 
             IntPtr result = dataTransferManagerInterop.GetForWindow(App.WindowHandle, s_dataTransferManagerIid);
             dataTransferManager = WinRT.MarshalInterface<DataTransferManager>.FromAbi(result);
-
-            readingThemes = new List<ReadingThemeViewModel>
-            {
-                new ReadingThemeViewModel { Label = "System", ThemeMode = ReadingThemeMode.UseWindowsTheme },
-                new ReadingThemeViewModel { Label = "Sepia", ThemeMode = ReadingThemeMode.Sepia },
-                new ReadingThemeViewModel { Label = "Light", ThemeMode = ReadingThemeMode.Light },
-                new ReadingThemeViewModel { Label = "Dark", ThemeMode = ReadingThemeMode.Dark },
-                new ReadingThemeViewModel { Label = "Black", ThemeMode = ReadingThemeMode.Black }
-            };
-            selectedReadingTheme = readingThemes.Find(r => r.ThemeMode == App.Settings.ReadingTheme);
-            UpdateReadingTheme();
         }
 
         /// <summary>
@@ -1120,34 +1106,9 @@ namespace WinBlur.App
 
         #region Reading Style
 
-        private void ReadingTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems[0] is ReadingThemeViewModel option)
-            {
-                if (option != selectedReadingTheme)
-                {
-                    selectedReadingTheme = option;
-                    UpdateReadingTheme();
-                }
-            }
-        }
-
-        private void UpdateReadingTheme()
-        {
-            App.Settings.ReadingTheme = selectedReadingTheme.ThemeMode;
-
-            ArticleContent.RequestedTheme = selectedReadingTheme.RequestedTheme;
-            ArticleContent.Background = new SolidColorBrush(
-                ReadingThemeViewModel.GetWebViewBackgroundColorForReadingTheme(selectedReadingTheme.ThemeMode));
-
-            OnReadingThemeChanged();
-        }
-
         private void Settings_ThemeChanged(object sender, EventArgs e)
         {
-            ArticleContent.RequestedTheme = selectedReadingTheme.RequestedTheme;
-            ArticleContent.Background = new SolidColorBrush(
-                ReadingThemeViewModel.GetWebViewBackgroundColorForReadingTheme(selectedReadingTheme.ThemeMode));
+            ArticleTheme.Instance.OnSystemThemeChanged();
             OnReadingThemeChanged();
         }
 

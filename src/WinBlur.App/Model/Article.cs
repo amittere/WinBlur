@@ -86,65 +86,6 @@ namespace WinBlur.App.Model
             set { viewContent = value; NotifyPropertyChanged(nameof(ViewContent)); }
         }
 
-        // Article theming
-
-        private Color webViewBackgroundColor;
-        public Color WebViewBackgroundColor
-        {
-            get { return webViewBackgroundColor; }
-            set { webViewBackgroundColor = value; NotifyPropertyChanged(nameof(WebViewBackgroundColor)); }
-        }
-
-        private Color contentBackgroundColor;
-        public Color ContentBackgroundColor
-        {
-            get { return contentBackgroundColor; }
-            set { contentBackgroundColor = value; NotifyPropertyChanged(nameof(ContentBackgroundColor)); }
-        }
-
-        // Null color => use normal theme value
-        private SolidColorBrush contentForegroundBrush;
-        public SolidColorBrush ContentForegroundBrush
-        {
-            get { return contentForegroundBrush; }
-            set { contentForegroundBrush = value; NotifyPropertyChanged(nameof(ContentForegroundBrush)); }
-        }
-
-        private string contentFontFamily = App.Settings.ReadingFont;
-        public string ContentFontFamily
-        {
-            get { return contentFontFamily; }
-            set { contentFontFamily = value; NotifyPropertyChanged(nameof(ContentFontFamily)); }
-        }
-
-        private int contentFontWeight = App.Settings.ReadingFontWeight;
-        public int ContentFontWeight
-        {
-            get { return contentFontWeight; }
-            set { contentFontWeight = value; NotifyPropertyChanged(nameof(ContentFontWeight)); }
-        }
-
-        private int contentTextSize = App.Settings.ReadingTextSize;
-        public int ContentTextSize
-        {
-            get { return contentTextSize; }
-            set { contentTextSize = value; NotifyPropertyChanged(nameof(ContentTextSize)); }
-        }
-
-        private double contentLineHeight = App.Settings.ReadingLineHeight;
-        public double ContentLineHeight
-        {
-            get { return contentLineHeight; }
-            set { contentLineHeight = value; NotifyPropertyChanged(nameof(ContentLineHeight)); }
-        }
-
-        private int contentColumnWidth = App.Settings.ReadingColumnWidth;
-        public int ContentColumnWidth
-        {
-            get { return contentColumnWidth; }
-            set { contentColumnWidth = value; NotifyPropertyChanged(nameof(ContentColumnWidth)); }
-        }
-
         public long Timestamp { get; set; }
         public string ShortDate { get; set; }
         public string LongDate { get; set; }

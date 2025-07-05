@@ -18,21 +18,8 @@ namespace WinBlur.App.Helpers
 
         private static void OnHtmlContentChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            if (obj is WebView2 wv && wv.IsLoaded && wv.CoreWebView2 != null)
-            {
-                string style = GetHtmlStyleHeader(obj);
-                string header = GetHtmlContentHeader(obj);
-                try
-                {
-                    wv.NavigateToString(string.Concat(style, header, (string)e.NewValue));
-                }
-                catch (Exception)
-                {
-                    wv.NavigateToString(string.Concat(style, header, "<div>Failed to load story. Try a different reading mode.</div>"));
-                }
-            }
+            ReloadContent(obj, (string)e.NewValue);
         }
-
 
         public static readonly DependencyProperty HtmlContentHeaderProperty =
             DependencyProperty.RegisterAttached("HtmlContentHeader", typeof(string), typeof(DependencyPropertyHelper), new PropertyMetadata(""));
@@ -41,58 +28,100 @@ namespace WinBlur.App.Helpers
         public static void SetHtmlContentHeader(DependencyObject obj, string value) { obj.SetValue(HtmlContentHeaderProperty, value); }
 
         public static readonly DependencyProperty HtmlContentForegroundProperty =
-            DependencyProperty.RegisterAttached("HtmlContentForeground", typeof(SolidColorBrush), typeof(DependencyPropertyHelper), new PropertyMetadata(null));
+            DependencyProperty.RegisterAttached(
+                "HtmlContentForeground",
+                typeof(SolidColorBrush),
+                typeof(DependencyPropertyHelper),
+                new PropertyMetadata(null, OnHtmlThemePropertyChanged));
 
         public static SolidColorBrush GetHtmlContentForeground(DependencyObject obj) { return (SolidColorBrush)obj.GetValue(HtmlContentForegroundProperty); }
         public static void SetHtmlContentForeground(DependencyObject obj, SolidColorBrush value) { obj.SetValue(HtmlContentForegroundProperty, value); }
 
         public static readonly DependencyProperty HtmlContentLinkColorProperty =
-            DependencyProperty.RegisterAttached("HtmlContentLinkColor", typeof(SolidColorBrush), typeof(DependencyPropertyHelper), new PropertyMetadata(null));
+            DependencyProperty.RegisterAttached(
+                "HtmlContentLinkColor",
+                typeof(SolidColorBrush),
+                typeof(DependencyPropertyHelper),
+                new PropertyMetadata(null, OnHtmlThemePropertyChanged));
 
         public static SolidColorBrush GetHtmlContentLinkColor(DependencyObject obj) { return (SolidColorBrush)obj.GetValue(HtmlContentLinkColorProperty); }
         public static void SetHtmlContentLinkColor(DependencyObject obj, SolidColorBrush value) { obj.SetValue(HtmlContentLinkColorProperty, value); }
 
         public static readonly DependencyProperty HtmlContentScrollbarBackgroundColorProperty =
-            DependencyProperty.RegisterAttached("HtmlContentScrollbarBackgroundColor", typeof(SolidColorBrush), typeof(DependencyPropertyHelper), new PropertyMetadata(null));
+            DependencyProperty.RegisterAttached(
+                "HtmlContentScrollbarBackgroundColor",
+                typeof(SolidColorBrush),
+                typeof(DependencyPropertyHelper),
+                new PropertyMetadata(null, OnHtmlThemePropertyChanged));
 
         public static SolidColorBrush GetHtmlContentScrollbarBackgroundColor(DependencyObject obj) { return (SolidColorBrush)obj.GetValue(HtmlContentScrollbarBackgroundColorProperty); }
         public static void SetHtmlContentScrollbarBackgroundColor(DependencyObject obj, SolidColorBrush value) { obj.SetValue(HtmlContentScrollbarBackgroundColorProperty, value); }
 
         public static readonly DependencyProperty HtmlContentScrollbarColorProperty =
-            DependencyProperty.RegisterAttached("HtmlContentScrollbarColor", typeof(SolidColorBrush), typeof(DependencyPropertyHelper), new PropertyMetadata(null));
+            DependencyProperty.RegisterAttached(
+                "HtmlContentScrollbarColor",
+                typeof(SolidColorBrush),
+                typeof(DependencyPropertyHelper),
+                new PropertyMetadata(null, OnHtmlThemePropertyChanged));
 
         public static SolidColorBrush GetHtmlContentScrollbarColor(DependencyObject obj) { return (SolidColorBrush)obj.GetValue(HtmlContentScrollbarColorProperty); }
         public static void SetHtmlContentScrollbarColor(DependencyObject obj, SolidColorBrush value) { obj.SetValue(HtmlContentScrollbarColorProperty, value); }
 
         public static readonly DependencyProperty HtmlContentFontFamilyProperty =
-            DependencyProperty.RegisterAttached("HtmlContentFontFamily", typeof(string), typeof(DependencyPropertyHelper), new PropertyMetadata(App.Settings.ReadingFont));
+            DependencyProperty.RegisterAttached(
+                "HtmlContentFontFamily",
+                typeof(string),
+                typeof(DependencyPropertyHelper),
+                new PropertyMetadata(App.Settings.ReadingFont, OnHtmlThemePropertyChanged));
 
         public static string GetHtmlContentFontFamily(DependencyObject obj) { return (string)obj.GetValue(HtmlContentFontFamilyProperty); }
         public static void SetHtmlContentFontFamily(DependencyObject obj, string value) { obj.SetValue(HtmlContentFontFamilyProperty, value); }
 
         public static readonly DependencyProperty HtmlContentFontWeightProperty =
-            DependencyProperty.RegisterAttached("HtmlContentFontWeight", typeof(int), typeof(DependencyPropertyHelper), new PropertyMetadata(ReadingFontViewModel.DefaultFontWeight));
+            DependencyProperty.RegisterAttached(
+                "HtmlContentFontWeight",
+                typeof(int),
+                typeof(DependencyPropertyHelper),
+                new PropertyMetadata(ReadingFontViewModel.DefaultFontWeight, OnHtmlThemePropertyChanged));
 
         public static int GetHtmlContentFontWeight(DependencyObject obj) { return (int)obj.GetValue(HtmlContentFontWeightProperty); }
         public static void SetHtmlContentFontWeight(DependencyObject obj, int value) { obj.SetValue(HtmlContentFontWeightProperty, value); }
 
         public static readonly DependencyProperty HtmlContentTextSizeProperty =
-            DependencyProperty.RegisterAttached("HtmlContentTextSize", typeof(int), typeof(DependencyPropertyHelper), new PropertyMetadata(App.Settings.ReadingTextSize));
+            DependencyProperty.RegisterAttached(
+                "HtmlContentTextSize",
+                typeof(int),
+                typeof(DependencyPropertyHelper),
+                new PropertyMetadata(App.Settings.ReadingTextSize, OnHtmlThemePropertyChanged));
 
         public static int GetHtmlContentTextSize(DependencyObject obj) { return (int)obj.GetValue(HtmlContentTextSizeProperty); }
         public static void SetHtmlContentTextSize(DependencyObject obj, int value) { obj.SetValue(HtmlContentTextSizeProperty, value); }
 
         public static readonly DependencyProperty HtmlContentLineHeightProperty =
-            DependencyProperty.RegisterAttached("HtmlContentLineHeight", typeof(double), typeof(DependencyPropertyHelper), new PropertyMetadata(App.Settings.ReadingLineHeight));
+            DependencyProperty.RegisterAttached(
+                "HtmlContentLineHeight",
+                typeof(double),
+                typeof(DependencyPropertyHelper),
+                new PropertyMetadata(App.Settings.ReadingLineHeight, OnHtmlThemePropertyChanged));
 
         public static double GetHtmlContentLineHeight(DependencyObject obj) { return (double)obj.GetValue(HtmlContentLineHeightProperty); }
         public static void SetHtmlContentLineHeight(DependencyObject obj, double value) { obj.SetValue(HtmlContentLineHeightProperty, value); }
 
         public static readonly DependencyProperty HtmlContentColumnWidthProperty =
-            DependencyProperty.RegisterAttached("HtmlContentColumnWidth", typeof(int), typeof(DependencyPropertyHelper), new PropertyMetadata(App.Settings.ReadingColumnWidth));
+            DependencyProperty.RegisterAttached(
+                "HtmlContentColumnWidth",
+                typeof(int),
+                typeof(DependencyPropertyHelper),
+                new PropertyMetadata(App.Settings.ReadingColumnWidth, OnHtmlThemePropertyChanged));
 
         public static int GetHtmlContentColumnWidth(DependencyObject obj) { return (int)obj.GetValue(HtmlContentColumnWidthProperty); }
         public static void SetHtmlContentColumnWidth(DependencyObject obj, int value) { obj.SetValue(HtmlContentColumnWidthProperty, value); }
+
+        // Handler for all related property changes
+        private static void OnHtmlThemePropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            ReloadContent(obj, GetHtmlContent(obj));
+        }
 
         private static string htmlStyleHeader;
         private static string htmlForegroundColor;
@@ -104,6 +133,23 @@ namespace WinBlur.App.Helpers
         private static int htmlTextSize;
         private static double htmlLineHeight;
         private static int htmlColumnWidth;
+
+        private static void ReloadContent(DependencyObject obj, string content)
+        {
+            if (obj is WebView2 wv && wv.IsLoaded && wv.CoreWebView2 != null)
+            {
+                string style = GetHtmlStyleHeader(obj);
+                string header = GetHtmlContentHeader(obj);
+                try
+                {
+                    wv.NavigateToString(string.Concat(style, header, content));
+                }
+                catch (Exception)
+                {
+                    wv.NavigateToString(string.Concat(style, header, "<div>Failed to load story. Try a different reading mode.</div>"));
+                }
+            }
+        }
 
         private static string GetHtmlStyleHeader(DependencyObject obj)
         {

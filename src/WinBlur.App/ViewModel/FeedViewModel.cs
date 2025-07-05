@@ -130,6 +130,31 @@ namespace WinBlur.App.ViewModel
             set { ReadingMode = (ReadingMode)value; NotifyPropertyChanged(nameof(ReadingModeIndex)); }
         }
 
+        public List<ReadingThemeViewModel> ReadingThemes { get; set; } = new List<ReadingThemeViewModel>
+        {
+            new ReadingThemeViewModel { Label = "System", ThemeMode = ReadingThemeMode.UseWindowsTheme },
+            new ReadingThemeViewModel { Label = "Sepia", ThemeMode = ReadingThemeMode.Sepia },
+            new ReadingThemeViewModel { Label = "Light", ThemeMode = ReadingThemeMode.Light },
+            new ReadingThemeViewModel { Label = "Dark", ThemeMode = ReadingThemeMode.Dark },
+            new ReadingThemeViewModel { Label = "Black", ThemeMode = ReadingThemeMode.Black }
+        };
+
+        private ReadingThemeViewModel selectedReadingTheme;
+        public ReadingThemeViewModel SelectedReadingTheme
+        {
+            get { return selectedReadingTheme; }
+            set
+            {
+                selectedReadingTheme = value;
+                NotifyPropertyChanged(nameof(SelectedReadingTheme));
+
+                if (selectedReadingTheme != null)
+                {
+                    ArticleTheme.Instance.ReadingTheme = selectedReadingTheme.ThemeMode;
+                }
+            }
+        }
+
         public List<ReadingFontViewModel> ReadingFonts { get; set; } = new List<ReadingFontViewModel>
         {
             new ReadingFontViewModel
@@ -159,43 +184,39 @@ namespace WinBlur.App.ViewModel
 
                 if (selectedReadingFont != null)
                 {
-                    App.Settings.ReadingFont = selectedReadingFont.FontFamily.Source;
-                    App.Settings.ReadingFontWeight = selectedReadingFont.FontWeight.Weight;
-                    RefreshArticleContent();
+                    ArticleTheme.Instance.ContentFontFamily = selectedReadingFont.FontFamily.Source;
+                    ArticleTheme.Instance.ContentFontWeight = selectedReadingFont.FontWeight.Weight;
                 }
             }
         }
 
         public int ReadingTextSize
         {
-            get => App.Settings.ReadingTextSize;
+            get => ArticleTheme.Instance.ContentTextSize;
             set
             {
-                App.Settings.ReadingTextSize = value;
+                ArticleTheme.Instance.ContentTextSize = value;
                 NotifyPropertyChanged(nameof(ReadingTextSize));
-                RefreshArticleContent();
             }
         }
 
         public double ReadingLineHeight
         {
-            get => App.Settings.ReadingLineHeight;
+            get => ArticleTheme.Instance.ContentLineHeight;
             set
             {
-                App.Settings.ReadingLineHeight = value;
+                ArticleTheme.Instance.ContentLineHeight = value;
                 NotifyPropertyChanged(nameof(ReadingLineHeight));
-                RefreshArticleContent();
             }
         }
 
         public int ReadingColumnWidth
         {
-            get => App.Settings.ReadingColumnWidth;
+            get => ArticleTheme.Instance.ContentColumnWidth;
             set
             {
-                App.Settings.ReadingColumnWidth = value;
+                ArticleTheme.Instance.ContentColumnWidth = value;
                 NotifyPropertyChanged(nameof(ReadingColumnWidth));
-                RefreshArticleContent();
             }
         }
 
@@ -291,8 +312,9 @@ namespace WinBlur.App.ViewModel
             markAsReadTimer.Interval = new TimeSpan(0, 0, App.Settings.MarkAsReadDelay);
             markAsReadTimer.Tick += MarkAsReadTimer_Tick;
 
-            // Set selected font to the view model that matches the saved setting.
-            // Fallback to first font (system default font) if not found.
+            // Set selected theme+font to the view model that matches the saved setting.
+            // Fallback to first font (system default) if not found.
+            selectedReadingTheme = ReadingThemes.FirstOrDefault(r => r.ThemeMode == App.Settings.ReadingTheme, ReadingThemes[0]);
             selectedReadingFont = ReadingFonts.FirstOrDefault(f => f.FontFamily.Source == App.Settings.ReadingFont, ReadingFonts[0]);
         }
 
@@ -434,19 +456,8 @@ namespace WinBlur.App.ViewModel
 
         public void RefreshArticleContent()
         {
-            var viewBackgroundColor = ReadingThemeViewModel.GetWebViewBackgroundColorForReadingTheme(App.Settings.ReadingTheme);
-            var contentBackgroundColor = ReadingThemeViewModel.GetContentBackgroundColorForReadingTheme(App.Settings.ReadingTheme);
-            var contentForegroundColor = ReadingThemeViewModel.GetContentForegroundBrushForReadingTheme(App.Settings.ReadingTheme);
             foreach (Article a in ArticleList)
             {
-                a.WebViewBackgroundColor = viewBackgroundColor;
-                a.ContentBackgroundColor = contentBackgroundColor;
-                a.ContentForegroundBrush = contentForegroundColor;
-                a.ContentFontFamily = SelectedReadingFont.FontFamily.Source;
-                a.ContentFontWeight = SelectedReadingFont.FontWeight.Weight;
-                a.ContentTextSize = ReadingTextSize;
-                a.ContentLineHeight = ReadingLineHeight;
-                a.ContentColumnWidth = ReadingColumnWidth;
                 a.ViewContent = "";
                 if (SelectedArticle == a)
                 {

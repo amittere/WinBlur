@@ -17,6 +17,7 @@
             <SolidColorBrush x:Key="TitlebarBackgroundDisabled" Color="{ThemeResource SolidBackgroundFillColorBase}"/>
 
             <!-- Article content brushes -->
+            <SolidColorBrush x:Key="ArticleContentBackgroundBrush" Color="{StaticResource LayerFillColorDefault}" />
             <SolidColorBrush x:Key="ArticleContentForegroundBrush" Color="{StaticResource TextFillColorPrimary}"/>
             <SolidColorBrush x:Key="ArticleContentScrollbarBackgroundBrush" Color="#FCFCFC"/>
             <SolidColorBrush x:Key="ArticleContentScrollbarBrush" Color="#8A8A8A"/>
@@ -29,6 +30,8 @@
             <SolidColorBrush x:Key="TitlebarBackgroundDisabled" Color="{ThemeResource SolidBackgroundFillColorBase}"/>
 
             <!-- Article content brushes -->
+            <SolidColorBrush x:Key="ArticleContentBackgroundBrush" Color="{StaticResource LayerFillColorDefault}" />
+            <SolidColorBrush x:Key="ArticleContentForegroundBrush" Color="{StaticResource TextFillColorPrimary}"/>
             <SolidColorBrush x:Key="ArticleContentScrollbarBackgroundBrush" Color="#2C2C2C"/>
             <SolidColorBrush x:Key="ArticleContentScrollbarBrush" Color="#A1A1A1"/>
         </ResourceDictionary>
@@ -38,10 +41,6 @@
     <SolidColorBrush x:Key="WindowCaptionBackgroundDisabled" Color="Transparent"/>
     <SolidColorBrush x:Key="TitlebarBackground" Color="Transparent"/>
     
-    <!-- Reading Theme brushes matching Windows theme -->
-    <SolidColorBrush x:Key="ArticleContentBackgroundBrush" Color="{ThemeResource LayerFillColorDefault}" />
-    <SolidColorBrush x:Key="ArticleContentForegroundBrush" Color="{ThemeResource TextFillColorPrimary}"/>
-
     <!-- Red accent color shades -->
     <Color x:Key="RedAccentColor">#FFE61717</Color>
     <Color x:Key="RedAccentColorSemilight">#FFE64545</Color>
