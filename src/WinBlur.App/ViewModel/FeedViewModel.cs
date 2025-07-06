@@ -1,9 +1,12 @@
 using CommunityToolkit.WinUI;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using WinBlur.App.Helpers;
 using WinBlur.App.Model;
@@ -127,6 +130,95 @@ namespace WinBlur.App.ViewModel
             set { ReadingMode = (ReadingMode)value; NotifyPropertyChanged(nameof(ReadingModeIndex)); }
         }
 
+        public List<ReadingThemeViewModel> ReadingThemes { get; set; } = new List<ReadingThemeViewModel>
+        {
+            new ReadingThemeViewModel { Label = "System", ThemeMode = ReadingThemeMode.UseWindowsTheme },
+            new ReadingThemeViewModel { Label = "Sepia", ThemeMode = ReadingThemeMode.Sepia },
+            new ReadingThemeViewModel { Label = "Light", ThemeMode = ReadingThemeMode.Light },
+            new ReadingThemeViewModel { Label = "Dark", ThemeMode = ReadingThemeMode.Dark },
+            new ReadingThemeViewModel { Label = "Black", ThemeMode = ReadingThemeMode.Black }
+        };
+
+        private ReadingThemeViewModel selectedReadingTheme;
+        public ReadingThemeViewModel SelectedReadingTheme
+        {
+            get { return selectedReadingTheme; }
+            set
+            {
+                selectedReadingTheme = value;
+                NotifyPropertyChanged(nameof(SelectedReadingTheme));
+
+                if (selectedReadingTheme != null)
+                {
+                    ArticleThemeViewModel.Instance.ReadingTheme = selectedReadingTheme.ThemeMode;
+                }
+            }
+        }
+
+        public List<ReadingFontViewModel> ReadingFonts { get; set; } = new List<ReadingFontViewModel>
+        {
+            new ReadingFontViewModel
+            {
+                Label = FontFamily.XamlAutoFontFamily.Source,
+                FontFamily = FontFamily.XamlAutoFontFamily
+            },
+            new ReadingFontViewModel
+            {
+                Label = "Bahnschrift",
+                FontFamily = new FontFamily("Bahnschrift"),
+                FontWeight = FontWeights.SemiLight
+            },
+            new ReadingFontViewModel { Label = "Tahoma", FontFamily = new FontFamily("Tahoma") },
+            new ReadingFontViewModel { Label = "Georgia", FontFamily = new FontFamily("Georgia") },
+            new ReadingFontViewModel { Label = "Consolas", FontFamily = new FontFamily("Consolas") },
+        };
+
+        private ReadingFontViewModel selectedReadingFont;
+        public ReadingFontViewModel SelectedReadingFont
+        {
+            get => selectedReadingFont;
+            set
+            {
+                selectedReadingFont = value;
+                NotifyPropertyChanged(nameof(SelectedReadingFont));
+
+                if (selectedReadingFont != null)
+                {
+                    ArticleThemeViewModel.Instance.ContentFontFamily = selectedReadingFont.FontFamily.Source;
+                    ArticleThemeViewModel.Instance.ContentFontWeight = selectedReadingFont.FontWeight.Weight;
+                }
+            }
+        }
+
+        public int ReadingTextSize
+        {
+            get => ArticleThemeViewModel.Instance.ContentTextSize;
+            set
+            {
+                ArticleThemeViewModel.Instance.ContentTextSize = value;
+                NotifyPropertyChanged(nameof(ReadingTextSize));
+            }
+        }
+
+        public double ReadingLineHeight
+        {
+            get => ArticleThemeViewModel.Instance.ContentLineHeight;
+            set
+            {
+                ArticleThemeViewModel.Instance.ContentLineHeight = value;
+                NotifyPropertyChanged(nameof(ReadingLineHeight));
+            }
+        }
+
+        public int ReadingColumnWidth
+        {
+            get => ArticleThemeViewModel.Instance.ContentColumnWidth;
+            set
+            {
+                ArticleThemeViewModel.Instance.ContentColumnWidth = value;
+                NotifyPropertyChanged(nameof(ReadingColumnWidth));
+            }
+        }
 
         private Article _selectedArticle;
         public Article SelectedArticle
@@ -219,6 +311,11 @@ namespace WinBlur.App.ViewModel
         {
             markAsReadTimer.Interval = new TimeSpan(0, 0, App.Settings.MarkAsReadDelay);
             markAsReadTimer.Tick += MarkAsReadTimer_Tick;
+
+            // Set selected theme+font to the view model that matches the saved setting.
+            // Fallback to first font (system default) if not found.
+            selectedReadingTheme = ReadingThemes.FirstOrDefault(r => r.ThemeMode == App.Settings.ReadingTheme, ReadingThemes[0]);
+            selectedReadingFont = ReadingFonts.FirstOrDefault(f => f.FontFamily.Source == App.Settings.ReadingFont, ReadingFonts[0]);
         }
 
         private void MarkAsReadTimer_Tick(object sender, object e)

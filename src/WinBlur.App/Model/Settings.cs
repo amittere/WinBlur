@@ -1,11 +1,14 @@
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.UI.Helpers;
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using WinBlur.App.ViewModel;
 using Windows.Security.Credentials;
 using Windows.Storage;
@@ -118,6 +121,48 @@ namespace WinBlur.App.Model
             set { appTheme2 = value; SaveSetting(ApplicationData.Current.LocalSettings, (int)value); }
         }
 
+        private ReadingThemeMode readingTheme = ReadingThemeMode.UseWindowsTheme;
+        public ReadingThemeMode ReadingTheme
+        {
+            get => readingTheme;
+            set { readingTheme = value; SaveSetting(ApplicationData.Current.LocalSettings, (int)value); }
+        }
+
+        private string readingFont = FontFamily.XamlAutoFontFamily.Source;
+        public string ReadingFont
+        {
+            get { return readingFont; }
+            set { readingFont = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
+        }
+
+        private int readingFontWeight = FontWeights.Normal.Weight;
+        public int ReadingFontWeight
+        {
+            get { return readingFontWeight; }
+            set { readingFontWeight = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
+        }
+
+        private int readingTextSize = 16;
+        public int ReadingTextSize
+        {
+            get { return readingTextSize; }
+            set { readingTextSize = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
+        }
+
+        private double readingLineHeight = 1.75;
+        public double ReadingLineHeight
+        {
+            get { return readingLineHeight; }
+            set { readingLineHeight = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
+        }
+
+        private int readingColumnWidth = 700;
+        public int ReadingColumnWidth
+        {
+            get { return readingColumnWidth; }
+            set { readingColumnWidth = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
+        }
+
         private FeedMode feedFilterMode = FeedMode.All;
         public FeedMode FeedFilterMode
         {
@@ -222,6 +267,12 @@ namespace WinBlur.App.Model
             openLinksInBrowser = LoadSetting(container, nameof(OpenLinksInBrowser), OpenLinksInBrowser);
             showImagePreviews = LoadSetting(container, nameof(ShowImagePreviews), ShowImagePreviews);
             appTheme2 = LoadSetting(container, nameof(AppTheme2), AppTheme2);
+            readingTheme = LoadSetting(container, nameof(ReadingTheme), ReadingTheme);
+            readingTextSize = LoadSetting(container, nameof(ReadingTextSize), ReadingTextSize);
+            readingLineHeight = LoadSetting(container, nameof(ReadingLineHeight), ReadingLineHeight);
+            readingColumnWidth = LoadSetting(container, nameof(ReadingColumnWidth), ReadingColumnWidth);
+            readingFont = LoadSetting(container, nameof(ReadingFont), ReadingFont);
+            readingFontWeight = LoadSetting(container, nameof(ReadingFontWeight), ReadingFontWeight);
 
             var sortModeSettings = LoadSetting<ApplicationDataCompositeValue>(container, nameof(SortModeSettings), null);
             if (sortModeSettings != null)
@@ -275,6 +326,12 @@ namespace WinBlur.App.Model
             SaveSetting(container, OpenLinksInBrowser, nameof(OpenLinksInBrowser));
             SaveSetting(container, ShowImagePreviews, nameof(ShowImagePreviews));
             SaveSetting(container, (int)AppTheme2, nameof(AppTheme2));
+            SaveSetting(container, (int)ReadingTheme, nameof(ReadingTheme));
+            SaveSetting(container, ReadingTextSize, nameof(ReadingTextSize));
+            SaveSetting(container, ReadingLineHeight, nameof(ReadingLineHeight));
+            SaveSetting(container, ReadingColumnWidth, nameof(ReadingColumnWidth));
+            SaveSetting(container, ReadingFont, nameof(ReadingFont));
+            SaveSetting(container, ReadingFontWeight, nameof(ReadingFontWeight));
 
             // Sort mode settings
             if (SortModeSettings.Count > 0)
@@ -457,20 +514,24 @@ namespace WinBlur.App.Model
             });
         }
 
+        public ElementTheme GetElementThemeFromAppTheme(AppThemeMode themeMode)
+        {
+            if (themeMode == AppThemeMode.UseWindowsTheme)
+            {
+                return AppThemeToElementTheme(Application.Current.RequestedTheme);
+            }
+            else
+            {
+                return AppThemeToElementTheme((ApplicationTheme)themeMode);
+            }
+        }
+
         public void UpdateAppTheme()
         {
             if (App.Window.Content is FrameworkElement element)
             {
                 var oldTheme = element.RequestedTheme;
-                if (AppTheme2 == AppThemeMode.UseWindowsTheme)
-                {
-                    element.RequestedTheme = AppThemeToElementTheme(Application.Current.RequestedTheme);
-                }
-                else
-                {
-                    element.RequestedTheme = AppThemeToElementTheme((ApplicationTheme)AppTheme2);
-                }
-
+                element.RequestedTheme = GetElementThemeFromAppTheme(AppTheme2);
                 if (element.RequestedTheme != oldTheme)
                 {
                     ThemeChanged?.Invoke(this, EventArgs.Empty);
@@ -501,7 +562,7 @@ namespace WinBlur.App.Model
             }
         }
 
-        private ElementTheme AppThemeToElementTheme(ApplicationTheme appTheme)
+        public ElementTheme AppThemeToElementTheme(ApplicationTheme appTheme)
         {
             switch (appTheme)
             {
@@ -526,5 +587,14 @@ namespace WinBlur.App.Model
         Light,
         Dark,
         UseWindowsTheme
+    }
+
+    public enum ReadingThemeMode
+    {
+        UseWindowsTheme,
+        Light,
+        Sepia,
+        Dark,
+        Black
     }
 }

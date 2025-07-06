@@ -17,6 +17,8 @@
             <SolidColorBrush x:Key="TitlebarBackgroundDisabled" Color="{ThemeResource SolidBackgroundFillColorBase}"/>
 
             <!-- Article content brushes -->
+            <SolidColorBrush x:Key="ArticleContentBackgroundBrush" Color="{StaticResource LayerFillColorDefault}" />
+            <SolidColorBrush x:Key="ArticleContentForegroundBrush" Color="{StaticResource TextFillColorPrimary}"/>
             <SolidColorBrush x:Key="ArticleContentScrollbarBackgroundBrush" Color="#FCFCFC"/>
             <SolidColorBrush x:Key="ArticleContentScrollbarBrush" Color="#8A8A8A"/>
         </ResourceDictionary>
@@ -28,6 +30,8 @@
             <SolidColorBrush x:Key="TitlebarBackgroundDisabled" Color="{ThemeResource SolidBackgroundFillColorBase}"/>
 
             <!-- Article content brushes -->
+            <SolidColorBrush x:Key="ArticleContentBackgroundBrush" Color="{StaticResource LayerFillColorDefault}" />
+            <SolidColorBrush x:Key="ArticleContentForegroundBrush" Color="{StaticResource TextFillColorPrimary}"/>
             <SolidColorBrush x:Key="ArticleContentScrollbarBackgroundBrush" Color="#2C2C2C"/>
             <SolidColorBrush x:Key="ArticleContentScrollbarBrush" Color="#A1A1A1"/>
         </ResourceDictionary>
@@ -36,7 +40,7 @@
     <SolidColorBrush x:Key="WindowCaptionBackground" Color="Transparent"/>
     <SolidColorBrush x:Key="WindowCaptionBackgroundDisabled" Color="Transparent"/>
     <SolidColorBrush x:Key="TitlebarBackground" Color="Transparent"/>
-
+    
     <!-- Red accent color shades -->
     <Color x:Key="RedAccentColor">#FFE61717</Color>
     <Color x:Key="RedAccentColorSemilight">#FFE64545</Color>
@@ -48,7 +52,7 @@
     <!-- Control light-weight styling -->
     <StaticResource x:Key="CommandBarBackgroundOpen" ResourceKey="ControlFillColorTransparentBrush"/>
     <Thickness x:Key="CommandBarBorderThicknessOpen">0</Thickness>
-    
+
     <Style x:Key="CardGridStyle" TargetType="Grid">
         <Setter Property="Background"
                 Value="{ThemeResource LayerFillColorDefaultBrush}" />
@@ -59,6 +63,12 @@
         <Setter Property="CornerRadius"
                 Value="8" />
     </Style>
+    
+    <Style x:Key="FontRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource DefaultRadioButtonStyle}">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="8,0,0,0"/>
+    </Style>
+
 
     <Style x:Key="IconButtonStyle" TargetType="Button">
         <Setter Property="FontSize" Value="16" />

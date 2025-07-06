@@ -284,8 +284,11 @@
         </Grid>
 
         <!-- Article content card -->
-        <Grid Grid.Column="1"
+        <Grid x:Name="ArticleContent"
+              Grid.Column="1"
               Grid.Row="0"
+              Background="{x:Bind vmodel:ArticleThemeViewModel.Instance.WebViewBackgroundBrush, Mode=OneWay}"
+              RequestedTheme="{x:Bind vmodel:ArticleThemeViewModel.Instance.RequestedTheme, Mode=OneWay}"
               Style="{StaticResource CardGridStyle}"
               Margin="0,0,8,8">
             <Grid.RowDefinitions>
@@ -323,6 +326,120 @@
                                 </RadioMenuFlyoutItem.DataContext>
                             </RadioMenuFlyoutItem>
                         </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+
+                <AppBarButton x:Name="StyleButton"
+                              Label="Style"
+                              Style="{StaticResource FlyoutAppBarButtonStyle}"
+                              Icon="Font">
+                    <AppBarButton.Flyout>
+                        <Flyout>
+                            <StackPanel MinWidth="250" MaxWidth="300">
+                                <TextBlock Text="Color Theme"
+                                           Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                <RadioButtons ItemsSource="{x:Bind viewModel.ReadingThemes}"
+                                              MaxColumns="2"
+                                              SelectedItem="{x:Bind viewModel.SelectedReadingTheme, Mode=TwoWay}" />
+                                <MenuFlyoutSeparator Margin="0,8"/>
+                                <TextBlock Text="Font"
+                                           Margin="0,8,0,0"
+                                           Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                <RadioButtons ItemsSource="{x:Bind viewModel.ReadingFonts}"
+                                              MaxColumns="2"
+                                              SelectedItem="{x:Bind viewModel.SelectedReadingFont, Mode=TwoWay}">
+                                    <RadioButtons.ItemTemplate>
+                                        <DataTemplate x:DataType="vmodel:ReadingFontViewModel">
+                                            <RadioButton Style="{StaticResource FontRadioButtonStyle}">
+                                                <TextBlock Text="{x:Bind Label}"
+                                                           FontFamily="{x:Bind FontFamily}"
+                                                           FontWeight="{x:Bind FontWeight}"
+                                                           TextLineBounds="Tight"
+                                                           VerticalAlignment="Center" />
+                                            </RadioButton>
+                                        </DataTemplate>
+                                    </RadioButtons.ItemTemplate>
+                                </RadioButtons>
+                                <TextBlock Text="Text Size"
+                                           Margin="0,12,0,0"
+                                           Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                <Grid Margin="6,8,6,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                               Text="S"
+                                               TextAlignment="Left"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="M"
+                                               TextAlignment="Center"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                    <TextBlock Grid.Column="2"
+                                               Text="L"
+                                               TextAlignment="Right"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                </Grid>
+                                <Slider Value="{x:Bind viewModel.ReadingTextSize, Mode=TwoWay}"
+                                        IsThumbToolTipEnabled="False"
+                                        Minimum="8"
+                                        Maximum="24"
+                                        StepFrequency="2"
+                                        TickFrequency="4"
+                                        TickPlacement="TopLeft" />
+                                <MenuFlyoutSeparator Margin="0,8" />
+                                <TextBlock Text="Line Height"
+                                           Margin="0,12,0,0"
+                                           Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                               Text="Narrow"
+                                               TextAlignment="Left"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="Wide"
+                                               TextAlignment="Right"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                </Grid>
+                                <Slider Value="{x:Bind viewModel.ReadingLineHeight, Mode=TwoWay}"
+                                        IsThumbToolTipEnabled="False"
+                                        Minimum="1.0"
+                                        Maximum="2.5"
+                                        StepFrequency="0.25"
+                                        TickFrequency="0.75"
+                                        TickPlacement="TopLeft" />
+                                <TextBlock Text="Column Width"
+                                           Margin="0,12,0,0"
+                                           Style="{StaticResource BodyStrongTextBlockStyle}" />
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                               Text="Narrow"
+                                               TextAlignment="Left"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="Wide"
+                                               TextAlignment="Right"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                </Grid>
+                                <Slider Value="{x:Bind viewModel.ReadingColumnWidth, Mode=TwoWay}"
+                                        IsThumbToolTipEnabled="False"
+                                        Minimum="400"
+                                        Maximum="1000"
+                                        StepFrequency="100"
+                                        TickFrequency="300"
+                                        TickPlacement="TopLeft" />
+                            </StackPanel>
+                        </Flyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>
                 <AppBarToggleButton x:Name="commentsButton"
@@ -383,14 +500,18 @@
                         <WebView2 x:Name="articleTextView"
                                   CanGoBack="False"
                                   CanGoForward="False"
-                                  DefaultBackgroundColor="Transparent"
+                                  DefaultBackgroundColor="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentBackgroundColor, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContent="{x:Bind ViewContent, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentHeader="{x:Bind ContentHeader, Mode=OneWay}"
-                                  helpers:DependencyPropertyHelper.HtmlContentBackground="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
-                                  helpers:DependencyPropertyHelper.HtmlContentForeground="{ThemeResource TextFillColorPrimaryBrush}"
+                                  helpers:DependencyPropertyHelper.HtmlContentForeground="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentForegroundBrush, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentLinkColor="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarBackgroundColor="{ThemeResource ArticleContentScrollbarBackgroundBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarColor="{ThemeResource ArticleContentScrollbarBrush}"
+                                  helpers:DependencyPropertyHelper.HtmlContentFontFamily="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentFontFamily, Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentFontWeight="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentFontWeight,Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentTextSize="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentTextSize, Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentLineHeight="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentLineHeight, Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentColumnWidth="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentColumnWidth, Mode=OneWay}"
                                   Loaded="articleTextView_Loaded"
                                   NavigationStarting="articleTextView_NavigationStarting"
                                   HorizontalAlignment="Stretch"
@@ -398,7 +519,7 @@
                                   Margin="0,0,0,8">
                             <WebView2.Resources>
                                 <SolidColorBrush x:Name="BrushForThemeBackgroundColor"
-                                                 Color="{ThemeResource LayerFillColorDefault}" />
+                                                 Color="{x:Bind vmodel:ArticleThemeViewModel.Instance.WebViewBackgroundColor, Mode=OneWay}" />
                             </WebView2.Resources>
                         </WebView2>
                     </DataTemplate>

@@ -428,31 +428,39 @@ namespace WinBlur.App
 
         private async Task<bool> LoadTextView()
         {
-            if (articleDetailView == null) return false;
-            if (!(articleDetailView.SelectedItem is Article article)) return false;
+            if (GetActiveWebView() != null &&
+                articleDetailView?.SelectedItem is Article article)
+            {
+                // switch to text view, grabbing it from the web if necessary
+                await viewModel.GetOriginalText(article);
 
-            // switch to text view, grabbing it from the web if necessary
-            await viewModel.GetOriginalText(article);
-
-            // Get the webview hosting the story content
-            if (!(articleDetailView.ContainerFromIndex(articleDetailView.SelectedIndex) is FrameworkElement container)) return false;
-            if (!(container.FindDescendant("articleTextView") is WebView2 view)) return false;
-            if (!view.IsLoaded || view.CoreWebView2 == null) return false;
-
-            article.ViewContent = article.TextContent;
-            return true;
+                article.ViewContent = article.TextContent;
+                return true;
+            }
+            return false;
         }
 
         private bool LoadFeedView()
         {
-            if (articleDetailView == null) return false;
-            if (!(articleDetailView.SelectedItem is Article article)) return false;
-            if (!(articleDetailView.ContainerFromIndex(articleDetailView.SelectedIndex) is FrameworkElement container)) return false;
-            if (!(container.FindDescendant("articleTextView") is WebView2 view)) return false;
-            if (!view.IsLoaded || view.CoreWebView2 == null) return false;
+            if (GetActiveWebView() != null &&
+                articleDetailView?.SelectedItem is Article article)
+            {
+                article.ViewContent = article.FeedContent;
+                return true;
+            }
+            return false;
+        }
 
-            article.ViewContent = article.FeedContent;
-            return true;
+        private WebView2 GetActiveWebView()
+        {
+            if (articleDetailView?.ContainerFromIndex(articleDetailView.SelectedIndex) is FrameworkElement container &&
+                container.FindDescendant("articleTextView") is WebView2 view &&
+                view.IsLoaded &&
+                view.CoreWebView2 != null)
+            {
+                return view;
+            }
+            return null;
         }
 
         private void readingModeSplitButton_Click(SplitButton sender, SplitButtonClickEventArgs args)
@@ -1093,15 +1101,24 @@ namespace WinBlur.App
 
         #endregion
 
-        #region Theme
+        #region Reading Style
 
         private void Settings_ThemeChanged(object sender, EventArgs e)
         {
-            // Walk through all articles updating their ViewContent to match the new theme.
-            viewModel.RefreshArticleContent();
+            ArticleThemeViewModel.Instance.OnSystemThemeChanged();
+            OnReadingThemeChanged();
+        }
 
-            // Reload comments so hopefully the PersonPicture controls work properly
-            LoadComments(viewModel.SelectedArticle);
+        private void OnReadingThemeChanged()
+        {
+            if (viewModel != null)
+            {
+                // Walk through all articles updating their ViewContent to match the new theme.
+                viewModel.RefreshArticleContent();
+
+                // Reload comments so hopefully the PersonPicture controls work properly
+                LoadComments(viewModel.SelectedArticle);
+            }
         }
 
         #endregion
