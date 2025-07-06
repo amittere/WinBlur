@@ -1,10 +1,8 @@
-using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
 using WinBlur.App.ViewModel;
-using Windows.UI;
 
 namespace WinBlur.App.Helpers
 {

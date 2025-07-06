@@ -8,12 +8,12 @@ using Windows.UI;
 
 namespace WinBlur.App.ViewModel
 {
-    public class ArticleTheme : INotifyPropertyChanged
+    public class ArticleThemeViewModel : INotifyPropertyChanged
     {
-        private static readonly ArticleTheme _instance = new ArticleTheme();
-        public static ArticleTheme Instance => _instance;
+        private static readonly ArticleThemeViewModel _instance = new ArticleThemeViewModel();
+        public static ArticleThemeViewModel Instance => _instance;
 
-        private ArticleTheme()
+        private ArticleThemeViewModel()
         {
             contentFontFamily = App.Settings.ReadingFont;
             contentFontWeight = App.Settings.ReadingFontWeight;

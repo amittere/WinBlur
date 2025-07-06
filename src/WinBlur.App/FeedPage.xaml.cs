@@ -4,12 +4,10 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using WinBlur.App.Helpers;
 using WinBlur.App.Model;
@@ -17,7 +15,6 @@ using WinBlur.App.View;
 using WinBlur.App.ViewModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
-using Windows.UI;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -1108,7 +1105,7 @@ namespace WinBlur.App
 
         private void Settings_ThemeChanged(object sender, EventArgs e)
         {
-            ArticleTheme.Instance.OnSystemThemeChanged();
+            ArticleThemeViewModel.Instance.OnSystemThemeChanged();
             OnReadingThemeChanged();
         }
 

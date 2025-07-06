@@ -1,9 +1,6 @@
-using Microsoft.UI;
-using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using WinBlur.App.ViewModel;
 using Windows.UI;
 
 namespace WinBlur.App.Model

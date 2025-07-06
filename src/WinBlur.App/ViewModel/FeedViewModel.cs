@@ -150,7 +150,7 @@ namespace WinBlur.App.ViewModel
 
                 if (selectedReadingTheme != null)
                 {
-                    ArticleTheme.Instance.ReadingTheme = selectedReadingTheme.ThemeMode;
+                    ArticleThemeViewModel.Instance.ReadingTheme = selectedReadingTheme.ThemeMode;
                 }
             }
         }
@@ -184,38 +184,38 @@ namespace WinBlur.App.ViewModel
 
                 if (selectedReadingFont != null)
                 {
-                    ArticleTheme.Instance.ContentFontFamily = selectedReadingFont.FontFamily.Source;
-                    ArticleTheme.Instance.ContentFontWeight = selectedReadingFont.FontWeight.Weight;
+                    ArticleThemeViewModel.Instance.ContentFontFamily = selectedReadingFont.FontFamily.Source;
+                    ArticleThemeViewModel.Instance.ContentFontWeight = selectedReadingFont.FontWeight.Weight;
                 }
             }
         }
 
         public int ReadingTextSize
         {
-            get => ArticleTheme.Instance.ContentTextSize;
+            get => ArticleThemeViewModel.Instance.ContentTextSize;
             set
             {
-                ArticleTheme.Instance.ContentTextSize = value;
+                ArticleThemeViewModel.Instance.ContentTextSize = value;
                 NotifyPropertyChanged(nameof(ReadingTextSize));
             }
         }
 
         public double ReadingLineHeight
         {
-            get => ArticleTheme.Instance.ContentLineHeight;
+            get => ArticleThemeViewModel.Instance.ContentLineHeight;
             set
             {
-                ArticleTheme.Instance.ContentLineHeight = value;
+                ArticleThemeViewModel.Instance.ContentLineHeight = value;
                 NotifyPropertyChanged(nameof(ReadingLineHeight));
             }
         }
 
         public int ReadingColumnWidth
         {
-            get => ArticleTheme.Instance.ContentColumnWidth;
+            get => ArticleThemeViewModel.Instance.ContentColumnWidth;
             set
             {
-                ArticleTheme.Instance.ContentColumnWidth = value;
+                ArticleThemeViewModel.Instance.ContentColumnWidth = value;
                 NotifyPropertyChanged(nameof(ReadingColumnWidth));
             }
         }

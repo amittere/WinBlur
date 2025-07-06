@@ -287,8 +287,8 @@
         <Grid x:Name="ArticleContent"
               Grid.Column="1"
               Grid.Row="0"
-              Background="{x:Bind vmodel:ArticleTheme.Instance.WebViewBackgroundBrush, Mode=OneWay}"
-              RequestedTheme="{x:Bind vmodel:ArticleTheme.Instance.RequestedTheme, Mode=OneWay}"
+              Background="{x:Bind vmodel:ArticleThemeViewModel.Instance.WebViewBackgroundBrush, Mode=OneWay}"
+              RequestedTheme="{x:Bind vmodel:ArticleThemeViewModel.Instance.RequestedTheme, Mode=OneWay}"
               Style="{StaticResource CardGridStyle}"
               Margin="0,0,8,8">
             <Grid.RowDefinitions>
@@ -500,18 +500,18 @@
                         <WebView2 x:Name="articleTextView"
                                   CanGoBack="False"
                                   CanGoForward="False"
-                                  DefaultBackgroundColor="{x:Bind vmodel:ArticleTheme.Instance.ContentBackgroundColor, Mode=OneWay}"
+                                  DefaultBackgroundColor="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentBackgroundColor, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContent="{x:Bind ViewContent, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentHeader="{x:Bind ContentHeader, Mode=OneWay}"
-                                  helpers:DependencyPropertyHelper.HtmlContentForeground="{x:Bind vmodel:ArticleTheme.Instance.ContentForegroundBrush, Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentForeground="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentForegroundBrush, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentLinkColor="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarBackgroundColor="{ThemeResource ArticleContentScrollbarBackgroundBrush}"
                                   helpers:DependencyPropertyHelper.HtmlContentScrollbarColor="{ThemeResource ArticleContentScrollbarBrush}"
-                                  helpers:DependencyPropertyHelper.HtmlContentFontFamily="{x:Bind vmodel:ArticleTheme.Instance.ContentFontFamily, Mode=OneWay}"
-                                  helpers:DependencyPropertyHelper.HtmlContentFontWeight="{x:Bind vmodel:ArticleTheme.Instance.ContentFontWeight,Mode=OneWay}"
-                                  helpers:DependencyPropertyHelper.HtmlContentTextSize="{x:Bind vmodel:ArticleTheme.Instance.ContentTextSize, Mode=OneWay}"
-                                  helpers:DependencyPropertyHelper.HtmlContentLineHeight="{x:Bind vmodel:ArticleTheme.Instance.ContentLineHeight, Mode=OneWay}"
-                                  helpers:DependencyPropertyHelper.HtmlContentColumnWidth="{x:Bind vmodel:ArticleTheme.Instance.ContentColumnWidth, Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentFontFamily="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentFontFamily, Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentFontWeight="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentFontWeight,Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentTextSize="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentTextSize, Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentLineHeight="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentLineHeight, Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentColumnWidth="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentColumnWidth, Mode=OneWay}"
                                   Loaded="articleTextView_Loaded"
                                   NavigationStarting="articleTextView_NavigationStarting"
                                   HorizontalAlignment="Stretch"
@@ -519,7 +519,7 @@
                                   Margin="0,0,0,8">
                             <WebView2.Resources>
                                 <SolidColorBrush x:Name="BrushForThemeBackgroundColor"
-                                                 Color="{x:Bind vmodel:ArticleTheme.Instance.WebViewBackgroundColor, Mode=OneWay}" />
+                                                 Color="{x:Bind vmodel:ArticleThemeViewModel.Instance.WebViewBackgroundColor, Mode=OneWay}" />
                             </WebView2.Resources>
                         </WebView2>
                     </DataTemplate>
