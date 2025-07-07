@@ -80,6 +80,11 @@ namespace WinBlur.App
 
         #region Article List
 
+        public static DependencyObject GetParentListViewItem(DependencyObject element)
+        {
+            return element.FindAscendant<ListViewItem>();
+        }
+
         private async void ArticleListRefresh_RefreshRequested(RefreshContainer sender, RefreshRequestedEventArgs args)
         {
             var deferral = args.GetDeferral();
@@ -145,12 +150,22 @@ namespace WinBlur.App
             }
         }
 
+        private void UnreadKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            UnreadFlyoutItem_Click(args.Element, null);
+        }
+
         private void UnreadFlyoutItem_Click(object sender, RoutedEventArgs _)
         {
             if (sender is FrameworkElement element && element.DataContext is Article article)
             {
                 viewModel.UnreadArticle(article);
             }
+        }
+
+        private void ReadKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            ReadFlyoutItem_Click(args.Element, null);
         }
 
         private void ReadFlyoutItem_Click(object sender, RoutedEventArgs _)
@@ -161,12 +176,22 @@ namespace WinBlur.App
             }
         }
 
+        private void UnsaveKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            UnsaveFlyoutItem_Click(args.Element, null);
+        }
+
         private void UnsaveFlyoutItem_Click(object sender, RoutedEventArgs _)
         {
             if (sender is FrameworkElement element && element.DataContext is Article article)
             {
                 viewModel.UnstarArticle(article);
             }
+        }
+
+        private void SaveKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            SaveFlyoutItem_Click(args.Element, null);
         }
 
         private void SaveFlyoutItem_Click(object sender, RoutedEventArgs _)
@@ -177,12 +202,30 @@ namespace WinBlur.App
             }
         }
 
+        private void ShareKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            ShareFlyoutItem_Click(args.Element, null);
+        }
+
         private void ShareFlyoutItem_Click(object sender, RoutedEventArgs _)
         {
             if (sender is FrameworkElement element && element.DataContext is Article article)
             {
                 _shareArticle = article;
                 dataTransferManagerInterop.ShowShareUIForWindow(App.WindowHandle);
+            }
+        }
+
+        private void OpenInBrowserKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            OpenInBrowserFlyoutItem_Click(args.Element, null);
+        }
+
+        private async void OpenInBrowserFlyoutItem_Click(object sender, RoutedEventArgs _)
+        {
+            if (sender is FrameworkElement element && element.DataContext is Article article)
+            {
+                await Launcher.LaunchUriAsync(article.ArticleLink);
             }
         }
 
@@ -373,6 +416,8 @@ namespace WinBlur.App
             settings.IsGeneralAutofillEnabled = false;
             settings.IsSwipeNavigationEnabled = false;
             settings.IsWebMessageEnabled = false;
+            settings.AreDefaultContextMenusEnabled = false;
+            settings.IsPasswordAutosaveEnabled = false;
         }
 
         private async void articleTextView_NavigationStarting(WebView2 sender, CoreWebView2NavigationStartingEventArgs args)
@@ -1101,7 +1146,7 @@ namespace WinBlur.App
 
         #endregion
 
-        #region Reading Style
+        #region Theme
 
         private void Settings_ThemeChanged(object sender, EventArgs e)
         {

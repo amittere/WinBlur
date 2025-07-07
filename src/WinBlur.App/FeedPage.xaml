@@ -5,6 +5,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:tk="using:CommunityToolkit.WinUI.UI"
       xmlns:toolkit="using:CommunityToolkit.WinUI.UI.Controls"
+      xmlns:local="using:WinBlur.App"
       xmlns:model="using:WinBlur.App.Model"
       xmlns:vmodel="using:WinBlur.App.ViewModel"
       xmlns:helpers="using:WinBlur.App.Helpers"
@@ -63,8 +64,10 @@
                               LabelPosition="Collapsed"
                               Icon="Bullets"
                               Click="markFeedAsReadButton_Click"
-                              ToolTipService.ToolTip="Mark as read"
                               IsEnabled="{x:Bind viewModel.CanMarkAsRead}">
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="R"/>
+                    </AppBarButton.KeyboardAccelerators>
                     <FlyoutBase.AttachedFlyout>
                         <Flyout Placement="Bottom">
                             <StackPanel Width="200">
@@ -83,63 +86,65 @@
                     </FlyoutBase.AttachedFlyout>
                 </AppBarButton>
 
-                <CommandBar.SecondaryCommands>
-                    <AppBarButton x:Name="sortModeSplitButton"
-                                  Label="Sort"
-                                  Icon="Sort"
-                                  Style="{StaticResource FlyoutAppBarButtonStyle}"
-                                  ToolTipService.ToolTip="{x:Bind vmodel:SortModeHelpers.GetTooltipString(viewModel.SortMode), Mode=OneWay}">
-                        <AppBarButton.Flyout>
-                            <MenuFlyout x:Name="sortModeMenuFlyout"
-                                        Placement="BottomEdgeAlignedLeft">
-                                <RadioMenuFlyoutItem Text="All - Newest"
-                                                     GroupName="SortMode"
-                                                     Click="SortModeFlyoutItem_Click">
-                                    <RadioMenuFlyoutItem.DataContext>
-                                        <vmodel:SortMode>All_Newest</vmodel:SortMode>
-                                    </RadioMenuFlyoutItem.DataContext>
-                                </RadioMenuFlyoutItem>
-                                <RadioMenuFlyoutItem Text="All - Oldest"
-                                                     GroupName="SortMode"
-                                                     Click="SortModeFlyoutItem_Click">
-                                    <RadioMenuFlyoutItem.DataContext>
-                                        <vmodel:SortMode>All_Oldest</vmodel:SortMode>
-                                    </RadioMenuFlyoutItem.DataContext>
-                                </RadioMenuFlyoutItem>
-                                <RadioMenuFlyoutItem Text="Unread - Newest"
-                                                     GroupName="SortMode"
-                                                     Click="SortModeFlyoutItem_Click">
-                                    <RadioMenuFlyoutItem.DataContext>
-                                        <vmodel:SortMode>Unread_Newest</vmodel:SortMode>
-                                    </RadioMenuFlyoutItem.DataContext>
-                                </RadioMenuFlyoutItem>
-                                <RadioMenuFlyoutItem Text="Unread - Oldest"
-                                                     GroupName="SortMode"
-                                                     Click="SortModeFlyoutItem_Click">
-                                    <RadioMenuFlyoutItem.DataContext>
-                                        <vmodel:SortMode>Unread_Oldest</vmodel:SortMode>
-                                    </RadioMenuFlyoutItem.DataContext>
-                                </RadioMenuFlyoutItem>
-                            </MenuFlyout>
-                        </AppBarButton.Flyout>
-                    </AppBarButton>
-                    <AppBarButton x:Name="syncFeedButton"
-                                  Icon="Refresh"
-                                  Label="Refresh"
-                                  LabelPosition="Collapsed"
-                                  ToolTipService.ToolTip="Refresh"
-                                  Click="syncFeedButton_Click" />
-                </CommandBar.SecondaryCommands>
+                <AppBarButton x:Name="sortModeSplitButton"
+                              Label="Sort"
+                              LabelPosition="Collapsed"
+                              Icon="Sort"
+                              Style="{StaticResource FlyoutAppBarButtonStyle}"
+                              ToolTipService.ToolTip="{x:Bind vmodel:SortModeHelpers.GetTooltipString(viewModel.SortMode), Mode=OneWay}">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout x:Name="sortModeMenuFlyout"
+                                    Placement="BottomEdgeAlignedLeft">
+                            <RadioMenuFlyoutItem Text="All - Newest"
+                                                 GroupName="SortMode"
+                                                 Click="SortModeFlyoutItem_Click">
+                                <RadioMenuFlyoutItem.DataContext>
+                                    <vmodel:SortMode>All_Newest</vmodel:SortMode>
+                                </RadioMenuFlyoutItem.DataContext>
+                            </RadioMenuFlyoutItem>
+                            <RadioMenuFlyoutItem Text="All - Oldest"
+                                                 GroupName="SortMode"
+                                                 Click="SortModeFlyoutItem_Click">
+                                <RadioMenuFlyoutItem.DataContext>
+                                    <vmodel:SortMode>All_Oldest</vmodel:SortMode>
+                                </RadioMenuFlyoutItem.DataContext>
+                            </RadioMenuFlyoutItem>
+                            <RadioMenuFlyoutItem Text="Unread - Newest"
+                                                 GroupName="SortMode"
+                                                 Click="SortModeFlyoutItem_Click">
+                                <RadioMenuFlyoutItem.DataContext>
+                                    <vmodel:SortMode>Unread_Newest</vmodel:SortMode>
+                                </RadioMenuFlyoutItem.DataContext>
+                            </RadioMenuFlyoutItem>
+                            <RadioMenuFlyoutItem Text="Unread - Oldest"
+                                                 GroupName="SortMode"
+                                                 Click="SortModeFlyoutItem_Click">
+                                <RadioMenuFlyoutItem.DataContext>
+                                    <vmodel:SortMode>Unread_Oldest</vmodel:SortMode>
+                                </RadioMenuFlyoutItem.DataContext>
+                            </RadioMenuFlyoutItem>
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarButton x:Name="syncFeedButton"
+                              Icon="Refresh"
+                              Label="Refresh"
+                              LabelPosition="Collapsed"
+                              Click="syncFeedButton_Click">
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="None" Key="F5"/>
+                    </AppBarButton.KeyboardAccelerators>
+                </AppBarButton>
 
                 <CommandBar.Content>
-                        <TextBlock x:Name="FeedTitleText"
-                                   Text="{x:Bind viewModel.Subscription.Title, Mode=OneWay}"
-                                   ToolTipService.ToolTip="{x:Bind viewModel.Subscription.Title, Mode=OneWay}"
-                                   Style="{StaticResource SubtitleTextBlockStyle}"
-                                   HorizontalAlignment="Left"
-                                   Margin="22,10,12,10"
-                                   TextWrapping="NoWrap"
-                                   TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="FeedTitleText"
+                               Text="{x:Bind viewModel.Subscription.Title, Mode=OneWay}"
+                               ToolTipService.ToolTip="{x:Bind viewModel.Subscription.Title, Mode=OneWay}"
+                               Style="{StaticResource SubtitleTextBlockStyle}"
+                               HorizontalAlignment="Left"
+                               Margin="22,10,12,10"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis" />
                 </CommandBar.Content>
             </CommandBar>
 
@@ -158,7 +163,8 @@
                           ItemClick="articleListView_ItemClick">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="model:Article">
-                            <Grid>
+                            <Grid x:Name="RootGrid"
+                                  tk:FrameworkElementExtensions.AncestorType="ListViewItem">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
@@ -199,7 +205,7 @@
                                            Grid.Column="2"
                                            Margin="0,15,10,0"
                                            Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
-                                           Visibility="{x:Bind IsStarred, Converter={StaticResource BoolToVisibleConverter}, Mode=OneWay}" />
+                                           Visibility="{x:Bind IsStarred, Mode=OneWay}" />
                                 <Border Grid.Column="3"
                                         VerticalAlignment="Stretch"
                                         Margin="0,2,-8,2"
@@ -217,30 +223,94 @@
                                         </Image.Source>
                                     </Image>
                                 </Border>
+                                
+                                <!-- Keyboard accelerators that work on the currently focused item -->
+                                <Grid.KeyboardAccelerators>
+                                    <KeyboardAccelerator Modifiers="Control"
+                                                         Key="R"
+                                                         IsEnabled="{x:Bind IsRead, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                                                         ScopeOwner="{Binding (tk:FrameworkElementExtensions.Ancestor), ElementName=RootGrid}"
+                                                         Invoked="ReadKeyboardAccelerator_Invoked" />
+                                    <KeyboardAccelerator Modifiers="Control,Shift"
+                                                         Key="R"
+                                                         IsEnabled="{x:Bind IsRead, Mode=OneWay}"
+                                                         ScopeOwner="{Binding (tk:FrameworkElementExtensions.Ancestor), ElementName=RootGrid}"
+                                                         Invoked="UnreadKeyboardAccelerator_Invoked" />
+                                    <KeyboardAccelerator Modifiers="Control"
+                                                         Key="S"
+                                                         IsEnabled="{x:Bind IsStarred, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                                                         ScopeOwner="{Binding (tk:FrameworkElementExtensions.Ancestor), ElementName=RootGrid}"
+                                                         Invoked="SaveKeyboardAccelerator_Invoked" />
+                                    <KeyboardAccelerator Modifiers="Control,Shift"
+                                                         Key="S"
+                                                         IsEnabled="{x:Bind IsStarred, Mode=OneWay}"
+                                                         ScopeOwner="{Binding (tk:FrameworkElementExtensions.Ancestor), ElementName=RootGrid}"
+                                                         Invoked="UnsaveKeyboardAccelerator_Invoked" />
+                                    <KeyboardAccelerator Modifiers="Control"
+                                                         Key="H"
+                                                         ScopeOwner="{Binding (tk:FrameworkElementExtensions.Ancestor), ElementName=RootGrid}"
+                                                         Invoked="ShareKeyboardAccelerator_Invoked" />
+                                    <KeyboardAccelerator Modifiers="Control"
+                                                         Key="O"
+                                                         ScopeOwner="{Binding (tk:FrameworkElementExtensions.Ancestor), ElementName=RootGrid}"
+                                                         Invoked="OpenInBrowserKeyboardAccelerator_Invoked" />
+                                </Grid.KeyboardAccelerators>
 
                                 <Grid.ContextFlyout>
-                                    <CommandBarFlyout Placement="BottomEdgeAlignedLeft">
+                                    <CommandBarFlyout Placement="BottomEdgeAlignedLeft" AlwaysExpanded="True">
+                                        <AppBarButton Icon="Accept"
+                                                      Label="Mark as read"
+                                                      LabelPosition="Default"
+                                                      Click="ReadFlyoutItem_Click"
+                                                      IsEnabled="{x:Bind IsRead, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                                                      Visibility="{x:Bind IsRead, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}">
+                                            <AppBarButton.KeyboardAccelerators>
+                                                <KeyboardAccelerator Modifiers="Control" Key="R" ScopeOwner="{Binding ElementName=LayoutRoot, Path=articleListView}"/>
+                                            </AppBarButton.KeyboardAccelerators>
+                                        </AppBarButton>
+                                        <AppBarButton Icon="Cancel"
+                                                      Label="Mark as unread"
+                                                      Click="UnreadFlyoutItem_Click"
+                                                      IsEnabled="{x:Bind IsRead, Mode=OneWay}"
+                                                      Visibility="{x:Bind IsRead, Mode=OneWay}">
+                                            <AppBarButton.KeyboardAccelerators>
+                                                <KeyboardAccelerator Modifiers="Control,Shift" Key="R" ScopeOwner="{Binding ElementName=LayoutRoot, Path=articleListView}"/>
+                                            </AppBarButton.KeyboardAccelerators>
+                                        </AppBarButton>
+                                        <AppBarButton Icon="Favorite"
+                                                      Label="Save"
+                                                      Click="SaveFlyoutItem_Click"
+                                                      IsEnabled="{x:Bind IsStarred, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                                                      Visibility="{x:Bind IsStarred, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}">
+                                            <AppBarButton.KeyboardAccelerators>
+                                                <KeyboardAccelerator Modifiers="Control" Key="S" ScopeOwner="{Binding ElementName=LayoutRoot, Path=articleListView}"/>
+                                            </AppBarButton.KeyboardAccelerators>
+                                        </AppBarButton>
+                                        <AppBarButton Icon="UnFavorite"
+                                                      Label="Unsave"
+                                                      Click="UnsaveFlyoutItem_Click"
+                                                      IsEnabled="{x:Bind IsStarred, Mode=OneWay}"
+                                                      Visibility="{x:Bind IsStarred, Mode=OneWay}">
+                                            <AppBarButton.KeyboardAccelerators>
+                                                <KeyboardAccelerator Modifiers="Control,Shift" Key="S" ScopeOwner="{Binding ElementName=LayoutRoot, Path=articleListView}"/>
+                                            </AppBarButton.KeyboardAccelerators>
+                                        </AppBarButton>
+                                        <AppBarButton Icon="Share"
+                                                      Label="Share"
+                                                      Click="ShareFlyoutItem_Click">
+                                            <AppBarButton.KeyboardAccelerators>
+                                                <KeyboardAccelerator Modifiers="Control" Key="H" ScopeOwner="{Binding ElementName=LayoutRoot, Path=articleListView}"/>
+                                            </AppBarButton.KeyboardAccelerators>
+                                        </AppBarButton>
+                                        <AppBarButton x:Name="openInBrowserButton"
+                                                      Icon="World"
+                                                      Label="Open in browser"
+                                                      Click="OpenInBrowserFlyoutItem_Click">
+                                            <AppBarButton.KeyboardAccelerators>
+                                                <KeyboardAccelerator Modifiers="Control" Key="O" ScopeOwner="{Binding ElementName=LayoutRoot, Path=articleListView}"/>
+                                            </AppBarButton.KeyboardAccelerators>
+                                        </AppBarButton>
                                         <CommandBarFlyout.SecondaryCommands>
-                                            <AppBarButton Icon="Accept"
-                                                          Label="Mark as read"
-                                                          Click="ReadFlyoutItem_Click"
-                                                          Visibility="{x:Bind IsRead, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}" />
-                                            <AppBarButton Icon="Cancel"
-                                                          Label="Mark as unread"
-                                                          Click="UnreadFlyoutItem_Click"
-                                                          Visibility="{x:Bind IsRead, Mode=OneWay}" />
-                                            <AppBarButton Icon="Favorite"
-                                                          Label="Save"
-                                                          Click="SaveFlyoutItem_Click"
-                                                          Visibility="{x:Bind IsStarred, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}" />
-                                            <AppBarButton Icon="UnFavorite"
-                                                          Label="Unsave"
-                                                          Click="UnsaveFlyoutItem_Click"
-                                                          Visibility="{x:Bind IsStarred, Mode=OneWay}" />
-                                            <AppBarButton Icon="Share"
-                                                          Label="Share"
-                                                          Click="ShareFlyoutItem_Click" />
-                                            <AppBarSeparator />
                                             <AppBarButton Icon="{tk:FontIcon Glyph=&#xE010;}"
                                                           Label="Mark newer articles as read"
                                                           Click="ReadNewerFlyoutItem_Click"
@@ -248,11 +318,11 @@
                                             <AppBarButton Icon="{tk:FontIcon Glyph=&#xE010;}"
                                                           Label="Mark older articles as read"
                                                           Click="ReadOlderFlyoutItem_Click"
-                                                          Visibility="{Binding Source={StaticResource viewModel}, Path=SortModeIsNewestFirst, Converter={StaticResource BoolToCollapsedConverter}}" />
+                                                          Visibility="{Binding Source={StaticResource viewModel}, Path=SortModeIsNewestFirst, Converter={StaticResource BoolNegationConverter}}" />
                                             <AppBarButton Icon="{tk:FontIcon Glyph=&#xE011;}"
                                                           Label="Mark newer articles as read"
                                                           Click="ReadNewerFlyoutItem_Click"
-                                                          Visibility="{Binding Source={StaticResource viewModel}, Path=SortModeIsNewestFirst, Converter={StaticResource BoolToCollapsedConverter}}" />
+                                                          Visibility="{Binding Source={StaticResource viewModel}, Path=SortModeIsNewestFirst, Converter={StaticResource BoolNegationConverter}}" />
                                             <AppBarButton Icon="{tk:FontIcon Glyph=&#xE011;}"
                                                           Label="Mark older articles as read"
                                                           Click="ReadOlderFlyoutItem_Click"
@@ -458,37 +528,60 @@
                     <AppBarButton x:Name="openInBrowserButton"
                                   Icon="World"
                                   Label="Open in browser"
-                                  ToolTipService.ToolTip="Open article in browser"
-                                  Click="openInBrowserButton_Click" />
+                                  Click="openInBrowserButton_Click">
+                        <AppBarButton.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="O"/>
+                        </AppBarButton.KeyboardAccelerators>
+                    </AppBarButton>
                     <AppBarButton x:Name="readButton"
                                   Label="Mark as read"
                                   Icon="Accept"
-                                  ToolTipService.ToolTip="Mark article as read"
                                   Click="readButton_Click"
-                                  Visibility="{x:Bind viewModel.SelectedArticle.IsRead, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}" />
+                                  IsEnabled="{x:Bind viewModel.SelectedArticle.IsRead, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                                  Visibility="{x:Bind viewModel.SelectedArticle.IsRead, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}">
+                        <AppBarButton.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="R"/>
+                        </AppBarButton.KeyboardAccelerators>
+                    </AppBarButton>
                     <AppBarButton x:Name="unreadButton"
                                   Icon="Cancel"
                                   Label="Mark as unread"
-                                  ToolTipService.ToolTip="Mark article as unread"
                                   Click="unreadButton_Click"
-                                  Visibility="{x:Bind viewModel.SelectedArticle.IsRead, Mode=OneWay}" />
+                                  IsEnabled="{x:Bind viewModel.SelectedArticle.IsRead, Mode=OneWay}"
+                                  Visibility="{x:Bind viewModel.SelectedArticle.IsRead, Mode=OneWay}">
+                        <AppBarButton.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control,Shift" Key="R"/>
+                        </AppBarButton.KeyboardAccelerators>
+                    </AppBarButton>
                     <AppBarButton x:Name="starButton"
                                   Icon="Favorite"
                                   Label="Save article"
-                                  ToolTipService.ToolTip="Save article"
                                   Click="starButton_Click"
-                                  Visibility="{x:Bind viewModel.SelectedArticle.IsStarred, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}" />
+                                  IsEnabled="{x:Bind viewModel.SelectedArticle.IsStarred, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                                  Visibility="{x:Bind viewModel.SelectedArticle.IsStarred, Converter={StaticResource BoolToCollapsedConverter}, Mode=OneWay}">
+                        <AppBarButton.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="S"/>
+                        </AppBarButton.KeyboardAccelerators>
+                    </AppBarButton>
                     <AppBarButton x:Name="unstarButton"
                                   Icon="UnFavorite"
                                   Label="Unsave article"
-                                  ToolTipService.ToolTip="Unsave article"
                                   Click="unstarButton_Click"
-                                  Visibility="{x:Bind viewModel.SelectedArticle.IsStarred, Mode=OneWay}" />
+                                  IsEnabled="{x:Bind viewModel.SelectedArticle.IsStarred, Mode=OneWay}"
+                                  Visibility="{x:Bind viewModel.SelectedArticle.IsStarred, Mode=OneWay}">
+                        <AppBarButton.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control,Shift" Key="S"/>
+                        </AppBarButton.KeyboardAccelerators>
+                    </AppBarButton>
                     <AppBarButton x:Name="shareButton"
                                   Icon="Share"
                                   Label="Share article"
                                   ToolTipService.ToolTip="Share article to other apps"
-                                  Click="shareButton_Click" />
+                                  Click="shareButton_Click">
+                        <AppBarButton.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="H"/>
+                        </AppBarButton.KeyboardAccelerators>
+                    </AppBarButton>
                 </CommandBar.SecondaryCommands>
             </CommandBar>
 

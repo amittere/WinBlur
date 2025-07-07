@@ -86,19 +86,36 @@
                         </AppBarButton>
                         <AppBarButton Icon="Sync"
                                       Label="Sync"
-                                      ToolTipService.ToolTip="Sync"
-                                      Click="syncSubscriptions_Click" />
+                                      Click="syncSubscriptions_Click">
+                            <AppBarButton.KeyboardAccelerators>
+                                <KeyboardAccelerator Modifiers="Shift" Key="F5" />
+                            </AppBarButton.KeyboardAccelerators>
+                        </AppBarButton>
                         <CommandBar.SecondaryCommands>
-                            <AppBarButton Icon="Add"
+                            <AppBarButton x:Name="AddSiteCommand"
+                                          Icon="Add"
                                           Label="Add site..."
-                                          Click="AddSite_Click"/>
-                            <AppBarButton Icon="NewFolder"
+                                          Click="AddSite_Click">
+                                <AppBarButton.KeyboardAccelerators>
+                                    <KeyboardAccelerator Modifiers="Control" Key="N" />
+                                </AppBarButton.KeyboardAccelerators>
+                            </AppBarButton>
+                            <AppBarButton x:Name="AddFolderCommand"
+                                          Icon="NewFolder"
                                           Label="Add folder..."
-                                          Click="AddFolder_Click"/>
+                                          Click="AddFolder_Click">
+                                <AppBarButton.KeyboardAccelerators>
+                                    <KeyboardAccelerator Modifiers="Control,Shift" Key="N" />
+                                </AppBarButton.KeyboardAccelerators>
+                            </AppBarButton>
                             <AppBarSeparator />
                             <AppBarButton Icon="Bullets"
                                           Label="Mark all as read..."
-                                          Click="MarkAllAsRead_Click"/>
+                                          Click="MarkAllAsRead_Click">
+                                <AppBarButton.KeyboardAccelerators>
+                                    <KeyboardAccelerator Modifiers="Control,Shift" Key="A" />
+                                </AppBarButton.KeyboardAccelerators>
+                            </AppBarButton>
                             <AppBarButton Icon="Setting"
                                           Label="Settings"
                                           Click="Settings_Click" />
