@@ -1,4 +1,4 @@
-using CommunityToolkit.WinUI.UI;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -38,6 +38,9 @@ namespace WinBlur.App
         private DataTransferManager dataTransferManager;
         static readonly Guid s_dataTransferManagerIid = new Guid(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
 
+        //private CoreWebView2Environment coreWebView2Environment;
+        //private CoreWebView2ControllerOptions coreWebView2ControllerOptions;
+
         public FeedPage()
         {
             this.InitializeComponent();
@@ -62,6 +65,10 @@ namespace WinBlur.App
             viewModel = (FeedViewModel)Resources["viewModel"];
             viewModel.Subscription = (SubscriptionLabel)e.Parameter;
             DataContext = viewModel;
+
+            //coreWebView2Environment = await CoreWebView2Environment.CreateAsync();
+            //coreWebView2ControllerOptions = coreWebView2Environment.CreateCoreWebView2ControllerOptions();
+            //coreWebView2ControllerOptions.AllowHostInputProcessing = true;
 
             dataTransferManager.DataRequested += FeedPage_DataRequested;
             App.Settings.ThemeChanged += Settings_ThemeChanged;
