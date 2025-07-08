@@ -155,7 +155,7 @@ namespace WinBlur.App.Helpers
             string linkColor = GetHtmlContentLinkColor(obj).Color.ToString();
             string scrollbarBackgroundColor = GetHtmlContentScrollbarBackgroundColor(obj).Color.ToString();
             string scrollbarColor = GetHtmlContentScrollbarColor(obj).Color.ToString();
-            string fontFamily = GetHtmlContentFontFamily(obj);
+            string fontFamily = string.Format("'{0}', 'Segoe UI Variable Text', 'Segoe UI', sans-serif", GetHtmlContentFontFamily(obj));
             int fontWeight = GetHtmlContentFontWeight(obj);
             int textSize = GetHtmlContentTextSize(obj);
             double lineHeight = GetHtmlContentLineHeight(obj);
@@ -176,7 +176,7 @@ namespace WinBlur.App.Helpers
                 htmlLinkColor = linkColor;
                 htmlScrollbarBackgroundColor = scrollbarBackgroundColor;
                 htmlScrollbarColor = scrollbarColor;
-                htmlFontFamily = string.Format("\"{0}\", sans-serif", fontFamily);
+                htmlFontFamily = fontFamily;
                 htmlFontWeight = fontWeight;
                 htmlTextSize = textSize;
                 htmlLineHeight = lineHeight;

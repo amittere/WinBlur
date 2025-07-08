@@ -67,6 +67,7 @@
     <Style x:Key="FontRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource DefaultRadioButtonStyle}">
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="8,0,0,0"/>
+        <Setter Property="Margin" Value="0,0,8,0"/>
     </Style>
 
 
