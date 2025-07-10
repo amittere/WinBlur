@@ -1,3 +1,5 @@
+using Microsoft.UI.Xaml;
+
 namespace WinBlur.App.ViewModel
 {
     public class FolderLabel
@@ -11,6 +13,17 @@ namespace WinBlur.App.ViewModel
             Title = title;
             ParentFolder = parentFolder;
             Depth = depth;
+        }
+
+        public Thickness DepthToMargin(int offset = 0)
+        {
+            const int topMargin = 0;
+            const int bottomMargin = 0;
+            const int indent = 28;
+
+            int leftMargin = Depth * indent;
+            int rightMargin = offset;
+            return new Thickness(leftMargin, topMargin, rightMargin, bottomMargin);
         }
     }
 }

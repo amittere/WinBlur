@@ -17,6 +17,9 @@ namespace WinBlur.App.ViewModel
     {
         #region Fields
 
+        private static readonly MainViewModel _instance = new MainViewModel();
+        public static MainViewModel Instance => _instance;
+
         public TestModeHelper TestModeHelper { get { return App.TestModeHelper; } }
 
         public DispatcherTimer SyncUnreadCountTimer { get; private set; }
@@ -82,7 +85,7 @@ namespace WinBlur.App.ViewModel
 
         #region Init
 
-        public MainViewModel()
+        private MainViewModel()
         {
             Username = null;
             Subscriptions = new ObservableCollection<SubscriptionLabel>();

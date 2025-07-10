@@ -258,6 +258,14 @@
 
                                 <Grid.ContextFlyout>
                                     <CommandBarFlyout Placement="BottomEdgeAlignedLeft" AlwaysExpanded="True">
+                                        <AppBarButton x:Name="openInBrowserButton"
+                                                      Icon="World"
+                                                      Label="Open in browser"
+                                                      Click="OpenInBrowserFlyoutItem_Click">
+                                            <AppBarButton.KeyboardAccelerators>
+                                                <KeyboardAccelerator Modifiers="Control" Key="O" ScopeOwner="{Binding ElementName=LayoutRoot, Path=articleListView}"/>
+                                            </AppBarButton.KeyboardAccelerators>
+                                        </AppBarButton>
                                         <AppBarButton Icon="Accept"
                                                       Label="Mark as read"
                                                       LabelPosition="Default"
@@ -300,14 +308,6 @@
                                                       Click="ShareFlyoutItem_Click">
                                             <AppBarButton.KeyboardAccelerators>
                                                 <KeyboardAccelerator Modifiers="Control" Key="H" ScopeOwner="{Binding ElementName=LayoutRoot, Path=articleListView}"/>
-                                            </AppBarButton.KeyboardAccelerators>
-                                        </AppBarButton>
-                                        <AppBarButton x:Name="openInBrowserButton"
-                                                      Icon="World"
-                                                      Label="Open in browser"
-                                                      Click="OpenInBrowserFlyoutItem_Click">
-                                            <AppBarButton.KeyboardAccelerators>
-                                                <KeyboardAccelerator Modifiers="Control" Key="O" ScopeOwner="{Binding ElementName=LayoutRoot, Path=articleListView}"/>
                                             </AppBarButton.KeyboardAccelerators>
                                         </AppBarButton>
                                         <CommandBarFlyout.SecondaryCommands>

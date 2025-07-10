@@ -435,7 +435,7 @@ namespace WinBlur.App
             }
         }
 
-        private void articleTextView_WebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
+        private async void articleTextView_WebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
         {
             var json = JObject.Parse(args.WebMessageAsJson);
             string action = ParseHelper.ParseValueRef<string>(json["WinBlur-Action"], null);
@@ -471,24 +471,24 @@ namespace WinBlur.App
                         syncFeedButton_Click(sender, null);
                         break;
 
-                    case "RefreshSubscriptions":
-                        // TODO
-                        break;
-
                     case "MarkFeedAsRead":
                         markFeedAsReadButton_Click(markFeedAsReadButton, null);
                         break;
 
+                    case "RefreshSubscriptions":
+                        await MainViewModel.Instance.SyncSubscriptionListAsync();
+                        break;
+
                     case "MarkAllAsRead":
-                        // TODO
+                        App.Window.ShowMarkAllAsReadDialog();
                         break;
 
                     case "AddSite":
-                        // TODO
+                        App.Window.ShowAddSiteDialog();
                         break;
 
                     case "AddFolder":
-                        // TODO
+                        App.Window.ShowAddFolderDialog();
                         break;
 
                     default:

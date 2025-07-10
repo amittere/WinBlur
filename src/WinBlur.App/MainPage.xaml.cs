@@ -23,8 +23,6 @@ namespace WinBlur.App
         private bool isNewPageInstance;
         private Flyout activeFlyout;
 
-        private DispatcherTimer siteAutoCompleteTimer;
-
         #endregion Fields
 
         #region Initialization
@@ -40,10 +38,6 @@ namespace WinBlur.App
             isNewPageInstance = true;
 
             App.Client.FeedMarkedAsRead += FeedMarkedAsRead;
-
-            siteAutoCompleteTimer = new DispatcherTimer();
-            siteAutoCompleteTimer.Tick += SiteAutoCompleteTimer_Tick;
-            siteAutoCompleteTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
         }
 
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -82,7 +76,7 @@ namespace WinBlur.App
             {
                 BackgroundTaskManager.RegisterBackgroundTask();
 
-                viewModel = new MainViewModel();
+                viewModel = MainViewModel.Instance;
                 DataContext = viewModel;
             }
             isNewPageInstance = false;
@@ -191,7 +185,6 @@ namespace WinBlur.App
                         Tag = item,
                     };
 
-                    var converter = (DepthToMarginConverter)Application.Current.Resources["DepthToMarginConverter"];
                     foreach (FolderLabel folder in viewModel.FolderList)
                     {
                         MenuFlyoutItem folderItem = new MenuFlyoutItem
@@ -203,7 +196,7 @@ namespace WinBlur.App
                             Text = folder.Title,
                             Tag = item,
                             MinWidth = 100,
-                            Margin = (Thickness)converter.Convert(folder.Depth, typeof(Thickness), "0", "")
+                            Margin = folder.DepthToMargin(0)
                         };
 
                         if (label.IsFolder)
@@ -272,57 +265,9 @@ namespace WinBlur.App
             }
         }
 
-        private async void MarkAllAsRead_Click(object sender, RoutedEventArgs e)
+        private void MarkAllAsRead_Click(object sender, RoutedEventArgs e)
         {
-            // Reset dialog state
-            markAllAsReadSlider.Value = 1;
-            MarkAllAsReadLoadingPanel.Visibility = Visibility.Collapsed;
-            MarkAllAsReadErrorText.Visibility = Visibility.Collapsed;
-
-            try
-            {
-                await MarkAllAsReadDialog.ShowAsync();
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        private void markAllAsReadSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
-        {
-            if (e.NewValue == 0)
-            {
-                markAllAsReadMessage.Text = "Mark all stories as read";
-            }
-            else if (e.NewValue == 1)
-            {
-                markAllAsReadMessage.Text = "Mark all stories older than 1 day as read";
-            }
-            else
-            {
-                markAllAsReadMessage.Text = string.Format("Mark all stories older than {0} days as read", e.NewValue);
-            }
-        }
-
-        private async void MarkAllAsReadDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            var deferral = args.GetDeferral();
-            MarkAllAsReadLoadingPanel.Visibility = Visibility.Visible;
-
-            try
-            {
-                await viewModel.MarkAllAsReadAsync((int)markAllAsReadSlider.Value);
-            }
-            catch (Exception e)
-            {
-                args.Cancel = true;
-                MarkAllAsReadLoadingPanel.Visibility = Visibility.Collapsed;
-                MarkAllAsReadErrorText.Text = string.Format("Something went wrong: {0}", e.Message);
-                MarkAllAsReadErrorText.Visibility = Visibility.Visible;
-            }
-
-            MarkAllAsReadLoadingPanel.Visibility = Visibility.Collapsed;
-            deferral.Complete();
+            App.Window.ShowMarkAllAsReadDialog();
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
@@ -472,208 +417,14 @@ namespace WinBlur.App
 
         #region Feed Management
 
-        private void addSiteBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
+        private void AddSite_Click(object sender, RoutedEventArgs e)
         {
-            if (e.Reason != AutoSuggestionBoxTextChangeReason.SuggestionChosen)
-            {
-                viewModel.SiteAutoCompleteList.Clear();
-
-                if (sender.Text != "")
-                {
-                    if (!siteAutoCompleteTimer.IsEnabled)
-                    {
-                        // After a delay, start the request for auto complete
-                        siteAutoCompleteTimer.Start();
-                    }
-                }
-            }
+            App.Window.ShowAddSiteDialog();
         }
 
-        private void addSiteBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        private void AddFolder_Click(object sender, RoutedEventArgs e)
         {
-            if (args.ChosenSuggestion == null)
-            {
-                // User hit the query button or Enter on the text box.
-                // Search again for the same query
-                AutoSuggestBoxTextChangedEventArgs e = new AutoSuggestBoxTextChangedEventArgs()
-                {
-                    Reason = AutoSuggestionBoxTextChangeReason.UserInput
-                };
-                addSiteBox_TextChanged(sender, e);
-            }
-        }
-
-        private async void SiteAutoCompleteTimer_Tick(object sender, object args)
-        {
-            AddSiteErrorText.Visibility = Visibility.Collapsed;
-
-            try
-            {
-                string query = addSiteBox.Text;
-                if (query != "")
-                {
-                    addSiteBox.QueryIcon = new SymbolIcon(Symbol.Sync);
-
-                    string response = await App.Client.AutoCompleteSite(query);
-
-                    if (addSiteBox.Text != query)
-                    {
-                        // Text has changed since original query.
-                        // Cancel the request and wait for the next timer tick.
-                        return;
-                    }
-
-                    viewModel.ParseSiteAutoComplete(response);
-                }
-            }
-            catch (Exception e)
-            {
-                AddSiteErrorText.Text = string.Format("Failed site query: {0}", e.Message);
-                AddSiteErrorText.Visibility = Visibility.Visible;
-            }
-
-            addSiteBox.QueryIcon = new SymbolIcon(Symbol.Find);
-            siteAutoCompleteTimer.Stop();
-        }
-
-        private async void AddSite_Click(object sender, RoutedEventArgs e)
-        {
-            // Reset dialog state
-            addSiteBox.Text = "";
-            addSiteFolderPicker.SelectedIndex = -1;
-            AddSiteLoadingPanel.Visibility = Visibility.Collapsed;
-            AddSiteErrorText.Visibility = Visibility.Collapsed;
-
-            try
-            {
-                await AddSiteDialog.ShowAsync();
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        private async void AddSiteDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            AddSiteErrorText.Visibility = Visibility.Collapsed;
-
-            string url = addSiteBox.Text;
-            if (url == null || url == "" || !Uri.IsWellFormedUriString(url, UriKind.Absolute))
-            {
-                args.Cancel = true;
-                AddSiteErrorText.Text = "Make sure a URL is filled in.";
-                AddSiteErrorText.Visibility = Visibility.Visible;
-                return;
-            }
-
-            if (!(addSiteFolderPicker.SelectedItem is FolderLabel label))
-            {
-                args.Cancel = true;
-                AddSiteErrorText.Text = "Make sure a parent folder is selected.";
-                AddSiteErrorText.Visibility = Visibility.Visible;
-                return;
-            }
-
-            string folder = label.Title;
-            if (folder == null || folder == "")
-            {
-                args.Cancel = true;
-                AddSiteErrorText.Text = "Make sure a parent folder is selected.";
-                AddSiteErrorText.Visibility = Visibility.Visible;
-                return;
-            }
-            else if (folder == "Top Level")
-            {
-                folder = "";
-            }
-
-            var deferral = args.GetDeferral();
-            AddSiteLoadingPanel.Visibility = Visibility.Visible;
-
-            try
-            {
-                await viewModel.AddSiteAsync(url, folder);
-            }
-            catch (Exception e)
-            {
-                args.Cancel = true;
-                AddSiteLoadingPanel.Visibility = Visibility.Collapsed;
-                AddSiteErrorText.Text = string.Format("Failed to add site: {0}", e.Message);
-                AddSiteErrorText.Visibility = Visibility.Visible;
-            }
-
-            AddSiteLoadingPanel.Visibility = Visibility.Collapsed;
-            deferral.Complete();
-        }
-
-        private async void AddFolder_Click(object sender, RoutedEventArgs e)
-        {
-            // Reset dialog state
-            addFolderBox.Text = "";
-            addFolderFolderPicker.SelectedIndex = -1;
-            AddFolderLoadingPanel.Visibility = Visibility.Collapsed;
-            AddFolderErrorText.Visibility = Visibility.Collapsed;
-
-            try
-            {
-                await AddFolderDialog.ShowAsync();
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        private async void AddFolderDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            AddFolderErrorText.Visibility = Visibility.Collapsed;
-
-            string folderName = addFolderBox.Text;
-            if (folderName == null || folderName == "")
-            {
-                args.Cancel = true;
-                AddFolderErrorText.Text = "Make sure you give your folder a name.";
-                AddFolderErrorText.Visibility = Visibility.Visible;
-                return;
-            }
-
-            if (!(addFolderFolderPicker.SelectedItem is FolderLabel label))
-            {
-                args.Cancel = true;
-                AddFolderErrorText.Text = "Make sure a parent folder is selected.";
-                AddFolderErrorText.Visibility = Visibility.Visible;
-                return;
-            }
-
-            string parentFolder = label.Title;
-            if (parentFolder == null || parentFolder == "")
-            {
-                args.Cancel = true;
-                AddFolderErrorText.Text = "Make sure a parent folder is selected.";
-                AddFolderErrorText.Visibility = Visibility.Visible;
-                return;
-            }
-            else if (parentFolder == "Top Level")
-            {
-                parentFolder = "";
-            }
-
-            var deferral = args.GetDeferral();
-            AddFolderLoadingPanel.Visibility = Visibility.Visible;
-
-            try
-            {
-                await viewModel.AddFolderAsync(folderName, parentFolder);
-            }
-            catch (Exception e)
-            {
-                args.Cancel = true;
-                AddFolderLoadingPanel.Visibility = Visibility.Collapsed;
-                AddFolderErrorText.Text = string.Format("Failed to add folder: {0}", e.Message);
-                AddFolderErrorText.Visibility = Visibility.Visible;
-            }
-
-            AddFolderLoadingPanel.Visibility = Visibility.Collapsed;
-            deferral.Complete();
+            App.Window.ShowAddFolderDialog();
         }
 
         private async void deleteSubscription_Click(object sender, RoutedEventArgs e)

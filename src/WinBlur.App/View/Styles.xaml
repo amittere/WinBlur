@@ -1081,6 +1081,5 @@
     <converters:BoolToObjectConverter x:Key="LikedToContentConverter" TrueValue="&#xE1CF;" FalseValue="&#xE1CE;"/>
     <converters:EmptyObjectToObjectConverter x:Key="NullToCollapsedConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
     <converters:EmptyObjectToObjectConverter x:Key="NullToVisibleConverter" EmptyValue="Visible" NotEmptyValue="Collapsed"/>
-    <helpers:DepthToMarginConverter x:Key="DepthToMarginConverter"/>
 
 </ResourceDictionary>
