@@ -7,12 +7,14 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Threading.Tasks;
 using WinBlur.App.Helpers;
 using WinBlur.App.Model;
 using WinBlur.App.View;
 using WinBlur.App.ViewModel;
+using WinBlur.Shared;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 
@@ -38,9 +40,6 @@ namespace WinBlur.App
         private DataTransferManager dataTransferManager;
         static readonly Guid s_dataTransferManagerIid = new Guid(0xa5caee9b, 0x8708, 0x49d1, 0x8d, 0x36, 0x67, 0xd2, 0x5a, 0x8d, 0xa0, 0x0c);
 
-        //private CoreWebView2Environment coreWebView2Environment;
-        //private CoreWebView2ControllerOptions coreWebView2ControllerOptions;
-
         public FeedPage()
         {
             this.InitializeComponent();
@@ -65,10 +64,6 @@ namespace WinBlur.App
             viewModel = (FeedViewModel)Resources["viewModel"];
             viewModel.Subscription = (SubscriptionLabel)e.Parameter;
             DataContext = viewModel;
-
-            //coreWebView2Environment = await CoreWebView2Environment.CreateAsync();
-            //coreWebView2ControllerOptions = coreWebView2Environment.CreateCoreWebView2ControllerOptions();
-            //coreWebView2ControllerOptions.AllowHostInputProcessing = true;
 
             dataTransferManager.DataRequested += FeedPage_DataRequested;
             App.Settings.ThemeChanged += Settings_ThemeChanged;
@@ -284,6 +279,10 @@ namespace WinBlur.App
                 if (sender is FrameworkElement element)
                 {
                     FlyoutBase.ShowAttachedFlyout(element);
+
+                    // Manually set focus to handle the case where a keyboard
+                    // shortcut invoked from the WebView occurs.
+                    markFeedAsReadSubmitButton.Focus(FocusState.Keyboard);
                 }
             }
             else
@@ -422,8 +421,6 @@ namespace WinBlur.App
             settings.IsBuiltInErrorPageEnabled = false;
             settings.IsGeneralAutofillEnabled = false;
             settings.IsSwipeNavigationEnabled = false;
-            settings.IsWebMessageEnabled = false;
-            settings.AreDefaultContextMenusEnabled = false;
             settings.IsPasswordAutosaveEnabled = false;
         }
 
@@ -435,6 +432,68 @@ namespace WinBlur.App
 
                 // Launch the URL in web browser
                 await Launcher.LaunchUriAsync(new Uri(args.Uri));
+            }
+        }
+
+        private void articleTextView_WebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
+        {
+            var json = JObject.Parse(args.WebMessageAsJson);
+            string action = ParseHelper.ParseValueRef<string>(json["WinBlur-Action"], null);
+            if (action != null)
+            {
+                switch (action)
+                {
+                    case "OpenInBrowser":
+                        openInBrowserButton_Click(sender, null);
+                        break;
+
+                    case "MarkArticleAsRead":
+                        readButton_Click(sender, null);
+                        break;
+
+                    case "MarkArticleAsUnread":
+                        unreadButton_Click(sender, null);
+                        break;
+
+                    case "SaveArticle":
+                        starButton_Click(sender, null);
+                        break;
+
+                    case "UnsaveArticle":
+                        unstarButton_Click(sender, null);
+                        break;
+
+                    case "ShareArticle":
+                        shareButton_Click(sender, null);
+                        break;
+
+                    case "RefreshFeed":
+                        syncFeedButton_Click(sender, null);
+                        break;
+
+                    case "RefreshSubscriptions":
+                        // TODO
+                        break;
+
+                    case "MarkFeedAsRead":
+                        markFeedAsReadButton_Click(markFeedAsReadButton, null);
+                        break;
+
+                    case "MarkAllAsRead":
+                        // TODO
+                        break;
+
+                    case "AddSite":
+                        // TODO
+                        break;
+
+                    case "AddFolder":
+                        // TODO
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(action), action);
+                }
             }
         }
 

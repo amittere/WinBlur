@@ -88,7 +88,7 @@
                                       Label="Sync"
                                       Click="syncSubscriptions_Click">
                             <AppBarButton.KeyboardAccelerators>
-                                <KeyboardAccelerator Modifiers="Shift" Key="F5" />
+                                <KeyboardAccelerator Modifiers="Control" Key="F5" />
                             </AppBarButton.KeyboardAccelerators>
                         </AppBarButton>
                         <CommandBar.SecondaryCommands>

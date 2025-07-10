@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
+using System.IO;
 using WinBlur.App.ViewModel;
 
 namespace WinBlur.App.Helpers
@@ -149,6 +150,17 @@ namespace WinBlur.App.Helpers
             }
         }
 
+        private static string articleTextViewScript = ReadScriptFile("View\\ArticleTextViewScript.js");
+        private static string ReadScriptFile(string fileName)
+        {
+            var path = Path.Combine(AppContext.BaseDirectory, fileName);
+            if (File.Exists(path))
+            {
+                return File.ReadAllText(path);
+            }
+            return string.Empty;
+        }
+
         private static string GetHtmlStyleHeader(DependencyObject obj)
         {
             string fgColor = GetHtmlContentForeground(obj).Color.ToString();
@@ -182,20 +194,23 @@ namespace WinBlur.App.Helpers
                 htmlLineHeight = lineHeight;
                 htmlColumnWidth = columnWidth;
 
-                // Convert text size from px to em to easily support relative sizing
-                float textSizeEm = textSize / 16f;
+                string fgColorNoAlpha = htmlForegroundColor.Substring(3); // Remove alpha channel
+                string linkColorNoAlpha = htmlLinkColor.Substring(3);
+                string scrollbarBackgroundColorNoAlpha = htmlScrollbarBackgroundColor.Substring(3);
+                string scrollbarColorNoAlpha = htmlScrollbarColor.Substring(3);
+                float textSizeEm = textSize / 16f; // Convert text size from px to em to easily support relative sizing
 
-                htmlStyleHeader = string.Format(@"
+                htmlStyleHeader = $@"
                     <head>
                         <meta name=""viewport"" content=""initial-scale=1 minimum-scale=1"" />
                         <style type=""text/css"">
                             html {{
-                                color: #{0};
-                                font-family: {7};
-                                font-size: {4}em;
-                                font-weight: {8};
-                                line-height: {5};
-                                max-width: {6}px;
+                                color: #{fgColorNoAlpha};
+                                font-family: {htmlFontFamily};
+                                font-size: {textSizeEm}em;
+                                font-weight: {htmlFontWeight};
+                                line-height: {htmlLineHeight};
+                                max-width: {htmlColumnWidth}px;
                                 margin: auto;
                                 padding: 0px 30px;
                             }}
@@ -205,7 +220,7 @@ namespace WinBlur.App.Helpers
                                 height: auto;
                             }}
                             a {{
-                                color: #{1};
+                                color: #{linkColorNoAlpha};
                                 text-decoration: none;
                             }}
                             a:hover {{
@@ -219,7 +234,7 @@ namespace WinBlur.App.Helpers
                                 margin-bottom: 0.4em;
                             }}
                             .winblur-title-link {{
-                                color: #{0};
+                                color: #{fgColorNoAlpha};
                             }}
                             .winblur-caption {{
                                 font-size: 75%;
@@ -227,28 +242,20 @@ namespace WinBlur.App.Helpers
                                 margin-bottom: 24px;
                             }}
                             ::-webkit-scrollbar {{
-                                width: 10px;
-                                height: 10px;
+                                width: 8px;
+                                height: 8px;
                             }}
                             ::-webkit-scrollbar-track {{
-                                background: #{2};
+                                background: #{scrollbarBackgroundColorNoAlpha};
                             }}
                             ::-webkit-scrollbar-thumb {{
-                                background: #{3};
+                                background: #{scrollbarColorNoAlpha};
                                 border-radius: 10px;
-                                border: 4px solid #{3};
+                                border: 4px solid #{scrollbarColorNoAlpha};
                             }}
                         </style>
-                    </head>",
-                    htmlForegroundColor.Substring(3),
-                    htmlLinkColor.Substring(3),
-                    htmlScrollbarBackgroundColor.Substring(3),
-                    htmlScrollbarColor.Substring(3),
-                    textSizeEm,
-                    htmlLineHeight,
-                    htmlColumnWidth,
-                    htmlFontFamily,
-                    htmlFontWeight);
+                        <script>{articleTextViewScript}</script>
+                    </head>";
             }
             return htmlStyleHeader;
         }

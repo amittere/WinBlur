@@ -66,7 +66,7 @@
                               Click="markFeedAsReadButton_Click"
                               IsEnabled="{x:Bind viewModel.CanMarkAsRead}">
                     <AppBarButton.KeyboardAccelerators>
-                        <KeyboardAccelerator Modifiers="Control" Key="R"/>
+                        <KeyboardAccelerator Modifiers="Control" Key="A"/>
                     </AppBarButton.KeyboardAccelerators>
                     <FlyoutBase.AttachedFlyout>
                         <Flyout Placement="Bottom">
@@ -607,6 +607,7 @@
                                   helpers:DependencyPropertyHelper.HtmlContentColumnWidth="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentColumnWidth, Mode=OneWay}"
                                   Loaded="articleTextView_Loaded"
                                   NavigationStarting="articleTextView_NavigationStarting"
+                                  WebMessageReceived="articleTextView_WebMessageReceived"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   Margin="0,0,0,8">

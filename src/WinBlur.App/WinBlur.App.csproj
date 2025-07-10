@@ -26,6 +26,11 @@
     <PackageCertificateThumbprint>C0E697D7909A1C86E4A4B921123376DBD3092956</PackageCertificateThumbprint>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="View\ArticleTextViewScript.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.WinUI.Collections" Version="8.2.250402" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.2.250402" />
