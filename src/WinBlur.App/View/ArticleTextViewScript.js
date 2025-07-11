@@ -2,7 +2,15 @@
 // keyboard shortcuts and forward them to the host app as WebView2 host messages.
 document.addEventListener('keydown', (event) => {
     console.log("keydown: ${event.key}");
-    if (event.key === 'o' && event.ctrlKey) {
+    if (event.key === 'j') {
+        event.preventDefault();
+        window.chrome.webview.postMessage({ 'WinBlur-Action': 'NextArticle' });
+    }
+    if (event.key === 'k') {
+        event.preventDefault();
+        window.chrome.webview.postMessage({ 'WinBlur-Action': 'PreviousArticle' });
+    }
+    else if (event.key === 'o' && event.ctrlKey) {
         // Ctrl + O pressed
         event.preventDefault();
         window.chrome.webview.postMessage({ 'WinBlur-Action': 'OpenInBrowser' });

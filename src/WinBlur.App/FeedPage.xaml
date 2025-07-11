@@ -152,15 +152,16 @@
                               Grid.Row="1"
                               RefreshRequested="ArticleListRefresh_RefreshRequested">
                 <ListView x:Name="articleListView"
-                          SelectionMode="None"
-                          IsItemClickEnabled="True"
-                          SingleSelectionFollowsFocus="False"
                           DataFetchSize="6"
                           Margin="0,0,0,0"
                           Padding="6,0,10,0"
                           IncrementalLoadingThreshold="1"
                           ItemsSource="{Binding Source={StaticResource articleListViewSource}}"
-                          ItemClick="articleListView_ItemClick">
+                          IsSynchronizedWithCurrentItem="False">
+                    <ListView.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="None" Key="J" Invoked="NextArticleKeyboardAccelerator_Invoked"/>
+                        <KeyboardAccelerator Modifiers="None" Key="K" Invoked="PrevArticleKeyboardAccelerator_Invoked"/>
+                    </ListView.KeyboardAccelerators>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="model:Article">
                             <Grid x:Name="RootGrid"
@@ -586,6 +587,8 @@
             </CommandBar>
 
             <view:ArticleFlipView x:Name="articleDetailView"
+                                  ItemsSource="{Binding Source={StaticResource articleListViewSource}}"
+                                  IsSynchronizedWithCurrentItem="False"
                                   Style="{StaticResource ArticleFlipViewStyle}"
                                   Grid.Row="1">
                 <FlipView.ItemTemplate>

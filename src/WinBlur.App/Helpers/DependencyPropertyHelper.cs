@@ -141,7 +141,7 @@ namespace WinBlur.App.Helpers
                 string header = GetHtmlContentHeader(obj);
                 try
                 {
-                    wv.NavigateToString(string.Concat(style, header, content));
+                    wv.NavigateToString(string.Concat(style, content));
                 }
                 catch (Exception)
                 {
