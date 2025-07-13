@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WinBlur.App.Helpers;
 using WinBlur.App.ViewModel;
@@ -343,7 +344,36 @@ namespace WinBlur.App
 
         private void PreviousSiteKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
-            // TODO
+            SubscriptionLabel prevLabel = null;
+            if (viewModel.SelectedSubscription is SubscriptionLabel label)
+            {
+                if (label.IsFolder)
+                {
+                    // This only works if a site folder is selected
+                    if (label.Type == SubscriptionType.Site)
+                    {
+                        prevLabel = FindPrevFolder(label, true);
+                    }
+                }
+                else
+                {
+                    // This works across social and sites, but not saved story tags
+                    if (label.Type == SubscriptionType.Site || label.Type == SubscriptionType.Social)
+                    {
+                        prevLabel = FindPrevSite(label, true);
+                    }
+                }
+            }
+            else
+            {
+                // Nothing selected - select last site in the list.
+                prevLabel = FindPrevSite(viewModel.FilteredSubscriptions.Last(), false);
+            }
+
+            if (prevLabel != null)
+            {
+                SelectSubscription(prevLabel);
+            }
             args.Handled = true;
         }
 
@@ -402,13 +432,62 @@ namespace WinBlur.App
             return FindNextFolder(label.ParentLabel);
         }
 
+        private SubscriptionLabel FindPrevFolder(SubscriptionLabel label, bool allowWrapAround = false)
+        {
+            if (!allowWrapAround && label.ParentLabel == null)
+            {
+                // This means we wrapped around and hit "All Site Stories". Just return that
+                return label;
+            }
+
+            IList<SubscriptionLabel> parentList = label.ParentLabel?.FilteredChildren;
+            if (parentList == null || parentList.Count == 0)
+            {
+                // This is the special case where the first level of folders/sites are at the same tree depth as "All Site Stories".
+                parentList = viewModel.FilteredSubscriptions;
+            }
+
+            // Current folder was marked as read, so start at the parent label.
+            int indexInParent = parentList.IndexOf(label);
+            if (indexInParent == -1)
+            {
+                // This shouldn't happen.
+                return null;
+            }
+
+            // Starting at the very next subscription, linear search for the next applicable folder.
+            // Yes it's not efficient :(
+            for (int i = indexInParent - 1; i >= 0; i--)
+            {
+                SubscriptionLabel l = parentList[i];
+                if (l.Type != SubscriptionType.Site)
+                {
+                    // We went through the entire site list. Break early to avoid going through Saved stories
+                    break;
+                }
+
+                if (l.IsUnderCompressedFolder)
+                {
+                    // Skip entries that are not visible in the list.
+                    break;
+                }
+
+                if (l.IsFolder)
+                {
+                    return l;
+                }
+            }
+
+            // We got to the end of the parent list. Try going up a level
+            return FindPrevFolder(label.ParentLabel, allowWrapAround);
+        }
+
         private SubscriptionLabel FindNextSite(SubscriptionLabel label, bool skipCurrentItem)
         {
             if (label == null)
             {
-                // This is the case where searching bubbled up to the root. Wrap around
-                // to the beginning.
-                label = viewModel.FilteredSubscriptions[0];
+                // This is the case where searching bubbled up to the root. Wrap around to the beginning.
+                label = viewModel.FilteredSubscriptions.First();
             }
 
             IList<SubscriptionLabel> parentList = label.ParentLabel?.FilteredChildren;
@@ -449,7 +528,7 @@ namespace WinBlur.App
                 {
                     // Drill into the folder to find the first site inside. Skip folders that are collapsed.
                     // Pass false so we don't skip the first item in the folder.
-                    SubscriptionLabel nextLabelInFolder = FindNextSite(l.FilteredChildren[0], false);
+                    SubscriptionLabel nextLabelInFolder = FindNextSite(l.FilteredChildren.First(), false);
                     if (nextLabelInFolder != null)
                     {
                         return nextLabelInFolder;
@@ -459,6 +538,64 @@ namespace WinBlur.App
 
             // We reached the end of the list. Try going up a level
             return FindNextSite(label.ParentLabel, true);
+        }
+
+        private SubscriptionLabel FindPrevSite(SubscriptionLabel label, bool skipCurrentItem)
+        {
+            if (label == null)
+            {
+                // This is the case where searching bubbled up to the root. Wrap around to the end.
+                label = viewModel.FilteredSubscriptions.Last();
+            }
+
+            IList<SubscriptionLabel> parentList = label.ParentLabel?.FilteredChildren;
+            if (parentList == null || parentList.Count == 0)
+            {
+                // This is the special case where the first level of folders/sites are at the same tree depth as "All Site Stories".
+                parentList = viewModel.FilteredSubscriptions;
+            }
+
+            // Current folder was marked as read, so start at the parent label.
+            int indexInParent = parentList.IndexOf(label);
+            if (indexInParent == -1)
+            {
+                // This shouldn't happen.
+                return null;
+            }
+
+            for (int i = skipCurrentItem ? indexInParent - 1 : indexInParent; i >= 0; i--)
+            {
+                SubscriptionLabel l = parentList[i];
+                if (l.Type == SubscriptionType.Saved)
+                {
+                    // We went through the entire site list. Break early to avoid going through Saved stories
+                    continue;
+                }
+
+                if (l.IsUnderCompressedFolder)
+                {
+                    // Skip entries that are not visible in the list.
+                    break;
+                }
+
+                if (!l.IsFolder)
+                {
+                    return l;
+                }
+                else if (l.FilteredChildren.Count != 0 && !l.IsCompressed)
+                {
+                    // Drill into the folder to find the last site inside. Skip folders that are collapsed.
+                    // Pass false so we don't skip the last item in the folder.
+                    SubscriptionLabel nextLabelInFolder = FindPrevSite(l.FilteredChildren.Last(), false);
+                    if (nextLabelInFolder != null)
+                    {
+                        return nextLabelInFolder;
+                    }
+                }
+            }
+
+            // We reached the end of the list. Try going up a level
+            return FindPrevSite(label.ParentLabel, true);
         }
 
         #endregion
