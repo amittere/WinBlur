@@ -6,9 +6,19 @@ document.addEventListener('keydown', (event) => {
         event.preventDefault();
         window.chrome.webview.postMessage({ 'WinBlur-Action': 'NextArticle' });
     }
-    if (event.key === 'k') {
+    else if (event.key === 'k') {
         event.preventDefault();
         window.chrome.webview.postMessage({ 'WinBlur-Action': 'PreviousArticle' });
+    }
+    else if (event.key === 'J' && event.shiftKey) {
+        // Shift + J pressed
+        event.preventDefault();
+        window.chrome.webview.postMessage({ 'WinBlur-Action': 'NextSite' });
+    }
+    else if (event.key === 'K' && event.shiftKey) {
+        // Shift + K pressed
+        event.preventDefault();
+        window.chrome.webview.postMessage({ 'WinBlur-Action': 'PreviousSite' });
     }
     else if (event.key === 'o' && event.ctrlKey) {
         // Ctrl + O pressed

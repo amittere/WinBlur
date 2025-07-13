@@ -154,6 +154,26 @@ namespace WinBlur.App.ViewModel
 
             Subscriptions.Clear();
 
+            // Always add the Top Level folder here so that brand new accounts can still add folders
+            FolderList.Clear();
+            FolderList.Add(new FolderLabel("Top Level", null, 0));
+
+            // Parse subscriptions
+            if (pResponse["folders"] is JArray folders && folders.Count > 0)
+            {
+                SubscriptionLabel allSites = new SubscriptionLabel
+                {
+                    Title = "All Site Stories",
+                    IsFolder = true,
+                    Glyph = Symbol.PreviewLink,
+                    FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.Sites),
+                    Type = SubscriptionType.Site
+                };
+                Subscriptions.Add(allSites);
+                allSitesLabel = allSites;
+                ParseFolder(folders, allSites, 0);
+            }
+
             // Add "Global Site Stories" header
             SubscriptionLabel global = new SubscriptionLabel
             {
@@ -179,26 +199,6 @@ namespace WinBlur.App.ViewModel
                 SetCompressedState(allShared);
                 Subscriptions.Add(allShared);
                 ParseFriends(friends, allShared);
-            }
-
-            // Always add the Top Level folder here so that brand new accounts can still add folders
-            FolderList.Clear();
-            FolderList.Add(new FolderLabel("Top Level", null, 0));
-
-            // Parse subscriptions
-            if (pResponse["folders"] is JArray folders && folders.Count > 0)
-            {
-                SubscriptionLabel allSites = new SubscriptionLabel
-                {
-                    Title = "All Site Stories",
-                    IsFolder = true,
-                    Glyph = Symbol.PreviewLink,
-                    FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.Sites),
-                    Type = SubscriptionType.Site
-                };
-                Subscriptions.Add(allSites);
-                allSitesLabel = allSites;
-                ParseFolder(folders, allSites, 0);
             }
 
             // Parse saved

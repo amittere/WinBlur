@@ -306,21 +306,62 @@ namespace WinBlur.App
             }
         }
 
+        private void NextSiteKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            SubscriptionLabel nextLabel = null;
+            if (viewModel.SelectedSubscription is SubscriptionLabel label)
+            {
+                if (label.IsFolder)
+                {
+                    // This only works if a site folder is selected
+                    if (label.Type == SubscriptionType.Site)
+                    {
+                        nextLabel = FindNextFolder(label, true);
+                    }
+                }
+                else
+                {
+                    // This works across social and sites, but not saved story tags
+                    if (label.Type == SubscriptionType.Site || label.Type == SubscriptionType.Social)
+                    {
+                        nextLabel = FindNextSite(label, true);
+                    }
+                }
+            }
+            else
+            {
+                // Nothing selected - select first site in the list.
+                nextLabel = FindNextSite(viewModel.FilteredSubscriptions[0], false);
+            }
+
+            if (nextLabel != null)
+            {
+                SelectSubscription(nextLabel);
+            }
+            args.Handled = true;
+        }
+
+        private void PreviousSiteKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            // TODO
+            args.Handled = true;
+        }
+
         /// <summary>
         /// Finds the next site folder in the TreeView.
         /// </summary>
         /// <param name="label">Label to start at</param>
         /// <returns>Next folder to show</returns>
-        private SubscriptionLabel FindNextFolder(SubscriptionLabel label)
+        private SubscriptionLabel FindNextFolder(SubscriptionLabel label, bool allowWrapAround = false)
         {
-            if (label.ParentLabel == null)
+            if (!allowWrapAround && label.ParentLabel == null)
             {
                 // This means we wrapped around and hit "All Site Stories". Just return that
                 return label;
             }
 
-            IList<SubscriptionLabel> parentList = label.ParentLabel.FilteredChildren;
-            if (parentList.Count == 0)
+            IList<SubscriptionLabel> parentList = label.ParentLabel?.FilteredChildren;
+            if (parentList == null || parentList.Count == 0)
             {
                 // This is the special case where the first level of folders/sites are at the same tree depth as "All Site Stories".
                 parentList = viewModel.FilteredSubscriptions;
@@ -363,8 +404,15 @@ namespace WinBlur.App
 
         private SubscriptionLabel FindNextSite(SubscriptionLabel label, bool skipCurrentItem)
         {
-            IList<SubscriptionLabel> parentList = label.ParentLabel.FilteredChildren;
-            if (parentList.Count == 0)
+            if (label == null)
+            {
+                // This is the case where searching bubbled up to the root. Wrap around
+                // to the beginning.
+                label = viewModel.FilteredSubscriptions[0];
+            }
+
+            IList<SubscriptionLabel> parentList = label.ParentLabel?.FilteredChildren;
+            if (parentList == null || parentList.Count == 0)
             {
                 // This is the special case where the first level of folders/sites are at the same tree depth as "All Site Stories".
                 parentList = viewModel.FilteredSubscriptions;
@@ -381,7 +429,7 @@ namespace WinBlur.App
             for (int i = skipCurrentItem ? indexInParent + 1 : indexInParent; i < parentList.Count; i++)
             {
                 SubscriptionLabel l = parentList[i];
-                if (l.Type != SubscriptionType.Site && l.Type != SubscriptionType.Social)
+                if (l.Type == SubscriptionType.Saved)
                 {
                     // We went through the entire site list. Break early to avoid going through Saved stories
                     break;

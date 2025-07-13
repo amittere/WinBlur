@@ -98,6 +98,9 @@ namespace WinBlur.App
 
         private async Task UpdateArticleListAsync(SortMode mode)
         {
+            // Reset state of the CollectionViewSource
+            articleListViewSource.Source = null;
+
             // Unsynchonize the selection to workaround the documented behavior
             // of CollectionViewSource where the first item is automatically chosen
             // as the current item when the source is set.
@@ -127,11 +130,10 @@ namespace WinBlur.App
                 // Re-synchronize the selection with the current item and remove
                 // the SelectionChanged handler to let the selection in both views
                 // be handled by the CollectionViewSource.
+                articleListView.SelectionChanged -= articleListView_SelectionChanged;
+                articleListViewSource.View.MoveCurrentTo(articleListView.SelectedItem);
                 articleListView.IsSynchronizedWithCurrentItem = null;
                 articleDetailView.IsSynchronizedWithCurrentItem = null;
-                articleListView.SelectionChanged -= articleListView_SelectionChanged;
-
-                ViewArticle(a);
             }
         }
 
@@ -151,9 +153,17 @@ namespace WinBlur.App
 
         private void MoveToNextArticle()
         {
-            if (articleListViewSource.View.CurrentPosition < (articleListViewSource.View.Count - 1))
+            if (articleListView.IsSynchronizedWithCurrentItem == null)
             {
-                articleListViewSource.View.MoveCurrentToNext();
+                if (articleListViewSource.View.CurrentPosition < (articleListViewSource.View.Count - 1))
+                {
+                    articleListViewSource.View.MoveCurrentToNext();
+                }
+            }
+            else
+            {
+                // No item has been selected yet. Select the first item
+                articleListView.SelectedIndex = 0;
             }
         }
 
@@ -165,9 +175,17 @@ namespace WinBlur.App
 
         private void MoveToPrevArticle()
         {
-            if (articleListViewSource.View.CurrentPosition > 0)
+            if (articleListView.IsSynchronizedWithCurrentItem == null)
             {
-                articleListViewSource.View.MoveCurrentToPrevious();
+                if (articleListViewSource.View.CurrentPosition > 0)
+                {
+                    articleListViewSource.View.MoveCurrentToPrevious();
+                }
+            }
+            else
+            {
+                // No item has been selected yet. Select the first item
+                articleListView.SelectedIndex = 0;
             }
         }
 
@@ -360,7 +378,24 @@ namespace WinBlur.App
         {
             if (viewModel.ArticleList != null)
             {
+                // Reset state of the CollectionViewSource
+                articleListViewSource.Source = null;
+
+                // Unsynchonize the selection to workaround the documented behavior
+                // of CollectionViewSource where the first item is automatically chosen
+                // as the current item when the source is set.
+                // The first item selection will be handled by the SelectionChanged handler.
+                articleListView.IsSynchronizedWithCurrentItem = false;
+                articleDetailView.IsSynchronizedWithCurrentItem = false;
+                articleListView.SelectedItem = null;
+                articleDetailView.SelectedItem = null;
+                articleListView.SelectionChanged += articleListView_SelectionChanged;
+
                 await viewModel.ArticleList.RefreshAsync();
+
+                // Now update the CollectionViewSource.
+                articleListViewSource.Source = viewModel.ArticleList;
+                articleListViewSource.View.CurrentChanged += ArticleListViewSource_CurrentChanged;
             }
         }
 
@@ -484,6 +519,14 @@ namespace WinBlur.App
 
                     case "PrevArticle":
                         MoveToPrevArticle();
+                        break;
+
+                    case "NextSite":
+                        // TODO
+                        break;
+
+                    case "PreviousSite":
+                        // TODO
                         break;
 
                     case "OpenInBrowser":

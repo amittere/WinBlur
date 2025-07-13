@@ -129,6 +129,10 @@
                                   Expanding="TreeView_Expanding"
                                   Collapsed="TreeView_Collapsed"
                                   ItemInvoked="TreeView_ItemInvoked">
+                            <TreeView.KeyboardAccelerators>
+                                <KeyboardAccelerator Modifiers="Shift" Key="J" Invoked="NextSiteKeyboardAccelerator_Invoked"/>
+                                <KeyboardAccelerator Modifiers="Shift" Key="K" Invoked="PreviousSiteKeyboardAccelerator_Invoked"/>
+                            </TreeView.KeyboardAccelerators>
                             <TreeView.ItemTemplate>
                                 <DataTemplate x:DataType="vmodel:SubscriptionLabel">
                                     <TreeViewItem ItemsSource="{x:Bind FilteredChildren, Mode=OneWay}"
