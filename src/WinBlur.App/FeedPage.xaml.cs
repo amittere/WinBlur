@@ -522,11 +522,11 @@ namespace WinBlur.App
                         break;
 
                     case "NextSite":
-                        // TODO
+                        MainViewModel.Instance.NotifyNextSiteAcceleratorInvoked();
                         break;
 
                     case "PreviousSite":
-                        // TODO
+                        MainViewModel.Instance.NotifyPreviousSiteAcceleratorInvoked();
                         break;
 
                     case "OpenInBrowser":

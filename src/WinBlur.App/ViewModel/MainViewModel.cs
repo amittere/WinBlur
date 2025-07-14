@@ -757,6 +757,22 @@ namespace WinBlur.App.ViewModel
 
         #endregion Subscriptions
 
+        #region Events
+
+        public event EventHandler NextSiteAcceleratorInvoked;
+        public void NotifyNextSiteAcceleratorInvoked()
+        {
+            NextSiteAcceleratorInvoked?.Invoke(this, EventArgs.Empty);
+        }
+
+        public event EventHandler PreviousSiteAcceleratorInvoked;
+        public void NotifyPreviousSiteAcceleratorInvoked()
+        {
+            PreviousSiteAcceleratorInvoked?.Invoke(this, EventArgs.Empty);
+        }
+
+        #endregion Events
+
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;

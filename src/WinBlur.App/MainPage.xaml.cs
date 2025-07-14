@@ -39,6 +39,8 @@ namespace WinBlur.App
             isNewPageInstance = true;
 
             App.Client.FeedMarkedAsRead += FeedMarkedAsRead;
+            MainViewModel.Instance.NextSiteAcceleratorInvoked += MainViewModel_NextSiteAcceleratorInvoked;
+            MainViewModel.Instance.PreviousSiteAcceleratorInvoked += MainViewModel_PreviousSiteAcceleratorInvoked;
         }
 
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -307,6 +309,16 @@ namespace WinBlur.App
             }
         }
 
+        private void MainViewModel_NextSiteAcceleratorInvoked(object sender, EventArgs e)
+        {
+            NextSiteKeyboardAccelerator_Invoked(null, null);
+        }
+
+        private void MainViewModel_PreviousSiteAcceleratorInvoked(object sender, EventArgs e)
+        {
+            PreviousSiteKeyboardAccelerator_Invoked(null, null);
+        }
+
         private void NextSiteKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             SubscriptionLabel nextLabel = null;
@@ -339,7 +351,11 @@ namespace WinBlur.App
             {
                 SelectSubscription(nextLabel);
             }
-            args.Handled = true;
+
+            if (args != null)
+            {
+                args.Handled = true;
+            }
         }
 
         private void PreviousSiteKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
@@ -374,7 +390,11 @@ namespace WinBlur.App
             {
                 SelectSubscription(prevLabel);
             }
-            args.Handled = true;
+
+            if (args != null)
+            {
+                args.Handled = true;
+            }
         }
 
         /// <summary>
