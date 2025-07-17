@@ -201,6 +201,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Background" Value="{ThemeResource SubtleFillColorTransparentBrush}"/>
         <Setter Property="AutomationProperties.Name" Value="Menu" />
+        <Setter Property="FocusVisualMargin" Value="-3,-1,0,-1" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -1071,6 +1072,21 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!-- Customize TreeView's template to set SingleSelectionFollowsFocus property -->
+    <ControlTemplate x:Key="TreeViewTemplate" TargetType="TreeView">
+        <TreeViewList x:Name="ListControl"
+                      Background="{TemplateBinding Background}"
+                      ItemTemplate="{TemplateBinding ItemTemplate}"
+                      ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                      ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
+                      ItemContainerStyleSelector="{TemplateBinding ItemContainerStyleSelector}"
+                      ItemContainerTransitions="{TemplateBinding ItemContainerTransitions}"
+                      CanDragItems="{TemplateBinding CanDragItems}"
+                      AllowDrop="{TemplateBinding AllowDrop}"
+                      CanReorderItems="{TemplateBinding CanReorderItems}"
+                      SingleSelectionFollowsFocus="False" />
+    </ControlTemplate>
 
     <!-- Converters -->
     <converters:BoolNegationConverter x:Key="BoolNegationConverter" />

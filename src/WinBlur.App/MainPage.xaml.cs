@@ -145,9 +145,9 @@ namespace WinBlur.App
             }
         }
 
-        private void TreeView_ItemInvoked(TreeView sender, TreeViewItemInvokedEventArgs args)
+        private void TreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
         {
-            if (args.InvokedItem is SubscriptionLabel label && label != TreeView.SelectedItem)
+            if (args.AddedItems.Count > 0 && args.AddedItems[0] is SubscriptionLabel label)
             {
                 SelectSubscription(label);
             }

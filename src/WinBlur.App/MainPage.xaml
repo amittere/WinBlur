@@ -35,7 +35,8 @@
                    OpenPaneLength="320"
                    PaneBackground="Transparent"
                    Loaded="splitView_Loaded"
-                   DisplayMode="CompactInline">
+                   DisplayMode="CompactInline"
+                   IsTabStop="False">
             <SplitView.Pane>
                 <Grid x:Name="SplitViewPaneGrid" Visibility="{x:Bind splitView.IsPaneOpen, Mode=OneWay}">
                     <Grid.RowDefinitions>
@@ -58,7 +59,8 @@
                                       Label="Filter"
                                       Icon="Filter"
                                       Style="{StaticResource FlyoutAppBarButtonStyle}"
-                                      ToolTipService.ToolTip="{x:Bind vmodel:FeedModeHelpers.GetTooltipString(viewModel.FeedMode), Mode=OneWay}">
+                                      ToolTipService.ToolTip="{x:Bind vmodel:FeedModeHelpers.GetTooltipString(viewModel.FeedMode), Mode=OneWay}"
+                                      TabIndex="2">
                             <AppBarButton.Flyout>
                                 <MenuFlyout x:Name="feedModeMenuFlyout" Placement="BottomEdgeAlignedLeft">
                                     <RadioMenuFlyoutItem Text="All" GroupName="FeedMode" Click="FeedModeFlyoutItem_Click">
@@ -128,7 +130,8 @@
                                   SelectedItem="{x:Bind viewModel.SelectedSubscription, Mode=OneWay}"
                                   Expanding="TreeView_Expanding"
                                   Collapsed="TreeView_Collapsed"
-                                  ItemInvoked="TreeView_ItemInvoked">
+                                  SelectionChanged="TreeView_SelectionChanged"
+                                  Template="{StaticResource TreeViewTemplate}">
                             <TreeView.KeyboardAccelerators>
                                 <KeyboardAccelerator Modifiers="Shift" Key="J" Invoked="NextSiteKeyboardAccelerator_Invoked"/>
                                 <KeyboardAccelerator Modifiers="Shift" Key="K" Invoked="PreviousSiteKeyboardAccelerator_Invoked"/>
@@ -245,7 +248,8 @@
                 HorizontalAlignment="Left"
                 Margin="0,4,0,0"
                 Style="{StaticResource SplitViewToggleButtonStyle}"
-                Click="SplitViewToggleButton_Click" />
+                Click="SplitViewToggleButton_Click"
+                TabIndex="1"/>
 
         <Border BorderThickness="2"
                 BorderBrush="Red"

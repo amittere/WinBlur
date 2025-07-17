@@ -157,7 +157,8 @@
                           Padding="6,0,10,0"
                           IncrementalLoadingThreshold="1"
                           ItemsSource="{Binding Source={StaticResource articleListViewSource}}"
-                          IsSynchronizedWithCurrentItem="False">
+                          IsSynchronizedWithCurrentItem="False"
+                          SingleSelectionFollowsFocus="False">
                     <ListView.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="None" Key="J" Invoked="NextArticleKeyboardAccelerator_Invoked"/>
                         <KeyboardAccelerator Modifiers="None" Key="K" Invoked="PrevArticleKeyboardAccelerator_Invoked"/>
