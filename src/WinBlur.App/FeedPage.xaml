@@ -413,7 +413,7 @@
                                 <RadioButtons ItemsSource="{x:Bind viewModel.ReadingThemes}"
                                               MaxColumns="2"
                                               SelectedItem="{x:Bind viewModel.SelectedReadingTheme, Mode=TwoWay}" />
-                                <MenuFlyoutSeparator Margin="0,8"/>
+                                <MenuFlyoutSeparator Margin="0,8" IsTabStop="False"/>
                                 <TextBlock Text="Font"
                                            Margin="0,8,0,0"
                                            Style="{StaticResource BodyStrongTextBlockStyle}" />
@@ -458,10 +458,12 @@
                                         IsThumbToolTipEnabled="False"
                                         Minimum="8"
                                         Maximum="24"
+                                        LargeChange="4"
+                                        SmallChange="2"
                                         StepFrequency="2"
                                         TickFrequency="4"
                                         TickPlacement="TopLeft" />
-                                <MenuFlyoutSeparator Margin="0,8" />
+                                <MenuFlyoutSeparator Margin="0,8" IsTabStop="False" />
                                 <TextBlock Text="Line Height"
                                            Margin="0,12,0,0"
                                            Style="{StaticResource BodyStrongTextBlockStyle}" />
@@ -483,6 +485,8 @@
                                         IsThumbToolTipEnabled="False"
                                         Minimum="1.0"
                                         Maximum="2.5"
+                                        LargeChange="0.75"
+                                        SmallChange="0.25"
                                         StepFrequency="0.25"
                                         TickFrequency="0.75"
                                         TickPlacement="TopLeft" />
@@ -507,6 +511,8 @@
                                         IsThumbToolTipEnabled="False"
                                         Minimum="400"
                                         Maximum="1000"
+                                        LargeChange="300"
+                                        SmallChange="100"
                                         StepFrequency="100"
                                         TickFrequency="300"
                                         TickPlacement="TopLeft" />

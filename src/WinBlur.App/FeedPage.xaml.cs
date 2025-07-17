@@ -165,6 +165,11 @@ namespace WinBlur.App
                 // No item has been selected yet. Select the first item
                 articleListView.SelectedIndex = 0;
             }
+
+            if (articleListView.ContainerFromIndex(articleListView.SelectedIndex) is ListViewItem item)
+            {
+                item.Focus(FocusState.Keyboard);
+            }
         }
 
         private void PrevArticleKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
@@ -186,6 +191,11 @@ namespace WinBlur.App
             {
                 // No item has been selected yet. Select the first item
                 articleListView.SelectedIndex = 0;
+            }
+
+            if (articleListView.ContainerFromIndex(articleListView.SelectedIndex) is ListViewItem item)
+            {
+                item.Focus(FocusState.Keyboard);
             }
         }
 
@@ -210,6 +220,7 @@ namespace WinBlur.App
         private void UnreadKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             UnreadFlyoutItem_Click(args.Element, null);
+            args.Handled = true;
         }
 
         private void UnreadFlyoutItem_Click(object sender, RoutedEventArgs _)
@@ -223,6 +234,7 @@ namespace WinBlur.App
         private void ReadKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             ReadFlyoutItem_Click(args.Element, null);
+            args.Handled = true;
         }
 
         private void ReadFlyoutItem_Click(object sender, RoutedEventArgs _)
@@ -236,6 +248,7 @@ namespace WinBlur.App
         private void UnsaveKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             UnsaveFlyoutItem_Click(args.Element, null);
+            args.Handled = true;
         }
 
         private void UnsaveFlyoutItem_Click(object sender, RoutedEventArgs _)
@@ -249,6 +262,7 @@ namespace WinBlur.App
         private void SaveKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             SaveFlyoutItem_Click(args.Element, null);
+            args.Handled = true;
         }
 
         private void SaveFlyoutItem_Click(object sender, RoutedEventArgs _)
@@ -262,6 +276,7 @@ namespace WinBlur.App
         private void ShareKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             ShareFlyoutItem_Click(args.Element, null);
+            args.Handled = true;
         }
 
         private void ShareFlyoutItem_Click(object sender, RoutedEventArgs _)
@@ -276,6 +291,7 @@ namespace WinBlur.App
         private void OpenInBrowserKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             OpenInBrowserFlyoutItem_Click(args.Element, null);
+            args.Handled = true;
         }
 
         private async void OpenInBrowserFlyoutItem_Click(object sender, RoutedEventArgs _)
