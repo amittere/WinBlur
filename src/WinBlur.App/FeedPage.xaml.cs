@@ -1,4 +1,5 @@
 using CommunityToolkit.WinUI;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -17,6 +18,7 @@ using WinBlur.App.ViewModel;
 using WinBlur.Shared;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
+using Windows.UI.Core;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -199,9 +201,44 @@ namespace WinBlur.App
             }
         }
 
-        private void sortModeSplitButton_Click(SplitButton sender, SplitButtonClickEventArgs args)
+        private static bool s_isShiftKeyPressed = false;
+        private void ArticleListView_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            sender.Flyout.ShowAt(sender);
+            // Override Space and Shift+Space to scroll the active webview
+            // if the currently focused item is already selected. This unlocks full
+            // keyboard-based reading of articles.
+            if (e.Key == VirtualKey.Shift)
+            {
+                s_isShiftKeyPressed = true;
+            }
+            else if (e.Key == VirtualKey.Space)
+            {
+                if (FocusManager.GetFocusedElement(XamlRoot) is ListViewItem focusedItem &&
+                    articleListView.ContainerFromItem(articleListView.SelectedItem) is ListViewItem selectedItem &&
+                    focusedItem == selectedItem)
+                {
+                    if (s_isShiftKeyPressed)
+                    {
+                        // Scroll up
+                        GetActiveWebView()?.CoreWebView2.ExecuteScriptAsync(
+                            "window.scrollBy({ top: -window.innerHeight * 0.9, left: 0, behavior: 'smooth' });");
+                    }
+                    else
+                    {
+                        // Scroll down
+                        GetActiveWebView()?.CoreWebView2.ExecuteScriptAsync(
+                            "window.scrollBy({ top: window.innerHeight * 0.9, left: 0, behavior: 'smooth' });");
+                    }
+                }
+            }
+        }
+
+        private void ArticleListView_PreviewKeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Shift)
+            {
+                s_isShiftKeyPressed = false;
+            }
         }
 
         private void UpdateSortModeFlyout(SortMode mode)

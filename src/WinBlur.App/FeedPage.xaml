@@ -158,7 +158,9 @@
                           IncrementalLoadingThreshold="1"
                           ItemsSource="{Binding Source={StaticResource articleListViewSource}}"
                           IsSynchronizedWithCurrentItem="False"
-                          SingleSelectionFollowsFocus="False">
+                          SingleSelectionFollowsFocus="False"
+                          PreviewKeyDown="ArticleListView_PreviewKeyDown"
+                          PreviewKeyUp="ArticleListView_PreviewKeyUp">
                     <ListView.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="None" Key="J" Invoked="NextArticleKeyboardAccelerator_Invoked"/>
                         <KeyboardAccelerator Modifiers="None" Key="K" Invoked="PrevArticleKeyboardAccelerator_Invoked"/>
