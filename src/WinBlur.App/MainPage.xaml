@@ -5,6 +5,12 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:vmodel="using:WinBlur.App.ViewModel"
       mc:Ignorable="d">
+    <Page.Resources>
+        <CollectionViewSource x:Key="KeyboardShortcutsViewSource"
+                             IsSourceGrouped="True"
+                             ItemsPath="Shortcuts"
+                             Source="{x:Bind viewModel.KeyboardShortcutGroups, Mode=OneWay}" />
+    </Page.Resources>
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot">
         <VisualStateManager.VisualStateGroups>
@@ -108,6 +114,9 @@
                                     <KeyboardAccelerator Modifiers="Control,Shift" Key="A" />
                                 </AppBarButton.KeyboardAccelerators>
                             </AppBarButton>
+                            <AppBarButton Icon="Keyboard"
+                                          Label="Keyboard Shortcuts..."
+                                          Click="KeyboardShortcutsButton_Click" />
                             <AppBarButton Icon="Setting"
                                           Label="Settings"
                                           Click="Settings_Click" />
@@ -290,6 +299,44 @@
                 <TextBlock TextWrapping="WrapWholeWords" Style="{StaticResource SubtitleTextBlockStyle}" HorizontalAlignment="Center" Text="Hypersonic is now WinBlur"/>
                 <TextBlock TextWrapping="WrapWholeWords" HorizontalAlignment="Center" Text="We've rebuilt the app from the ground up with a new look and new features. We hope you like it!" />
             </StackPanel>
+        </ContentDialog>
+        
+        <ContentDialog x:Name="KeyboardShortcutsDialog"
+                       Title="Keyboard Shortcuts"
+                       CloseButtonText="Close">
+            <ListView ItemsSource="{Binding Source={StaticResource KeyboardShortcutsViewSource}}"
+                      Margin="0"
+                      MaxHeight="400"
+                      SelectionMode="None"
+                      IsItemClickEnabled="False">
+                <ListView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Category}" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="0,8,0,0" />
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListView.GroupStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="vmodel:KeyboardShortcutViewModel">
+                        <Grid ColumnSpacing="12" Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0"
+                                    Padding="12,8"
+                                    HorizontalAlignment="Left"
+                                    Background="{ThemeResource CardBackgroundFillColorDefault}"
+                                    CornerRadius="{StaticResource ControlCornerRadius}">
+                                <TextBlock Text="{x:Bind Shortcut}" FontWeight="SemiBold" />
+                            </Border>
+                            <TextBlock Grid.Column="1" Text="{x:Bind Description}" VerticalAlignment="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </ContentDialog>
     </Grid>
 

@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -271,6 +272,11 @@ namespace WinBlur.App
         private void MarkAllAsRead_Click(object sender, RoutedEventArgs e)
         {
             App.Window.ShowMarkAllAsReadDialog();
+        }
+
+        private async void KeyboardShortcutsButton_Click(object sender, RoutedEventArgs e)
+        {
+            await KeyboardShortcutsDialog.ShowAsync();
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
