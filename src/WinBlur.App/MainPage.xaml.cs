@@ -3,8 +3,10 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Data;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WinBlur.App.Helpers;
 using WinBlur.App.ViewModel;
@@ -23,8 +25,6 @@ namespace WinBlur.App
         private bool isNewPageInstance;
         private Flyout activeFlyout;
 
-        private DispatcherTimer siteAutoCompleteTimer;
-
         #endregion Fields
 
         #region Initialization
@@ -40,10 +40,8 @@ namespace WinBlur.App
             isNewPageInstance = true;
 
             App.Client.FeedMarkedAsRead += FeedMarkedAsRead;
-
-            siteAutoCompleteTimer = new DispatcherTimer();
-            siteAutoCompleteTimer.Tick += SiteAutoCompleteTimer_Tick;
-            siteAutoCompleteTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            MainViewModel.Instance.NextSiteAcceleratorInvoked += MainViewModel_NextSiteAcceleratorInvoked;
+            MainViewModel.Instance.PreviousSiteAcceleratorInvoked += MainViewModel_PreviousSiteAcceleratorInvoked;
         }
 
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -82,7 +80,7 @@ namespace WinBlur.App
             {
                 BackgroundTaskManager.RegisterBackgroundTask();
 
-                viewModel = new MainViewModel();
+                viewModel = MainViewModel.Instance;
                 DataContext = viewModel;
             }
             isNewPageInstance = false;
@@ -148,9 +146,9 @@ namespace WinBlur.App
             }
         }
 
-        private void TreeView_ItemInvoked(TreeView sender, TreeViewItemInvokedEventArgs args)
+        private void TreeView_SelectionChanged(TreeView sender, TreeViewSelectionChangedEventArgs args)
         {
-            if (args.InvokedItem is SubscriptionLabel label && label != TreeView.SelectedItem)
+            if (args.AddedItems.Count > 0 && args.AddedItems[0] is SubscriptionLabel label)
             {
                 SelectSubscription(label);
             }
@@ -191,7 +189,6 @@ namespace WinBlur.App
                         Tag = item,
                     };
 
-                    var converter = (DepthToMarginConverter)Application.Current.Resources["DepthToMarginConverter"];
                     foreach (FolderLabel folder in viewModel.FolderList)
                     {
                         MenuFlyoutItem folderItem = new MenuFlyoutItem
@@ -203,7 +200,7 @@ namespace WinBlur.App
                             Text = folder.Title,
                             Tag = item,
                             MinWidth = 100,
-                            Margin = (Thickness)converter.Convert(folder.Depth, typeof(Thickness), "0", "")
+                            Margin = folder.DepthToMargin(0)
                         };
 
                         if (label.IsFolder)
@@ -272,57 +269,14 @@ namespace WinBlur.App
             }
         }
 
-        private async void MarkAllAsRead_Click(object sender, RoutedEventArgs e)
+        private void MarkAllAsRead_Click(object sender, RoutedEventArgs e)
         {
-            // Reset dialog state
-            markAllAsReadSlider.Value = 1;
-            MarkAllAsReadLoadingPanel.Visibility = Visibility.Collapsed;
-            MarkAllAsReadErrorText.Visibility = Visibility.Collapsed;
-
-            try
-            {
-                await MarkAllAsReadDialog.ShowAsync();
-            }
-            catch (Exception)
-            {
-            }
+            App.Window.ShowMarkAllAsReadDialog();
         }
 
-        private void markAllAsReadSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        private async void KeyboardShortcutsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (e.NewValue == 0)
-            {
-                markAllAsReadMessage.Text = "Mark all stories as read";
-            }
-            else if (e.NewValue == 1)
-            {
-                markAllAsReadMessage.Text = "Mark all stories older than 1 day as read";
-            }
-            else
-            {
-                markAllAsReadMessage.Text = string.Format("Mark all stories older than {0} days as read", e.NewValue);
-            }
-        }
-
-        private async void MarkAllAsReadDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            var deferral = args.GetDeferral();
-            MarkAllAsReadLoadingPanel.Visibility = Visibility.Visible;
-
-            try
-            {
-                await viewModel.MarkAllAsReadAsync((int)markAllAsReadSlider.Value);
-            }
-            catch (Exception e)
-            {
-                args.Cancel = true;
-                MarkAllAsReadLoadingPanel.Visibility = Visibility.Collapsed;
-                MarkAllAsReadErrorText.Text = string.Format("Something went wrong: {0}", e.Message);
-                MarkAllAsReadErrorText.Visibility = Visibility.Visible;
-            }
-
-            MarkAllAsReadLoadingPanel.Visibility = Visibility.Collapsed;
-            deferral.Complete();
+            await KeyboardShortcutsDialog.ShowAsync();
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
@@ -361,21 +315,109 @@ namespace WinBlur.App
             }
         }
 
+        private void MainViewModel_NextSiteAcceleratorInvoked(object sender, EventArgs e)
+        {
+            NextSiteKeyboardAccelerator_Invoked(null, null);
+        }
+
+        private void MainViewModel_PreviousSiteAcceleratorInvoked(object sender, EventArgs e)
+        {
+            PreviousSiteKeyboardAccelerator_Invoked(null, null);
+        }
+
+        private void NextSiteKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            SubscriptionLabel nextLabel = null;
+            if (viewModel.SelectedSubscription is SubscriptionLabel label)
+            {
+                if (label.IsFolder)
+                {
+                    // This only works if a site folder is selected
+                    if (label.Type == SubscriptionType.Site)
+                    {
+                        nextLabel = FindNextFolder(label, true);
+                    }
+                }
+                else
+                {
+                    // This works across social and sites, but not saved story tags
+                    if (label.Type == SubscriptionType.Site || label.Type == SubscriptionType.Social)
+                    {
+                        nextLabel = FindNextSite(label, true);
+                    }
+                }
+            }
+            else
+            {
+                // Nothing selected - select first site in the list.
+                nextLabel = FindNextSite(viewModel.FilteredSubscriptions[0], false);
+            }
+
+            if (nextLabel != null)
+            {
+                SelectSubscription(nextLabel);
+            }
+
+            if (args != null)
+            {
+                args.Handled = true;
+            }
+        }
+
+        private void PreviousSiteKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            SubscriptionLabel prevLabel = null;
+            if (viewModel.SelectedSubscription is SubscriptionLabel label)
+            {
+                if (label.IsFolder)
+                {
+                    // This only works if a site folder is selected
+                    if (label.Type == SubscriptionType.Site)
+                    {
+                        prevLabel = FindPrevFolder(label, true);
+                    }
+                }
+                else
+                {
+                    // This works across social and sites, but not saved story tags
+                    if (label.Type == SubscriptionType.Site || label.Type == SubscriptionType.Social)
+                    {
+                        prevLabel = FindPrevSite(label, true);
+                    }
+                }
+            }
+            else
+            {
+                // Nothing selected - select last site in the list.
+                prevLabel = FindPrevSite(viewModel.FilteredSubscriptions.Last(), false);
+            }
+
+            if (prevLabel != null)
+            {
+                SelectSubscription(prevLabel);
+            }
+
+            if (args != null)
+            {
+                args.Handled = true;
+            }
+        }
+
         /// <summary>
         /// Finds the next site folder in the TreeView.
         /// </summary>
         /// <param name="label">Label to start at</param>
         /// <returns>Next folder to show</returns>
-        private SubscriptionLabel FindNextFolder(SubscriptionLabel label)
+        private SubscriptionLabel FindNextFolder(SubscriptionLabel label, bool allowWrapAround = false)
         {
-            if (label.ParentLabel == null)
+            if (!allowWrapAround && label.ParentLabel == null)
             {
                 // This means we wrapped around and hit "All Site Stories". Just return that
                 return label;
             }
 
-            IList<SubscriptionLabel> parentList = label.ParentLabel.FilteredChildren;
-            if (parentList.Count == 0)
+            IList<SubscriptionLabel> parentList = label.ParentLabel?.FilteredChildren;
+            if (parentList == null || parentList.Count == 0)
             {
                 // This is the special case where the first level of folders/sites are at the same tree depth as "All Site Stories".
                 parentList = viewModel.FilteredSubscriptions;
@@ -416,10 +458,66 @@ namespace WinBlur.App
             return FindNextFolder(label.ParentLabel);
         }
 
+        private SubscriptionLabel FindPrevFolder(SubscriptionLabel label, bool allowWrapAround = false)
+        {
+            if (!allowWrapAround && label.ParentLabel == null)
+            {
+                // This means we wrapped around and hit "All Site Stories". Just return that
+                return label;
+            }
+
+            IList<SubscriptionLabel> parentList = label.ParentLabel?.FilteredChildren;
+            if (parentList == null || parentList.Count == 0)
+            {
+                // This is the special case where the first level of folders/sites are at the same tree depth as "All Site Stories".
+                parentList = viewModel.FilteredSubscriptions;
+            }
+
+            // Current folder was marked as read, so start at the parent label.
+            int indexInParent = parentList.IndexOf(label);
+            if (indexInParent == -1)
+            {
+                // This shouldn't happen.
+                return null;
+            }
+
+            // Starting at the very next subscription, linear search for the next applicable folder.
+            // Yes it's not efficient :(
+            for (int i = indexInParent - 1; i >= 0; i--)
+            {
+                SubscriptionLabel l = parentList[i];
+                if (l.Type != SubscriptionType.Site)
+                {
+                    // We went through the entire site list. Break early to avoid going through Saved stories
+                    break;
+                }
+
+                if (l.IsUnderCompressedFolder)
+                {
+                    // Skip entries that are not visible in the list.
+                    break;
+                }
+
+                if (l.IsFolder)
+                {
+                    return l;
+                }
+            }
+
+            // We got to the end of the parent list. Try going up a level
+            return FindPrevFolder(label.ParentLabel, allowWrapAround);
+        }
+
         private SubscriptionLabel FindNextSite(SubscriptionLabel label, bool skipCurrentItem)
         {
-            IList<SubscriptionLabel> parentList = label.ParentLabel.FilteredChildren;
-            if (parentList.Count == 0)
+            if (label == null)
+            {
+                // This is the case where searching bubbled up to the root. Wrap around to the beginning.
+                label = viewModel.FilteredSubscriptions.First();
+            }
+
+            IList<SubscriptionLabel> parentList = label.ParentLabel?.FilteredChildren;
+            if (parentList == null || parentList.Count == 0)
             {
                 // This is the special case where the first level of folders/sites are at the same tree depth as "All Site Stories".
                 parentList = viewModel.FilteredSubscriptions;
@@ -436,7 +534,7 @@ namespace WinBlur.App
             for (int i = skipCurrentItem ? indexInParent + 1 : indexInParent; i < parentList.Count; i++)
             {
                 SubscriptionLabel l = parentList[i];
-                if (l.Type != SubscriptionType.Site && l.Type != SubscriptionType.Social)
+                if (l.Type == SubscriptionType.Saved)
                 {
                     // We went through the entire site list. Break early to avoid going through Saved stories
                     break;
@@ -456,7 +554,7 @@ namespace WinBlur.App
                 {
                     // Drill into the folder to find the first site inside. Skip folders that are collapsed.
                     // Pass false so we don't skip the first item in the folder.
-                    SubscriptionLabel nextLabelInFolder = FindNextSite(l.FilteredChildren[0], false);
+                    SubscriptionLabel nextLabelInFolder = FindNextSite(l.FilteredChildren.First(), false);
                     if (nextLabelInFolder != null)
                     {
                         return nextLabelInFolder;
@@ -468,212 +566,76 @@ namespace WinBlur.App
             return FindNextSite(label.ParentLabel, true);
         }
 
+        private SubscriptionLabel FindPrevSite(SubscriptionLabel label, bool skipCurrentItem)
+        {
+            if (label == null)
+            {
+                // This is the case where searching bubbled up to the root. Wrap around to the end.
+                label = viewModel.FilteredSubscriptions.Last();
+            }
+
+            IList<SubscriptionLabel> parentList = label.ParentLabel?.FilteredChildren;
+            if (parentList == null || parentList.Count == 0)
+            {
+                // This is the special case where the first level of folders/sites are at the same tree depth as "All Site Stories".
+                parentList = viewModel.FilteredSubscriptions;
+            }
+
+            // Current folder was marked as read, so start at the parent label.
+            int indexInParent = parentList.IndexOf(label);
+            if (indexInParent == -1)
+            {
+                // This shouldn't happen.
+                return null;
+            }
+
+            for (int i = skipCurrentItem ? indexInParent - 1 : indexInParent; i >= 0; i--)
+            {
+                SubscriptionLabel l = parentList[i];
+                if (l.Type == SubscriptionType.Saved)
+                {
+                    // We went through the entire site list. Break early to avoid going through Saved stories
+                    continue;
+                }
+
+                if (l.IsUnderCompressedFolder)
+                {
+                    // Skip entries that are not visible in the list.
+                    break;
+                }
+
+                if (!l.IsFolder)
+                {
+                    return l;
+                }
+                else if (l.FilteredChildren.Count != 0 && !l.IsCompressed)
+                {
+                    // Drill into the folder to find the last site inside. Skip folders that are collapsed.
+                    // Pass false so we don't skip the last item in the folder.
+                    SubscriptionLabel nextLabelInFolder = FindPrevSite(l.FilteredChildren.Last(), false);
+                    if (nextLabelInFolder != null)
+                    {
+                        return nextLabelInFolder;
+                    }
+                }
+            }
+
+            // We reached the end of the list. Try going up a level
+            return FindPrevSite(label.ParentLabel, true);
+        }
+
         #endregion
 
         #region Feed Management
 
-        private void addSiteBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs e)
+        private void AddSite_Click(object sender, RoutedEventArgs e)
         {
-            if (e.Reason != AutoSuggestionBoxTextChangeReason.SuggestionChosen)
-            {
-                viewModel.SiteAutoCompleteList.Clear();
-
-                if (sender.Text != "")
-                {
-                    if (!siteAutoCompleteTimer.IsEnabled)
-                    {
-                        // After a delay, start the request for auto complete
-                        siteAutoCompleteTimer.Start();
-                    }
-                }
-            }
+            App.Window.ShowAddSiteDialog();
         }
 
-        private void addSiteBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        private void AddFolder_Click(object sender, RoutedEventArgs e)
         {
-            if (args.ChosenSuggestion == null)
-            {
-                // User hit the query button or Enter on the text box.
-                // Search again for the same query
-                AutoSuggestBoxTextChangedEventArgs e = new AutoSuggestBoxTextChangedEventArgs()
-                {
-                    Reason = AutoSuggestionBoxTextChangeReason.UserInput
-                };
-                addSiteBox_TextChanged(sender, e);
-            }
-        }
-
-        private async void SiteAutoCompleteTimer_Tick(object sender, object args)
-        {
-            AddSiteErrorText.Visibility = Visibility.Collapsed;
-
-            try
-            {
-                string query = addSiteBox.Text;
-                if (query != "")
-                {
-                    addSiteBox.QueryIcon = new SymbolIcon(Symbol.Sync);
-
-                    string response = await App.Client.AutoCompleteSite(query);
-
-                    if (addSiteBox.Text != query)
-                    {
-                        // Text has changed since original query.
-                        // Cancel the request and wait for the next timer tick.
-                        return;
-                    }
-
-                    viewModel.ParseSiteAutoComplete(response);
-                }
-            }
-            catch (Exception e)
-            {
-                AddSiteErrorText.Text = string.Format("Failed site query: {0}", e.Message);
-                AddSiteErrorText.Visibility = Visibility.Visible;
-            }
-
-            addSiteBox.QueryIcon = new SymbolIcon(Symbol.Find);
-            siteAutoCompleteTimer.Stop();
-        }
-
-        private async void AddSite_Click(object sender, RoutedEventArgs e)
-        {
-            // Reset dialog state
-            addSiteBox.Text = "";
-            addSiteFolderPicker.SelectedIndex = -1;
-            AddSiteLoadingPanel.Visibility = Visibility.Collapsed;
-            AddSiteErrorText.Visibility = Visibility.Collapsed;
-
-            try
-            {
-                await AddSiteDialog.ShowAsync();
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        private async void AddSiteDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            AddSiteErrorText.Visibility = Visibility.Collapsed;
-
-            string url = addSiteBox.Text;
-            if (url == null || url == "" || !Uri.IsWellFormedUriString(url, UriKind.Absolute))
-            {
-                args.Cancel = true;
-                AddSiteErrorText.Text = "Make sure a URL is filled in.";
-                AddSiteErrorText.Visibility = Visibility.Visible;
-                return;
-            }
-
-            if (!(addSiteFolderPicker.SelectedItem is FolderLabel label))
-            {
-                args.Cancel = true;
-                AddSiteErrorText.Text = "Make sure a parent folder is selected.";
-                AddSiteErrorText.Visibility = Visibility.Visible;
-                return;
-            }
-
-            string folder = label.Title;
-            if (folder == null || folder == "")
-            {
-                args.Cancel = true;
-                AddSiteErrorText.Text = "Make sure a parent folder is selected.";
-                AddSiteErrorText.Visibility = Visibility.Visible;
-                return;
-            }
-            else if (folder == "Top Level")
-            {
-                folder = "";
-            }
-
-            var deferral = args.GetDeferral();
-            AddSiteLoadingPanel.Visibility = Visibility.Visible;
-
-            try
-            {
-                await viewModel.AddSiteAsync(url, folder);
-            }
-            catch (Exception e)
-            {
-                args.Cancel = true;
-                AddSiteLoadingPanel.Visibility = Visibility.Collapsed;
-                AddSiteErrorText.Text = string.Format("Failed to add site: {0}", e.Message);
-                AddSiteErrorText.Visibility = Visibility.Visible;
-            }
-
-            AddSiteLoadingPanel.Visibility = Visibility.Collapsed;
-            deferral.Complete();
-        }
-
-        private async void AddFolder_Click(object sender, RoutedEventArgs e)
-        {
-            // Reset dialog state
-            addFolderBox.Text = "";
-            addFolderFolderPicker.SelectedIndex = -1;
-            AddFolderLoadingPanel.Visibility = Visibility.Collapsed;
-            AddFolderErrorText.Visibility = Visibility.Collapsed;
-
-            try
-            {
-                await AddFolderDialog.ShowAsync();
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        private async void AddFolderDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            AddFolderErrorText.Visibility = Visibility.Collapsed;
-
-            string folderName = addFolderBox.Text;
-            if (folderName == null || folderName == "")
-            {
-                args.Cancel = true;
-                AddFolderErrorText.Text = "Make sure you give your folder a name.";
-                AddFolderErrorText.Visibility = Visibility.Visible;
-                return;
-            }
-
-            if (!(addFolderFolderPicker.SelectedItem is FolderLabel label))
-            {
-                args.Cancel = true;
-                AddFolderErrorText.Text = "Make sure a parent folder is selected.";
-                AddFolderErrorText.Visibility = Visibility.Visible;
-                return;
-            }
-
-            string parentFolder = label.Title;
-            if (parentFolder == null || parentFolder == "")
-            {
-                args.Cancel = true;
-                AddFolderErrorText.Text = "Make sure a parent folder is selected.";
-                AddFolderErrorText.Visibility = Visibility.Visible;
-                return;
-            }
-            else if (parentFolder == "Top Level")
-            {
-                parentFolder = "";
-            }
-
-            var deferral = args.GetDeferral();
-            AddFolderLoadingPanel.Visibility = Visibility.Visible;
-
-            try
-            {
-                await viewModel.AddFolderAsync(folderName, parentFolder);
-            }
-            catch (Exception e)
-            {
-                args.Cancel = true;
-                AddFolderLoadingPanel.Visibility = Visibility.Collapsed;
-                AddFolderErrorText.Text = string.Format("Failed to add folder: {0}", e.Message);
-                AddFolderErrorText.Visibility = Visibility.Visible;
-            }
-
-            AddFolderLoadingPanel.Visibility = Visibility.Collapsed;
-            deferral.Complete();
+            App.Window.ShowAddFolderDialog();
         }
 
         private async void deleteSubscription_Click(object sender, RoutedEventArgs e)

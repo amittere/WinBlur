@@ -1,4 +1,5 @@
-using CommunityToolkit.WinUI.UI;
+using CommunityToolkit.WinUI;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -7,14 +8,17 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Threading.Tasks;
 using WinBlur.App.Helpers;
 using WinBlur.App.Model;
 using WinBlur.App.View;
 using WinBlur.App.ViewModel;
+using WinBlur.Shared;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
+using Windows.UI.Core;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -80,6 +84,11 @@ namespace WinBlur.App
 
         #region Article List
 
+        public static DependencyObject GetParentListViewItem(DependencyObject element)
+        {
+            return element.FindAscendant<ListViewItem>();
+        }
+
         private async void ArticleListRefresh_RefreshRequested(RefreshContainer sender, RefreshRequestedEventArgs args)
         {
             var deferral = args.GetDeferral();
@@ -91,6 +100,17 @@ namespace WinBlur.App
 
         private async Task UpdateArticleListAsync(SortMode mode)
         {
+            // Reset state of the CollectionViewSource
+            articleListViewSource.Source = null;
+
+            // Unsynchonize the selection to workaround the documented behavior
+            // of CollectionViewSource where the first item is automatically chosen
+            // as the current item when the source is set.
+            // The first item selection will be handled by the SelectionChanged handler.
+            articleListView.IsSynchronizedWithCurrentItem = false;
+            articleDetailView.IsSynchronizedWithCurrentItem = false;
+            articleListView.SelectionChanged += articleListView_SelectionChanged;
+
             UpdateSortModeFlyout(mode);
 
             // Update the view model's selected article list
@@ -102,11 +122,123 @@ namespace WinBlur.App
 
             // Now update the CollectionViewSource.
             articleListViewSource.Source = viewModel.ArticleList;
+            articleListViewSource.View.CurrentChanged += ArticleListViewSource_CurrentChanged;
         }
 
-        private void sortModeSplitButton_Click(SplitButton sender, SplitButtonClickEventArgs args)
+        private void articleListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            sender.Flyout.ShowAt(sender);
+            if (articleListView.SelectedItem is Article a)
+            {
+                // Re-synchronize the selection with the current item and remove
+                // the SelectionChanged handler to let the selection in both views
+                // be handled by the CollectionViewSource.
+                articleListView.SelectionChanged -= articleListView_SelectionChanged;
+                articleListViewSource.View.MoveCurrentTo(articleListView.SelectedItem);
+                articleListView.IsSynchronizedWithCurrentItem = null;
+                articleDetailView.IsSynchronizedWithCurrentItem = null;
+            }
+        }
+
+        private void ArticleListViewSource_CurrentChanged(object sender, object e)
+        {
+            if (articleListViewSource.View.CurrentItem is Article a)
+            {
+                ViewArticle(a);
+            }
+        }
+
+        private void NextArticleKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            MoveToNextArticle();
+            args.Handled = true;
+        }
+
+        private void MoveToNextArticle()
+        {
+            if (articleListView.IsSynchronizedWithCurrentItem == null)
+            {
+                if (articleListViewSource.View.CurrentPosition < (articleListViewSource.View.Count - 1))
+                {
+                    articleListViewSource.View.MoveCurrentToNext();
+                }
+            }
+            else
+            {
+                // No item has been selected yet. Select the first item
+                articleListView.SelectedIndex = 0;
+            }
+
+            if (articleListView.ContainerFromIndex(articleListView.SelectedIndex) is ListViewItem item)
+            {
+                item.Focus(FocusState.Keyboard);
+            }
+        }
+
+        private void PrevArticleKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            MoveToPrevArticle();
+            args.Handled = true;
+        }
+
+        private void MoveToPrevArticle()
+        {
+            if (articleListView.IsSynchronizedWithCurrentItem == null)
+            {
+                if (articleListViewSource.View.CurrentPosition > 0)
+                {
+                    articleListViewSource.View.MoveCurrentToPrevious();
+                }
+            }
+            else
+            {
+                // No item has been selected yet. Select the first item
+                articleListView.SelectedIndex = 0;
+            }
+
+            if (articleListView.ContainerFromIndex(articleListView.SelectedIndex) is ListViewItem item)
+            {
+                item.Focus(FocusState.Keyboard);
+            }
+        }
+
+        private static bool s_isShiftKeyPressed = false;
+        private void ArticleListView_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            // Override Space and Shift+Space to scroll the active webview
+            // if the currently focused item is already selected. This unlocks full
+            // keyboard-based reading of articles.
+            if (e.Key == VirtualKey.Shift)
+            {
+                s_isShiftKeyPressed = true;
+            }
+            else if (e.Key == VirtualKey.Space)
+            {
+                if (FocusManager.GetFocusedElement(XamlRoot) is ListViewItem focusedItem &&
+                    articleListView.ContainerFromItem(articleListView.SelectedItem) is ListViewItem selectedItem &&
+                    focusedItem == selectedItem)
+                {
+                    if (s_isShiftKeyPressed)
+                    {
+                        // Scroll up
+                        GetActiveWebView()?.CoreWebView2.ExecuteScriptAsync(
+                            "window.scrollBy({ top: -window.innerHeight * 0.9, left: 0, behavior: 'smooth' });");
+                    }
+                    else
+                    {
+                        // Scroll down
+                        GetActiveWebView()?.CoreWebView2.ExecuteScriptAsync(
+                            "window.scrollBy({ top: window.innerHeight * 0.9, left: 0, behavior: 'smooth' });");
+                    }
+                }
+            }
+        }
+
+        private void ArticleListView_PreviewKeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Shift)
+            {
+                s_isShiftKeyPressed = false;
+            }
         }
 
         private void UpdateSortModeFlyout(SortMode mode)
@@ -122,27 +254,10 @@ namespace WinBlur.App
             }
         }
 
-        private void articleListView_ItemClick(object sender, ItemClickEventArgs e)
+        private void UnreadKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
-            if (sender is ListView view)
-            {
-                if (e.ClickedItem is Article a)
-                {
-                    articleDetailView.SetBinding(ItemsControl.ItemsSourceProperty, new Binding
-                    {
-                        Source = Resources["articleListViewSource"]
-                    });
-
-                    articleDetailView.SelectedItem = a;
-                    ViewArticle(a);
-
-                    view.SelectionMode = ListViewSelectionMode.Single;
-                    view.IsItemClickEnabled = false;
-
-                    // Add SelectionChanged handler after handling initial click to avoid double view
-                    articleDetailView.SelectionChanged += articleDetailView_SelectionChanged;
-                }
-            }
+            UnreadFlyoutItem_Click(args.Element, null);
+            args.Handled = true;
         }
 
         private void UnreadFlyoutItem_Click(object sender, RoutedEventArgs _)
@@ -153,12 +268,24 @@ namespace WinBlur.App
             }
         }
 
+        private void ReadKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            ReadFlyoutItem_Click(args.Element, null);
+            args.Handled = true;
+        }
+
         private void ReadFlyoutItem_Click(object sender, RoutedEventArgs _)
         {
             if (sender is FrameworkElement element && element.DataContext is Article article)
             {
                 viewModel.ReadArticle(article);
             }
+        }
+
+        private void UnsaveKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            UnsaveFlyoutItem_Click(args.Element, null);
+            args.Handled = true;
         }
 
         private void UnsaveFlyoutItem_Click(object sender, RoutedEventArgs _)
@@ -169,6 +296,12 @@ namespace WinBlur.App
             }
         }
 
+        private void SaveKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            SaveFlyoutItem_Click(args.Element, null);
+            args.Handled = true;
+        }
+
         private void SaveFlyoutItem_Click(object sender, RoutedEventArgs _)
         {
             if (sender is FrameworkElement element && element.DataContext is Article article)
@@ -177,12 +310,32 @@ namespace WinBlur.App
             }
         }
 
+        private void ShareKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            ShareFlyoutItem_Click(args.Element, null);
+            args.Handled = true;
+        }
+
         private void ShareFlyoutItem_Click(object sender, RoutedEventArgs _)
         {
             if (sender is FrameworkElement element && element.DataContext is Article article)
             {
                 _shareArticle = article;
                 dataTransferManagerInterop.ShowShareUIForWindow(App.WindowHandle);
+            }
+        }
+
+        private void OpenInBrowserKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            OpenInBrowserFlyoutItem_Click(args.Element, null);
+            args.Handled = true;
+        }
+
+        private async void OpenInBrowserFlyoutItem_Click(object sender, RoutedEventArgs _)
+        {
+            if (sender is FrameworkElement element && element.DataContext is Article article)
+            {
+                await Launcher.LaunchUriAsync(article.ArticleLink);
             }
         }
 
@@ -220,8 +373,6 @@ namespace WinBlur.App
         {
             // Note that updating SelectedArticle also marks read state
             viewModel.SelectedArticle = a;
-            articleDetailView.SelectedItem = a;
-
             LoadComments(a);
             LoadArticleContent();
         }
@@ -234,6 +385,10 @@ namespace WinBlur.App
                 if (sender is FrameworkElement element)
                 {
                     FlyoutBase.ShowAttachedFlyout(element);
+
+                    // Manually set focus to handle the case where a keyboard
+                    // shortcut invoked from the WebView occurs.
+                    markFeedAsReadSubmitButton.Focus(FocusState.Keyboard);
                 }
             }
             else
@@ -276,7 +431,24 @@ namespace WinBlur.App
         {
             if (viewModel.ArticleList != null)
             {
+                // Reset state of the CollectionViewSource
+                articleListViewSource.Source = null;
+
+                // Unsynchonize the selection to workaround the documented behavior
+                // of CollectionViewSource where the first item is automatically chosen
+                // as the current item when the source is set.
+                // The first item selection will be handled by the SelectionChanged handler.
+                articleListView.IsSynchronizedWithCurrentItem = false;
+                articleDetailView.IsSynchronizedWithCurrentItem = false;
+                articleListView.SelectedItem = null;
+                articleDetailView.SelectedItem = null;
+                articleListView.SelectionChanged += articleListView_SelectionChanged;
+
                 await viewModel.ArticleList.RefreshAsync();
+
+                // Now update the CollectionViewSource.
+                articleListViewSource.Source = viewModel.ArticleList;
+                articleListViewSource.View.CurrentChanged += ArticleListViewSource_CurrentChanged;
             }
         }
 
@@ -297,7 +469,7 @@ namespace WinBlur.App
 
         private void starButton_Click(object sender, RoutedEventArgs e)
         {
-            if (articleDetailView.SelectedItem is Article a && !a.IsStarred)
+            if (articleListViewSource.View.CurrentItem is Article a && !a.IsStarred)
             {
                 viewModel.StarArticle(a);
             }
@@ -305,7 +477,7 @@ namespace WinBlur.App
 
         private void unstarButton_Click(object sender, RoutedEventArgs e)
         {
-            if (articleDetailView.SelectedItem is Article a && a.IsStarred)
+            if (articleListViewSource.View.CurrentItem is Article a && a.IsStarred)
             {
                 viewModel.UnstarArticle(a);
             }
@@ -313,7 +485,7 @@ namespace WinBlur.App
 
         private void readButton_Click(object sender, RoutedEventArgs e)
         {
-            if (articleDetailView.SelectedItem is Article a && !a.IsRead)
+            if (articleListViewSource.View.CurrentItem is Article a && !a.IsRead)
             {
                 viewModel.ReadArticle(a);
             }
@@ -321,7 +493,7 @@ namespace WinBlur.App
 
         private void unreadButton_Click(object sender, RoutedEventArgs e)
         {
-            if (articleDetailView.SelectedItem is Article a && a.IsRead)
+            if (articleListViewSource.View.CurrentItem is Article a && a.IsRead)
             {
                 viewModel.UnreadArticle(a);
             }
@@ -329,7 +501,7 @@ namespace WinBlur.App
 
         private async void openInBrowserButton_Click(object sender, RoutedEventArgs e)
         {
-            if (articleDetailView.SelectedItem is Article a && a.ArticleLink != null)
+            if (articleListViewSource.View.CurrentItem is Article a && a.ArticleLink != null)
             {
                 await Launcher.LaunchUriAsync(a.ArticleLink);
             }
@@ -352,7 +524,7 @@ namespace WinBlur.App
 
         private void shareButton_Click(object sender, RoutedEventArgs e)
         {
-            if (articleDetailView.SelectedItem is Article a)
+            if (articleListViewSource.View.CurrentItem is Article a)
             {
                 _shareArticle = a;
                 dataTransferManagerInterop.ShowShareUIForWindow(App.WindowHandle);
@@ -372,17 +544,95 @@ namespace WinBlur.App
             settings.IsBuiltInErrorPageEnabled = false;
             settings.IsGeneralAutofillEnabled = false;
             settings.IsSwipeNavigationEnabled = false;
-            settings.IsWebMessageEnabled = false;
+            settings.IsPasswordAutosaveEnabled = false;
         }
 
         private async void articleTextView_NavigationStarting(WebView2 sender, CoreWebView2NavigationStartingEventArgs args)
         {
-            if (articleDetailView.SelectedItem is Article && args.IsUserInitiated && args.Uri != null)
+            if (articleListViewSource.View.CurrentItem is Article && args.IsUserInitiated && args.Uri != null)
             {
                 args.Cancel = true;
 
                 // Launch the URL in web browser
                 await Launcher.LaunchUriAsync(new Uri(args.Uri));
+            }
+        }
+
+        private async void articleTextView_WebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
+        {
+            var json = JObject.Parse(args.WebMessageAsJson);
+            string action = ParseHelper.ParseValueRef<string>(json["WinBlur-Action"], null);
+            if (action != null)
+            {
+                switch (action)
+                {
+                    case "NextArticle":
+                        MoveToNextArticle();
+                        break;
+
+                    case "PrevArticle":
+                        MoveToPrevArticle();
+                        break;
+
+                    case "NextSite":
+                        MainViewModel.Instance.NotifyNextSiteAcceleratorInvoked();
+                        break;
+
+                    case "PreviousSite":
+                        MainViewModel.Instance.NotifyPreviousSiteAcceleratorInvoked();
+                        break;
+
+                    case "OpenInBrowser":
+                        openInBrowserButton_Click(sender, null);
+                        break;
+
+                    case "MarkArticleAsRead":
+                        readButton_Click(sender, null);
+                        break;
+
+                    case "MarkArticleAsUnread":
+                        unreadButton_Click(sender, null);
+                        break;
+
+                    case "SaveArticle":
+                        starButton_Click(sender, null);
+                        break;
+
+                    case "UnsaveArticle":
+                        unstarButton_Click(sender, null);
+                        break;
+
+                    case "ShareArticle":
+                        shareButton_Click(sender, null);
+                        break;
+
+                    case "RefreshFeed":
+                        syncFeedButton_Click(sender, null);
+                        break;
+
+                    case "MarkFeedAsRead":
+                        markFeedAsReadButton_Click(markFeedAsReadButton, null);
+                        break;
+
+                    case "RefreshSubscriptions":
+                        await MainViewModel.Instance.SyncSubscriptionListAsync();
+                        break;
+
+                    case "MarkAllAsRead":
+                        App.Window.ShowMarkAllAsReadDialog();
+                        break;
+
+                    case "AddSite":
+                        App.Window.ShowAddSiteDialog();
+                        break;
+
+                    case "AddFolder":
+                        App.Window.ShowAddFolderDialog();
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(action), action);
+                }
             }
         }
 
@@ -428,13 +678,14 @@ namespace WinBlur.App
 
         private async Task<bool> LoadTextView()
         {
-            if (GetActiveWebView() != null &&
-                articleDetailView?.SelectedItem is Article article)
+            WebView2 webView = GetActiveWebView();
+            if (webView != null &&
+                articleListViewSource.View.CurrentItem is Article article)
             {
                 // switch to text view, grabbing it from the web if necessary
                 await viewModel.GetOriginalText(article);
 
-                article.ViewContent = article.TextContent;
+                article.ViewContent = string.Concat(article.ContentHeader, article.TextContent);
                 return true;
             }
             return false;
@@ -442,10 +693,11 @@ namespace WinBlur.App
 
         private bool LoadFeedView()
         {
-            if (GetActiveWebView() != null &&
-                articleDetailView?.SelectedItem is Article article)
+            WebView2 webView = GetActiveWebView();
+            if (webView != null &&
+                articleListViewSource.View.CurrentItem is Article article)
             {
-                article.ViewContent = article.FeedContent;
+                article.ViewContent = string.Concat(article.ContentHeader, article.FeedContent);
                 return true;
             }
             return false;
@@ -453,7 +705,7 @@ namespace WinBlur.App
 
         private WebView2 GetActiveWebView()
         {
-            if (articleDetailView?.ContainerFromIndex(articleDetailView.SelectedIndex) is FrameworkElement container &&
+            if (articleDetailView?.ContainerFromIndex(articleListViewSource.View.CurrentPosition) is FrameworkElement container &&
                 container.FindDescendant("articleTextView") is WebView2 view &&
                 view.IsLoaded &&
                 view.CoreWebView2 != null)
@@ -1101,7 +1353,7 @@ namespace WinBlur.App
 
         #endregion
 
-        #region Reading Style
+        #region Theme
 
         private void Settings_ThemeChanged(object sender, EventArgs e)
         {

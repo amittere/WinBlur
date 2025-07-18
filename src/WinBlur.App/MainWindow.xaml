@@ -5,6 +5,7 @@
                 xmlns:winex="using:WinUIEx"
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:vmodel="using:WinBlur.App.ViewModel"
                 mc:Ignorable="d"
                 Width="1280"
                 Height="800"
@@ -15,11 +16,17 @@
     </winex:WindowEx.SystemBackdrop>
 
     <Grid x:Name="ContentRoot">
+        <Grid.Resources>
+            <DataTemplate x:Key="FolderLabelItemTemplate" x:DataType="vmodel:FolderLabel">
+                <TextBlock Text="{x:Bind Title}"
+                           Margin="{x:Bind DepthToMargin(20)}"
+                           Style="{StaticResource BodyTextBlockStyle}" />
+            </DataTemplate>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
         <Grid x:Name="AppTitleBar">
             <!-- Width of the padding columns is set in LayoutMetricsChanged handler. -->
             <!-- Using padding columns instead of Margin ensures that the background
@@ -49,5 +56,132 @@
                 <TransitionCollection/>
             </Frame.ContentTransitions>
         </Frame>
+
+        <ContentDialog x:Name="AddSiteDialog"
+                       Title="Add site"
+                       CloseButtonText="Cancel"
+                       PrimaryButtonText="Add Site"
+                       DefaultButton="Primary"
+                       PrimaryButtonClick="AddSiteDialog_PrimaryButtonClick">
+            <StackPanel Width="300"
+                        Margin="0,10,0,0">
+                <AutoSuggestBox x:Name="AddSiteBox"
+                                PlaceholderText="Site name or feed URL"
+                                QueryIcon="Find"
+                                Margin="0,0,0,10"
+                                ItemsSource="{x:Bind vmodel:MainViewModel.Instance.SiteAutoCompleteList, Mode=OneWay}"
+                                TextMemberPath="FeedURL"
+                                UpdateTextOnSelect="True"
+                                MaxSuggestionListHeight="170"
+                                TextChanged="AddSiteBox_TextChanged"
+                                QuerySubmitted="AddSiteBox_QuerySubmitted">
+                    <AutoSuggestBox.ItemTemplate>
+                        <DataTemplate x:DataType="vmodel:SiteAutoCompleteEntry">
+                            <StackPanel Margin="0,5">
+                                <TextBlock Text="{x:Bind Title}"
+                                           Style="{StaticResource BaseTextBlockStyle}" />
+                                <TextBlock Text="{x:Bind FeedURL}"
+                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </AutoSuggestBox.ItemTemplate>
+                </AutoSuggestBox>
+                <ComboBox x:Name="AddSiteFolderPicker"
+                          PlaceholderText="Parent folder"
+                          Margin="0,0,0,20"
+                          HorizontalAlignment="Stretch"
+                          ItemsSource="{x:Bind vmodel:MainViewModel.Instance.FolderList, Mode=OneWay}"
+                          ItemTemplate="{StaticResource FolderLabelItemTemplate}"/>
+
+                <StackPanel x:Name="AddSiteLoadingPanel"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Spacing="10"
+                            Visibility="Collapsed">
+                    <ProgressRing x:Name="AddSiteProgressRing"
+                                  Width="20"
+                                  Height="20" />
+                    <TextBlock Text="Adding site..." />
+                </StackPanel>
+                <TextBlock x:Name="AddSiteErrorText"
+                           Foreground="{StaticResource RedAccentColorBrush}"
+                           TextWrapping="WrapWholeWords"
+                           Visibility="Collapsed" />
+            </StackPanel>
+        </ContentDialog>
+
+        <ContentDialog x:Name="AddFolderDialog"
+                       Title="Add folder"
+                       CloseButtonText="Cancel"
+                       PrimaryButtonText="Add Folder"
+                       DefaultButton="Primary"
+                       PrimaryButtonClick="AddFolderDialog_PrimaryButtonClick">
+            <StackPanel Width="300"
+                        Margin="0,10,0,0">
+                <TextBox x:Name="AddFolderBox"
+                         PlaceholderText="Folder name"
+                         Margin="0,0,0,10" />
+                <ComboBox x:Name="AddFolderFolderPicker"
+                          PlaceholderText="Parent folder"
+                          Margin="0,0,0,10"
+                          HorizontalAlignment="Stretch"
+                          ItemsSource="{x:Bind vmodel:MainViewModel.Instance.FolderList, Mode=OneWay}"
+                          ItemTemplate="{StaticResource FolderLabelItemTemplate}" />
+
+                <StackPanel x:Name="AddFolderLoadingPanel"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Spacing="10"
+                            Visibility="Collapsed">
+                    <ProgressRing x:Name="AddFolderProgressRing"
+                                  Width="20"
+                                  Height="20" />
+                    <TextBlock Text="Adding folder..." />
+                </StackPanel>
+                <TextBlock x:Name="AddFolderErrorText"
+                           Foreground="{StaticResource RedAccentColorBrush}"
+                           TextWrapping="WrapWholeWords"
+                           Visibility="Collapsed" />
+            </StackPanel>
+        </ContentDialog>
+
+        <ContentDialog x:Name="MarkAllAsReadDialog"
+                       Title="How many days back?"
+                       CloseButtonText="Cancel"
+                       DefaultButton="Primary"
+                       PrimaryButtonText="Submit"
+                       PrimaryButtonClick="MarkAllAsReadDialog_PrimaryButtonClick">
+            <StackPanel Width="300"
+                        Margin="0,10,0,0">
+                <TextBlock x:Name="MarkAllAsReadMessage"
+                           Text="Mark all stories older than 1 day as read"
+                           TextWrapping="WrapWholeWords"
+                           Margin="0,0,0,10" />
+                <Slider x:Name="MarkAllAsReadSlider"
+                        Minimum="0"
+                        Maximum="7"
+                        Value="1"
+                        TickFrequency="1"
+                        TickPlacement="Outside"
+                        SnapsTo="Ticks"
+                        Margin="0,0,0,10"
+                        ValueChanged="MarkAllAsReadSlider_ValueChanged" />
+                <StackPanel x:Name="MarkAllAsReadLoadingPanel"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Spacing="10"
+                            Visibility="Collapsed">
+                    <ProgressRing x:Name="MarkAllAsReadProgressRing"
+                                  Width="20"
+                                  Height="20" />
+                    <TextBlock Text="Marking stories as read..." />
+                </StackPanel>
+                <TextBlock x:Name="MarkAllAsReadErrorText"
+                           Foreground="{StaticResource RedAccentColorBrush}"
+                           TextWrapping="WrapWholeWords"
+                           Visibility="Collapsed" />
+            </StackPanel>
+        </ContentDialog>
     </Grid>
 </winex:WindowEx>

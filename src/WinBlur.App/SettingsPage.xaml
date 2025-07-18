@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:labs="using:CommunityToolkit.Labs.WinUI"
+    xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -33,23 +33,23 @@
                     <TextBlock Text="Settings" Style="{StaticResource TitleTextBlockStyle}" />
 
                     <TextBlock Text="General" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"/>
-                    <labs:SettingsCard Header="App theme">
-                        <labs:SettingsCard.HeaderIcon>
+                    <toolkit:SettingsCard Header="App theme">
+                        <toolkit:SettingsCard.HeaderIcon>
                             <FontIcon Glyph="&#xE790;" />
-                        </labs:SettingsCard.HeaderIcon>
+                        </toolkit:SettingsCard.HeaderIcon>
                         <ComboBox x:Name="themePicker" SelectedIndex="{x:Bind viewModel.AppTheme, Mode=TwoWay}">
                             <x:String>Light</x:String>
                             <x:String>Dark</x:String>
                             <x:String>Use Windows theme</x:String>
                         </ComboBox>
-                    </labs:SettingsCard>
-                    <labs:SettingsExpander Header="Background badge updates" Description="Required to display accurate unread counts while not using the app">
-                        <labs:SettingsExpander.HeaderIcon>
+                    </toolkit:SettingsCard>
+                    <toolkit:SettingsExpander Header="Background badge updates" Description="Required to display accurate unread counts while not using the app">
+                        <toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon Glyph="&#xE895;" />
-                        </labs:SettingsExpander.HeaderIcon>
+                        </toolkit:SettingsExpander.HeaderIcon>
                         <ToggleSwitch x:Name="backgroundTaskSwitch" IsOn="{x:Bind viewModel.BackgroundTaskEnabled, Mode=TwoWay}" />
-                        <labs:SettingsExpander.Items>
-                            <labs:SettingsCard Header="Update frequency">
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard Header="Update frequency">
                                 <ComboBox x:Name="backgroundTaskFreqPicker" IsEnabled="{x:Bind viewModel.BackgroundTaskEnabled, Mode=OneWay}" SelectedIndex="{x:Bind viewModel.BackgroundTaskUpdateFreq, Mode=TwoWay}">
                                     <x:String>15 minutes</x:String>
                                     <x:String>30 minutes</x:String>
@@ -57,23 +57,23 @@
                                     <x:String>2 hours</x:String>
                                     <x:String>4 hours</x:String>
                                 </ComboBox>
-                            </labs:SettingsCard>
-                        </labs:SettingsExpander.Items>
-                    </labs:SettingsExpander>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
 
                     <TextBlock Text="Feeds" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
-                    <labs:SettingsExpander Header="Default sort/filter for feeds" Description="Sets how stories are sorted and filtered when viewing individual feeds">
-                        <labs:SettingsExpander.HeaderIcon>
+                    <toolkit:SettingsExpander Header="Default sort/filter for feeds" Description="Sets how stories are sorted and filtered when viewing individual feeds">
+                        <toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon Glyph="&#xE12A;"/>
-                        </labs:SettingsExpander.HeaderIcon>
+                        </toolkit:SettingsExpander.HeaderIcon>
                         <ComboBox x:Name="defaultFeedFilterPicker" SelectedIndex="{x:Bind viewModel.FeedSortMode, Mode=TwoWay}">
                             <x:String>all stories - newest first</x:String>
                             <x:String>all stories - oldest first</x:String>
                             <x:String>unread stories - newest first</x:String>
                             <x:String>unread stories - oldest first</x:String>
                         </ComboBox>
-                        <labs:SettingsExpander.Items>
-                            <labs:SettingsCard Header="Clear overrides">
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard Header="Clear overrides">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                     <SymbolIcon x:Name="FeedFilterClearOverridesSuccessIcon" Symbol="Accept" Visibility="Collapsed"/>
                                     <Button x:Name="FeedFilterClearOverridesButton"
@@ -81,22 +81,22 @@
                                             Click="FeedFilterClearOverridesButton_Click"
                                             IsEnabled="{x:Bind viewModel.ShowFeedFilterClearOverrides, Mode=OneWay}" />
                                 </StackPanel>
-                            </labs:SettingsCard>
-                        </labs:SettingsExpander.Items>
-                    </labs:SettingsExpander>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
 
-                    <labs:SettingsExpander Header="Default sort/filter for folders" Description="Sets how stories are sorted and filtered when viewing folders">
-                        <labs:SettingsExpander.HeaderIcon>
+                    <toolkit:SettingsExpander Header="Default sort/filter for folders" Description="Sets how stories are sorted and filtered when viewing folders">
+                        <toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon Glyph="&#xE8B7;"/>
-                        </labs:SettingsExpander.HeaderIcon>
+                        </toolkit:SettingsExpander.HeaderIcon>
                         <ComboBox x:Name="defaultFolderFilterPicker" SelectedIndex="{x:Bind viewModel.FolderSortMode, Mode=TwoWay}">
                             <x:String>all stories - newest first</x:String>
                             <x:String>all stories - oldest first</x:String>
                             <x:String>unread stories - newest first</x:String>
                             <x:String>unread stories - oldest first</x:String>
                         </ComboBox>
-                        <labs:SettingsExpander.Items>
-                            <labs:SettingsCard Header="Clear overrides">
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard Header="Clear overrides">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                     <SymbolIcon x:Name="FolderFilterClearOverridesSuccessIcon" Symbol="Accept" Visibility="Collapsed"/>
                                     <Button x:Name="FolderFilterClearOverridesButton"
@@ -104,27 +104,27 @@
                                             Click="FolderFilterClearOverridesButton_Click"
                                             IsEnabled="{x:Bind viewModel.ShowFolderFilterClearOverrides, Mode=OneWay}" />
                                 </StackPanel>
-                            </labs:SettingsCard>
-                        </labs:SettingsExpander.Items>
-                    </labs:SettingsExpander>
-                    <labs:SettingsCard Header="Show image previews">
-                        <labs:SettingsCard.HeaderIcon>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
+                    <toolkit:SettingsCard Header="Show image previews">
+                        <toolkit:SettingsCard.HeaderIcon>
                             <FontIcon Glyph="&#xE91B;" />
-                        </labs:SettingsCard.HeaderIcon>
+                        </toolkit:SettingsCard.HeaderIcon>
                         <ToggleSwitch IsOn="{x:Bind viewModel.ShowImagePreviews, Mode=TwoWay}" />
-                    </labs:SettingsCard>
+                    </toolkit:SettingsCard>
 
                     <TextBlock Text="Stories" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
-                    <labs:SettingsExpander Header="Default reading mode">
-                        <labs:SettingsExpander.HeaderIcon>
+                    <toolkit:SettingsExpander Header="Default reading mode">
+                        <toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon Glyph="&#xE736;" />
-                        </labs:SettingsExpander.HeaderIcon>
+                        </toolkit:SettingsExpander.HeaderIcon>
                         <ComboBox x:Name="defaultReadingModePicker" SelectedIndex="{x:Bind viewModel.DefaultReadingMode, Mode=TwoWay}">
                             <x:String>Feed</x:String>
                             <x:String>Text</x:String>
                         </ComboBox>
-                        <labs:SettingsExpander.Items>
-                            <labs:SettingsCard Header="Clear overrides">
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard Header="Clear overrides">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                     <SymbolIcon x:Name="ReadingModeClearOverridesSuccessIcon" Symbol="Accept" Visibility="Collapsed"/>
                                     <Button x:Name="ReadingModeClearOverridesButton"
@@ -132,15 +132,15 @@
                                             Click="ReadingModeClearOverridesButton_Click"
                                             IsEnabled="{x:Bind viewModel.ShowReadingModeClearOverrides, Mode=OneWay}" />
                                 </StackPanel>
-                            </labs:SettingsCard>
-                        </labs:SettingsExpander.Items>
-                    </labs:SettingsExpander>
-                    <labs:SettingsExpander Header="Automatically mark stories as read">
-                        <labs:SettingsExpander.HeaderIcon>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
+                    <toolkit:SettingsExpander Header="Automatically mark stories as read">
+                        <toolkit:SettingsExpander.HeaderIcon>
                             <FontIcon Glyph="&#xE762;"/>
-                        </labs:SettingsExpander.HeaderIcon>
-                        <labs:SettingsExpander.Items>
-                            <labs:SettingsCard ContentAlignment="Left" HorizontalContentAlignment="Left">
+                        </toolkit:SettingsExpander.HeaderIcon>
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard ContentAlignment="Left" HorizontalContentAlignment="Left">
                                 <StackPanel>
                                     <RadioButton x:Name="markAsReadNeverButton"
                                                  GroupName="MarkAsRead"
@@ -167,50 +167,50 @@
                                         </StackPanel>
                                     </RadioButton>
                                 </StackPanel>
-                            </labs:SettingsCard>
-                        </labs:SettingsExpander.Items>
-                    </labs:SettingsExpander>
-                    <labs:SettingsCard Header="Prompt before marking all as read">
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
+                    <toolkit:SettingsCard Header="Prompt before marking all as read">
                         <ToggleSwitch x:Name="readAllPromptSwitch" IsOn="{x:Bind viewModel.ReadAllPromptEnabled, Mode=TwoWay}" />
-                    </labs:SettingsCard>
-                    <labs:SettingsCard Header="After marking a site/folder as read, automatically open the next site/folder">
+                    </toolkit:SettingsCard>
+                    <toolkit:SettingsCard Header="After marking a site/folder as read, automatically open the next site/folder">
                         <ToggleSwitch x:Name="goToNextSubscriptionSwitch" IsOn="{x:Bind viewModel.GoToNextSubscriptionAfterMarkingAsRead, Mode=TwoWay}" />
-                    </labs:SettingsCard>
+                    </toolkit:SettingsCard>
 
                     <TextBlock Text="Account" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
-                    <labs:SettingsCard Header="{x:Bind viewModel.Username}">
-                        <labs:SettingsCard.HeaderIcon>
+                    <toolkit:SettingsCard Header="{x:Bind viewModel.Username}">
+                        <toolkit:SettingsCard.HeaderIcon>
                             <FontIcon Glyph="&#xE77B;" />
-                        </labs:SettingsCard.HeaderIcon>
+                        </toolkit:SettingsCard.HeaderIcon>
                         <Button Content="Sign out" Click="SignOutButton_Click" />
-                    </labs:SettingsCard>
+                    </toolkit:SettingsCard>
 
                     <TextBlock Text="About" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
-                    <labs:SettingsExpander Header="{x:Bind viewModel.PackageName}" Description="© 2023 Andrew Mittereder">
-                        <labs:SettingsExpander.HeaderIcon>
+                    <toolkit:SettingsExpander Header="{x:Bind viewModel.PackageName}" Description="© 2023 Andrew Mittereder">
+                        <toolkit:SettingsExpander.HeaderIcon>
                             <BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/StoreLogo.png" />
-                        </labs:SettingsExpander.HeaderIcon>
+                        </toolkit:SettingsExpander.HeaderIcon>
                         <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" IsTextSelectionEnabled="True" Text="{x:Bind viewModel.VersionNumber}"/>
-                        <labs:SettingsExpander.Items>
-                            <labs:SettingsCard Header="Links" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard Header="Links" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
                                 <StackPanel Margin="-12,0,0,0">
                                     <HyperlinkButton Content="Source code" NavigateUri="https://github.com/amittere/WinBlur" />
                                     <HyperlinkButton Content="Privacy policy" NavigateUri="https://github.com/amittere/WinBlur/blob/main/PRIVACY.md" />
                                 </StackPanel>
-                            </labs:SettingsCard>
-                            <labs:SettingsCard Header="Support/Feedback" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard Header="Support/Feedback" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
                                 <HyperlinkButton x:Name="emailLink" Margin="-12,0,0,0" Content="winblurapp@outlook.com" NavigateUri="mailto:winblurapp@outlook.com" />
-                            </labs:SettingsCard>
-                            <labs:SettingsCard Header="Credits" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard Header="Credits" ContentAlignment="Vertical" HorizontalContentAlignment="Left">
                                 <StackPanel Margin="-12,0,0,0">
                                     <HyperlinkButton Content="Windows UI Library" NavigateUri="https://learn.microsoft.com/en-us/windows/apps/winui/winui3"/>
                                     <HyperlinkButton Content="Newtonsoft Json.NET" NavigateUri="https://www.newtonsoft.com/json" />
                                     <HyperlinkButton Content="Windows Community Toolkit" NavigateUri="https://github.com/CommunityToolkit/WindowsCommunityToolkit"/>
                                     <HyperlinkButton Content="WinUIEx" NavigateUri="https://github.com/dotMorten/WinUIEx"/>
                                 </StackPanel>
-                            </labs:SettingsCard>
-                        </labs:SettingsExpander.Items>
-                    </labs:SettingsExpander>
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
                 </StackPanel>
             </Grid>
         </ScrollViewer>

@@ -1,5 +1,4 @@
 using CommunityToolkit.WinUI;
-using CommunityToolkit.WinUI.UI.Helpers;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
@@ -8,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using WinBlur.App.ViewModel;
 using Windows.Security.Credentials;
 using Windows.Storage;

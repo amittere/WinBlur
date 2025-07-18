@@ -17,6 +17,9 @@ namespace WinBlur.App.ViewModel
     {
         #region Fields
 
+        private static readonly MainViewModel _instance = new MainViewModel();
+        public static MainViewModel Instance => _instance;
+
         public TestModeHelper TestModeHelper { get { return App.TestModeHelper; } }
 
         public DispatcherTimer SyncUnreadCountTimer { get; private set; }
@@ -78,11 +81,15 @@ namespace WinBlur.App.ViewModel
         // Total Site Unread Count tracking (for app badge)
         private SubscriptionLabel allSitesLabel;
 
+        public List<KeyboardShortcutViewModel> SiteKeyboardShortcuts { get; set; }
+        public List<KeyboardShortcutViewModel> ArticleKeyboardShortcuts { get; set; }
+        public List<KeyboardShortcutGroup> KeyboardShortcutGroups { get; set; }
+
         #endregion Fields
 
         #region Init
 
-        public MainViewModel()
+        private MainViewModel()
         {
             Username = null;
             Subscriptions = new ObservableCollection<SubscriptionLabel>();
@@ -91,6 +98,37 @@ namespace WinBlur.App.ViewModel
             FolderList = new ObservableCollection<FolderLabel>();
             SelectedSubscription = null;
             IsLoading = false;
+
+            // Initialize site keyboard shortcuts
+            SiteKeyboardShortcuts = new List<KeyboardShortcutViewModel>
+            {
+                new KeyboardShortcutViewModel { Shortcut = "Ctrl + N", Description = "Add Site" },
+                new KeyboardShortcutViewModel { Shortcut = "Ctrl + Shift + N", Description = "Add Folder" },
+                new KeyboardShortcutViewModel { Shortcut = "F5", Description = "Refresh site" },
+                new KeyboardShortcutViewModel { Shortcut = "Shift + F5", Description = "Sync all sites" },
+                new KeyboardShortcutViewModel { Shortcut = "Ctrl + A", Description = "Mark site as read" },
+                new KeyboardShortcutViewModel { Shortcut = "Ctrl + Shift + A", Description = "Mark all sites as read" },
+                new KeyboardShortcutViewModel { Shortcut = "Shift + J", Description = "Next Site" },
+                new KeyboardShortcutViewModel { Shortcut = "Shift + K", Description = "Previous Site" },
+            };
+
+            // Initialize article keyboard shortcuts
+            ArticleKeyboardShortcuts = new List<KeyboardShortcutViewModel>
+            {
+                new KeyboardShortcutViewModel { Shortcut = "J", Description = "Next article" },
+                new KeyboardShortcutViewModel { Shortcut = "K", Description = "Previous article" },
+                new KeyboardShortcutViewModel { Shortcut = "Ctrl + R", Description = "Mark article as read" },
+                new KeyboardShortcutViewModel { Shortcut = "Ctrl + Shift + R", Description = "Mark article as unread" },
+                new KeyboardShortcutViewModel { Shortcut = "Ctrl + S", Description = "Save article" },
+                new KeyboardShortcutViewModel { Shortcut = "Ctrl + Shift + S", Description = "Unsave article" },
+                new KeyboardShortcutViewModel { Shortcut = "Ctrl + H", Description = "Share article" },
+                new KeyboardShortcutViewModel { Shortcut = "Ctrl + O", Description = "Open article in browser" },
+            };
+            KeyboardShortcutGroups = new List<KeyboardShortcutGroup>
+            {
+                new KeyboardShortcutGroup { Category = "Sites", Shortcuts = SiteKeyboardShortcuts },
+                new KeyboardShortcutGroup { Category = "Articles", Shortcuts = ArticleKeyboardShortcuts }
+            };
 
             App.Client.UnreadCountsChanged += UnreadCountsChanged;
 
@@ -151,6 +189,26 @@ namespace WinBlur.App.ViewModel
 
             Subscriptions.Clear();
 
+            // Always add the Top Level folder here so that brand new accounts can still add folders
+            FolderList.Clear();
+            FolderList.Add(new FolderLabel("Top Level", null, 0));
+
+            // Parse subscriptions
+            if (pResponse["folders"] is JArray folders && folders.Count > 0)
+            {
+                SubscriptionLabel allSites = new SubscriptionLabel
+                {
+                    Title = "All Site Stories",
+                    IsFolder = true,
+                    Glyph = Symbol.PreviewLink,
+                    FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.Sites),
+                    Type = SubscriptionType.Site
+                };
+                Subscriptions.Add(allSites);
+                allSitesLabel = allSites;
+                ParseFolder(folders, allSites, 0);
+            }
+
             // Add "Global Site Stories" header
             SubscriptionLabel global = new SubscriptionLabel
             {
@@ -176,26 +234,6 @@ namespace WinBlur.App.ViewModel
                 SetCompressedState(allShared);
                 Subscriptions.Add(allShared);
                 ParseFriends(friends, allShared);
-            }
-
-            // Always add the Top Level folder here so that brand new accounts can still add folders
-            FolderList.Clear();
-            FolderList.Add(new FolderLabel("Top Level", null, 0));
-
-            // Parse subscriptions
-            if (pResponse["folders"] is JArray folders && folders.Count > 0)
-            {
-                SubscriptionLabel allSites = new SubscriptionLabel
-                {
-                    Title = "All Site Stories",
-                    IsFolder = true,
-                    Glyph = Symbol.PreviewLink,
-                    FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.Sites),
-                    Type = SubscriptionType.Site
-                };
-                Subscriptions.Add(allSites);
-                allSitesLabel = allSites;
-                ParseFolder(folders, allSites, 0);
             }
 
             // Parse saved
@@ -753,6 +791,22 @@ namespace WinBlur.App.ViewModel
         }
 
         #endregion Subscriptions
+
+        #region Events
+
+        public event EventHandler NextSiteAcceleratorInvoked;
+        public void NotifyNextSiteAcceleratorInvoked()
+        {
+            NextSiteAcceleratorInvoked?.Invoke(this, EventArgs.Empty);
+        }
+
+        public event EventHandler PreviousSiteAcceleratorInvoked;
+        public void NotifyPreviousSiteAcceleratorInvoked()
+        {
+            PreviousSiteAcceleratorInvoked?.Invoke(this, EventArgs.Empty);
+        }
+
+        #endregion Events
 
         #region INotifyPropertyChanged
 

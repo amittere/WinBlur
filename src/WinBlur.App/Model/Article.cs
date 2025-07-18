@@ -71,7 +71,8 @@ namespace WinBlur.App.Model
         {
             get
             {
-                return (OriginalText != null) ? OriginalText : "<div>Failed to get the story's original text.</div>";
+                return (OriginalText != null) ? OriginalText :
+                    string.Concat("<div>Failed to get the story's original text.</div>", FeedContent);
             }
         }
 

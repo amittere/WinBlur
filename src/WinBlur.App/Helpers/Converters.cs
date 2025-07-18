@@ -43,24 +43,4 @@ namespace WinBlur.App.Helpers
             }
         }
     }
-
-    public class DepthToMarginConverter : IValueConverter
-    {
-        private int topMargin = 0;
-        private int bottomMargin = 0;
-        private int indent = 28;
-
-        public object Convert(object value, Type targetType, object parameter, string culture)
-        {
-            int marginOffset = parameter != null ? int.Parse((string)parameter) : 0;
-            int leftMargin = (int)value * indent;
-            int rightMargin = marginOffset;
-            return new Thickness(leftMargin, topMargin, rightMargin, bottomMargin);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
 }

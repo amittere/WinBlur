@@ -1,4 +1,4 @@
-using CommunityToolkit.WinUI;
+using CommunityToolkit.WinUI.Collections;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
