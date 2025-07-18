@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:tk="using:CommunityToolkit.WinUI"
       xmlns:vmodel="using:WinBlur.App.ViewModel"
       mc:Ignorable="d">
     <Page.Resources>
@@ -83,10 +84,10 @@
                             </AppBarButton.Flyout>
                         </AppBarButton>
                         <AppBarButton Icon="Sync"
-                                      Label="Sync"
+                                      Label="Refresh"
                                       Click="syncSubscriptions_Click">
                             <AppBarButton.KeyboardAccelerators>
-                                <KeyboardAccelerator Modifiers="Control" Key="F5" />
+                                <KeyboardAccelerator Modifiers="Shift" Key="F5" />
                             </AppBarButton.KeyboardAccelerators>
                         </AppBarButton>
                         <CommandBar.SecondaryCommands>
@@ -107,7 +108,7 @@
                                 </AppBarButton.KeyboardAccelerators>
                             </AppBarButton>
                             <AppBarSeparator />
-                            <AppBarButton Icon="Bullets"
+                            <AppBarButton Icon="{tk:FontIcon Glyph=&#xe9d5;}"
                                           Label="Mark all as read..."
                                           Click="MarkAllAsRead_Click">
                                 <AppBarButton.KeyboardAccelerators>
@@ -305,7 +306,7 @@
                        Title="Keyboard Shortcuts"
                        CloseButtonText="Close">
             <ListView ItemsSource="{Binding Source={StaticResource KeyboardShortcutsViewSource}}"
-                      Margin="0"
+                      Margin="-12,0"
                       MaxHeight="400"
                       SelectionMode="None"
                       IsItemClickEnabled="False">

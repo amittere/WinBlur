@@ -81,7 +81,6 @@ namespace WinBlur.App.ViewModel
         // Total Site Unread Count tracking (for app badge)
         private SubscriptionLabel allSitesLabel;
 
-        public List<KeyboardShortcutViewModel> MainKeyboardShortcuts { get; set; }
         public List<KeyboardShortcutViewModel> SiteKeyboardShortcuts { get; set; }
         public List<KeyboardShortcutViewModel> ArticleKeyboardShortcuts { get; set; }
         public List<KeyboardShortcutGroup> KeyboardShortcutGroups { get; set; }
@@ -100,29 +99,24 @@ namespace WinBlur.App.ViewModel
             SelectedSubscription = null;
             IsLoading = false;
 
-            // Initialize main page keyboard shortcuts
-            MainKeyboardShortcuts = new List<KeyboardShortcutViewModel>
-            {
-                new KeyboardShortcutViewModel { Shortcut = "Ctrl + F5", Description = "Sync all sites" },
-                new KeyboardShortcutViewModel { Shortcut = "Ctrl + N", Description = "Add Site" },
-                new KeyboardShortcutViewModel { Shortcut = "Ctrl + Shift + N", Description = "Add Folder" },
-                new KeyboardShortcutViewModel { Shortcut = "Ctrl + Shift + A", Description = "Mark all as read" },
-                new KeyboardShortcutViewModel { Shortcut = "Shift + J", Description = "Next Site" },
-                new KeyboardShortcutViewModel { Shortcut = "Shift + K", Description = "Previous Site" },
-            };
-
-            // Initialize feed page keyboard shortcuts
+            // Initialize site keyboard shortcuts
             SiteKeyboardShortcuts = new List<KeyboardShortcutViewModel>
             {
-                new KeyboardShortcutViewModel { Shortcut = "F5", Description = "Refresh feed" },
-                new KeyboardShortcutViewModel { Shortcut = "Ctrl + A", Description = "Mark feed as read" },
-                new KeyboardShortcutViewModel { Shortcut = "J", Description = "Next article" },
-                new KeyboardShortcutViewModel { Shortcut = "K", Description = "Previous article" },
+                new KeyboardShortcutViewModel { Shortcut = "Ctrl + N", Description = "Add Site" },
+                new KeyboardShortcutViewModel { Shortcut = "Ctrl + Shift + N", Description = "Add Folder" },
+                new KeyboardShortcutViewModel { Shortcut = "F5", Description = "Refresh site" },
+                new KeyboardShortcutViewModel { Shortcut = "Shift + F5", Description = "Sync all sites" },
+                new KeyboardShortcutViewModel { Shortcut = "Ctrl + A", Description = "Mark site as read" },
+                new KeyboardShortcutViewModel { Shortcut = "Ctrl + Shift + A", Description = "Mark all sites as read" },
+                new KeyboardShortcutViewModel { Shortcut = "Shift + J", Description = "Next Site" },
+                new KeyboardShortcutViewModel { Shortcut = "Shift + K", Description = "Previous Site" },
             };
 
             // Initialize article keyboard shortcuts
             ArticleKeyboardShortcuts = new List<KeyboardShortcutViewModel>
             {
+                new KeyboardShortcutViewModel { Shortcut = "J", Description = "Next article" },
+                new KeyboardShortcutViewModel { Shortcut = "K", Description = "Previous article" },
                 new KeyboardShortcutViewModel { Shortcut = "Ctrl + R", Description = "Mark article as read" },
                 new KeyboardShortcutViewModel { Shortcut = "Ctrl + Shift + R", Description = "Mark article as unread" },
                 new KeyboardShortcutViewModel { Shortcut = "Ctrl + S", Description = "Save article" },
@@ -132,7 +126,6 @@ namespace WinBlur.App.ViewModel
             };
             KeyboardShortcutGroups = new List<KeyboardShortcutGroup>
             {
-                new KeyboardShortcutGroup { Category = "General", Shortcuts = MainKeyboardShortcuts },
                 new KeyboardShortcutGroup { Category = "Sites", Shortcuts = SiteKeyboardShortcuts },
                 new KeyboardShortcutGroup { Category = "Articles", Shortcuts = ArticleKeyboardShortcuts }
             };

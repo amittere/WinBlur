@@ -62,7 +62,7 @@
                 <AppBarButton x:Name="markFeedAsReadButton"
                               Label="Mark as read"
                               LabelPosition="Collapsed"
-                              Icon="Bullets"
+                              Icon="{tk:FontIcon Glyph=&#xe9d5;}"
                               Click="markFeedAsReadButton_Click"
                               IsEnabled="{x:Bind viewModel.CanMarkAsRead}">
                     <AppBarButton.KeyboardAccelerators>
