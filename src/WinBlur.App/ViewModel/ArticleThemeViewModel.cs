@@ -35,7 +35,7 @@ namespace WinBlur.App.ViewModel
                 NotifyPropertyChanged(nameof(WebViewBackgroundColor));
                 NotifyPropertyChanged(nameof(WebViewBackgroundBrush));
                 NotifyPropertyChanged(nameof(ContentBackgroundColor));
-                NotifyPropertyChanged(nameof(ContentForegroundBrush));
+                NotifyPropertyChanged(nameof(ContentForegroundColor));
             }
         }
 
@@ -106,22 +106,21 @@ namespace WinBlur.App.ViewModel
             }
         }
 
-        private SolidColorBrush sepiaForegroundBrush = new SolidColorBrush(Color.FromArgb(255, 42, 20, 9)); // #2A1409
-        public SolidColorBrush ContentForegroundBrush
+        public Color ContentForegroundColor
         {
             get
             {
                 switch (ReadingTheme)
                 {
                     case ReadingThemeMode.UseWindowsTheme:
-                        return App.Current.Resources["ArticleContentForegroundBrush"] as SolidColorBrush;
+                        return (App.Current.Resources["ArticleContentForegroundBrush"] as SolidColorBrush).Color;
                     case ReadingThemeMode.Light:
-                        return ((ResourceDictionary)App.Current.Resources.ThemeDictionaries["Light"])["TextFillColorPrimaryBrush"] as SolidColorBrush;
+                        return (Color)((ResourceDictionary)App.Current.Resources.ThemeDictionaries["Light"])["TextFillColorPrimary"];
                     case ReadingThemeMode.Dark:
                     case ReadingThemeMode.Black:
-                        return ((ResourceDictionary)App.Current.Resources.ThemeDictionaries["Default"])["TextFillColorPrimaryBrush"] as SolidColorBrush;
+                        return (Color)((ResourceDictionary)App.Current.Resources.ThemeDictionaries["Default"]) ["TextFillColorPrimary"];
                     case ReadingThemeMode.Sepia:
-                        return sepiaForegroundBrush;
+                        return Color.FromArgb(255, 42, 20, 9); // #2A1409
                     default:
                         throw new ArgumentOutOfRangeException(nameof(ReadingTheme), ReadingTheme, "Invalid reading theme mode specified.");
                 }
@@ -195,7 +194,7 @@ namespace WinBlur.App.ViewModel
             NotifyPropertyChanged(nameof(WebViewBackgroundColor));
             NotifyPropertyChanged(nameof(WebViewBackgroundBrush));
             NotifyPropertyChanged(nameof(ContentBackgroundColor));
-            NotifyPropertyChanged(nameof(ContentForegroundBrush));
+            NotifyPropertyChanged(nameof(ContentForegroundColor));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
