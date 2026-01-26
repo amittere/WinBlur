@@ -537,6 +537,7 @@ namespace WinBlur.App
             await webView.EnsureCoreWebView2Async();
 
             var settings = webView.CoreWebView2.Settings;
+            settings.AreDefaultContextMenusEnabled = false;
             settings.AreBrowserAcceleratorKeysEnabled = false;
             settings.AreDefaultScriptDialogsEnabled = false;
             settings.AreDevToolsEnabled = App.TestModeHelper.TestMode;

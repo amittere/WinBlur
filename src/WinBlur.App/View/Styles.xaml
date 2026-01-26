@@ -19,8 +19,8 @@
             <!-- Article content brushes -->
             <SolidColorBrush x:Key="ArticleContentBackgroundBrush" Color="{StaticResource LayerFillColorDefault}" />
             <SolidColorBrush x:Key="ArticleContentForegroundBrush" Color="{StaticResource TextFillColorPrimary}"/>
-            <SolidColorBrush x:Key="ArticleContentScrollbarBackgroundBrush" Color="#FCFCFC"/>
-            <SolidColorBrush x:Key="ArticleContentScrollbarBrush" Color="#8A8A8A"/>
+            <Color x:Key="ArticleContentScrollbarBackgroundColor">#FCFCFC</Color>
+            <Color x:Key="ArticleContentScrollbarColor">#8A8A8A</Color>
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="Dark">
@@ -32,8 +32,8 @@
             <!-- Article content brushes -->
             <SolidColorBrush x:Key="ArticleContentBackgroundBrush" Color="{StaticResource LayerFillColorDefault}" />
             <SolidColorBrush x:Key="ArticleContentForegroundBrush" Color="{StaticResource TextFillColorPrimary}"/>
-            <SolidColorBrush x:Key="ArticleContentScrollbarBackgroundBrush" Color="#2C2C2C"/>
-            <SolidColorBrush x:Key="ArticleContentScrollbarBrush" Color="#A1A1A1"/>
+            <Color x:Key="ArticleContentScrollbarBackgroundColor">#2C2C2C</Color>
+            <Color x:Key="ArticleContentScrollbarColor">#A1A1A1</Color>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

@@ -61,22 +61,22 @@ namespace WinBlur.App.Helpers
         public static readonly DependencyProperty HtmlContentScrollbarBackgroundColorProperty =
             DependencyProperty.RegisterAttached(
                 "HtmlContentScrollbarBackgroundColor",
-                typeof(SolidColorBrush),
+                typeof(Color),
                 typeof(DependencyPropertyHelper),
                 new PropertyMetadata(null, OnHtmlThemePropertyChanged));
 
-        public static SolidColorBrush GetHtmlContentScrollbarBackgroundColor(DependencyObject obj) { return (SolidColorBrush)obj.GetValue(HtmlContentScrollbarBackgroundColorProperty); }
-        public static void SetHtmlContentScrollbarBackgroundColor(DependencyObject obj, SolidColorBrush value) { obj.SetValue(HtmlContentScrollbarBackgroundColorProperty, value); }
+        public static Color GetHtmlContentScrollbarBackgroundColor(DependencyObject obj) { return (Color)obj.GetValue(HtmlContentScrollbarBackgroundColorProperty); }
+        public static void SetHtmlContentScrollbarBackgroundColor(DependencyObject obj, Color value) { obj.SetValue(HtmlContentScrollbarBackgroundColorProperty, value); }
 
         public static readonly DependencyProperty HtmlContentScrollbarColorProperty =
             DependencyProperty.RegisterAttached(
                 "HtmlContentScrollbarColor",
-                typeof(SolidColorBrush),
+                typeof(Color),
                 typeof(DependencyPropertyHelper),
                 new PropertyMetadata(null, OnHtmlThemePropertyChanged));
 
-        public static SolidColorBrush GetHtmlContentScrollbarColor(DependencyObject obj) { return (SolidColorBrush)obj.GetValue(HtmlContentScrollbarColorProperty); }
-        public static void SetHtmlContentScrollbarColor(DependencyObject obj, SolidColorBrush value) { obj.SetValue(HtmlContentScrollbarColorProperty, value); }
+        public static Color GetHtmlContentScrollbarColor(DependencyObject obj) { return (Color)obj.GetValue(HtmlContentScrollbarColorProperty); }
+        public static void SetHtmlContentScrollbarColor(DependencyObject obj, Color value) { obj.SetValue(HtmlContentScrollbarColorProperty, value); }
 
         public static readonly DependencyProperty HtmlContentFontFamilyProperty =
             DependencyProperty.RegisterAttached(
@@ -179,8 +179,8 @@ namespace WinBlur.App.Helpers
             string fgColor = GetHtmlContentForeground(obj).ToString();
             string backgroundColor = GetHtmlContentBackground(obj).ToString();
             string linkColor = GetHtmlContentLinkColor(obj).Color.ToString();
-            string scrollbarBackgroundColor = GetHtmlContentScrollbarBackgroundColor(obj).Color.ToString();
-            string scrollbarColor = GetHtmlContentScrollbarColor(obj).Color.ToString();
+            string scrollbarBackgroundColor = GetHtmlContentScrollbarBackgroundColor(obj).ToString();
+            string scrollbarColor = GetHtmlContentScrollbarColor(obj).ToString();
             string fontFamily = string.Format("'{0}', 'Segoe UI Variable Text', 'Segoe UI', sans-serif", GetHtmlContentFontFamily(obj));
             int fontWeight = GetHtmlContentFontWeight(obj);
             int textSize = GetHtmlContentTextSize(obj);
