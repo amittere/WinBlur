@@ -20,10 +20,10 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
-    <AppxBundle>Always</AppxBundle>
+    <AppxBundle>Never</AppxBundle>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>C0E697D7909A1C86E4A4B921123376DBD3092956</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>3BCDFEAED9B9A4DF2270351E091EA6184D7E95F3</PackageCertificateThumbprint>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="View\ArticleTextViewScript.js">
