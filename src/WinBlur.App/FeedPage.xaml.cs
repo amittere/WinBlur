@@ -141,7 +141,7 @@ namespace WinBlur.App
 
         private void ArticleListViewSource_CurrentChanged(object sender, object e)
         {
-            if (articleListViewSource.View.CurrentItem is Article a)
+            if (articleListViewSource.View?.CurrentItem is Article a)
             {
                 ViewArticle(a);
             }
@@ -537,8 +537,8 @@ namespace WinBlur.App
             await webView.EnsureCoreWebView2Async();
 
             var settings = webView.CoreWebView2.Settings;
-            settings.AreDefaultContextMenusEnabled = false;
-            settings.AreBrowserAcceleratorKeysEnabled = false;
+            settings.AreDefaultContextMenusEnabled = App.TestModeHelper.TestMode;
+            settings.AreBrowserAcceleratorKeysEnabled = App.TestModeHelper.TestMode;
             settings.AreDefaultScriptDialogsEnabled = false;
             settings.AreDevToolsEnabled = App.TestModeHelper.TestMode;
             settings.AreHostObjectsAllowed = false;
@@ -1366,9 +1366,6 @@ namespace WinBlur.App
         {
             if (viewModel != null)
             {
-                // Walk through all articles updating their ViewContent to match the new theme.
-                viewModel.RefreshArticleContent();
-
                 // Reload comments so hopefully the PersonPicture controls work properly
                 LoadComments(viewModel.SelectedArticle);
             }

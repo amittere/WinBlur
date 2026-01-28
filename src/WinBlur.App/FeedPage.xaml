@@ -625,8 +625,7 @@
                                   VerticalAlignment="Stretch"
                                   Margin="0,0,0,8">
                             <WebView2.Resources>
-                                <SolidColorBrush x:Name="BrushForThemeBackgroundColor"
-                                                 Color="{x:Bind vmodel:ArticleThemeViewModel.Instance.WebViewBackgroundColor, Mode=OneWay}" />
+                                <SolidColorBrush x:Name="BrushForThemeBackgroundColor" Color="{ThemeResource LayerFillColorDefault}" />
                             </WebView2.Resources>
                         </WebView2>
                     </DataTemplate>

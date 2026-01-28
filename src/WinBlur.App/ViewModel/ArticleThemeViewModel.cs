@@ -70,7 +70,7 @@ namespace WinBlur.App.ViewModel
                 switch (ReadingTheme)
                 {
                     case ReadingThemeMode.UseWindowsTheme:
-                        return (App.Current.Resources["ArticleContentBackgroundBrush"] as SolidColorBrush).Color;
+                        return (Color)(App.Current.Resources["LayerFillColorDefault"]);
                     case ReadingThemeMode.Light:
                         return Color.FromArgb(255, 238, 238, 238); // #EEEEEE
                     case ReadingThemeMode.Sepia:
@@ -113,12 +113,12 @@ namespace WinBlur.App.ViewModel
                 switch (ReadingTheme)
                 {
                     case ReadingThemeMode.UseWindowsTheme:
-                        return (App.Current.Resources["ArticleContentForegroundBrush"] as SolidColorBrush).Color;
+                        return (Color)(App.Current.Resources["TextFillColorPrimary"]);
                     case ReadingThemeMode.Light:
                         return (Color)((ResourceDictionary)App.Current.Resources.ThemeDictionaries["Light"])["TextFillColorPrimary"];
                     case ReadingThemeMode.Dark:
                     case ReadingThemeMode.Black:
-                        return (Color)((ResourceDictionary)App.Current.Resources.ThemeDictionaries["Default"]) ["TextFillColorPrimary"];
+                        return (Color)((ResourceDictionary)App.Current.Resources.ThemeDictionaries["Default"])["TextFillColorPrimary"];
                     case ReadingThemeMode.Sepia:
                         return Color.FromArgb(255, 42, 20, 9); // #2A1409
                     default:
