@@ -608,10 +608,11 @@
                                   DefaultBackgroundColor="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentBackgroundColor, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContent="{x:Bind ViewContent, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentHeader="{x:Bind ContentHeader, Mode=OneWay}"
-                                  helpers:DependencyPropertyHelper.HtmlContentForeground="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentForegroundBrush, Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentForeground="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentForegroundColor, Mode=OneWay}"
+                                  helpers:DependencyPropertyHelper.HtmlContentBackground="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentBackgroundColor, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentLinkColor="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                                  helpers:DependencyPropertyHelper.HtmlContentScrollbarBackgroundColor="{ThemeResource ArticleContentScrollbarBackgroundBrush}"
-                                  helpers:DependencyPropertyHelper.HtmlContentScrollbarColor="{ThemeResource ArticleContentScrollbarBrush}"
+                                  helpers:DependencyPropertyHelper.HtmlContentScrollbarBackgroundColor="{ThemeResource ArticleContentScrollbarBackgroundColor}"
+                                  helpers:DependencyPropertyHelper.HtmlContentScrollbarColor="{ThemeResource ArticleContentScrollbarColor}"
                                   helpers:DependencyPropertyHelper.HtmlContentFontFamily="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentFontFamily, Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentFontWeight="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentFontWeight,Mode=OneWay}"
                                   helpers:DependencyPropertyHelper.HtmlContentTextSize="{x:Bind vmodel:ArticleThemeViewModel.Instance.ContentTextSize, Mode=OneWay}"
@@ -624,8 +625,7 @@
                                   VerticalAlignment="Stretch"
                                   Margin="0,0,0,8">
                             <WebView2.Resources>
-                                <SolidColorBrush x:Name="BrushForThemeBackgroundColor"
-                                                 Color="{x:Bind vmodel:ArticleThemeViewModel.Instance.WebViewBackgroundColor, Mode=OneWay}" />
+                                <SolidColorBrush x:Name="BrushForThemeBackgroundColor" Color="{ThemeResource LayerFillColorDefault}" />
                             </WebView2.Resources>
                         </WebView2>
                     </DataTemplate>

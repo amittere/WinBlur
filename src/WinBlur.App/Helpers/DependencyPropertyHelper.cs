@@ -1,9 +1,11 @@
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
 using System.IO;
 using WinBlur.App.ViewModel;
+using Windows.UI;
 
 namespace WinBlur.App.Helpers
 {
@@ -29,12 +31,22 @@ namespace WinBlur.App.Helpers
         public static readonly DependencyProperty HtmlContentForegroundProperty =
             DependencyProperty.RegisterAttached(
                 "HtmlContentForeground",
-                typeof(SolidColorBrush),
+                typeof(Color),
                 typeof(DependencyPropertyHelper),
                 new PropertyMetadata(null, OnHtmlThemePropertyChanged));
 
-        public static SolidColorBrush GetHtmlContentForeground(DependencyObject obj) { return (SolidColorBrush)obj.GetValue(HtmlContentForegroundProperty); }
-        public static void SetHtmlContentForeground(DependencyObject obj, SolidColorBrush value) { obj.SetValue(HtmlContentForegroundProperty, value); }
+        public static Color GetHtmlContentForeground(DependencyObject obj) { return (Color)obj.GetValue(HtmlContentForegroundProperty); }
+        public static void SetHtmlContentForeground(DependencyObject obj, Color value) { obj.SetValue(HtmlContentForegroundProperty, value); }
+
+        public static readonly DependencyProperty HtmlContentBackgroundProperty =
+            DependencyProperty.RegisterAttached(
+                "HtmlContentBackground",
+                typeof(Color),
+                typeof(DependencyPropertyHelper),
+                new PropertyMetadata(null, OnHtmlThemePropertyChanged));
+
+        public static Color GetHtmlContentBackground(DependencyObject obj) { return (Color)obj.GetValue(HtmlContentBackgroundProperty); }
+        public static void SetHtmlContentBackground(DependencyObject obj, Color value) { obj.SetValue(HtmlContentBackgroundProperty, value); }
 
         public static readonly DependencyProperty HtmlContentLinkColorProperty =
             DependencyProperty.RegisterAttached(
@@ -49,22 +61,22 @@ namespace WinBlur.App.Helpers
         public static readonly DependencyProperty HtmlContentScrollbarBackgroundColorProperty =
             DependencyProperty.RegisterAttached(
                 "HtmlContentScrollbarBackgroundColor",
-                typeof(SolidColorBrush),
+                typeof(Color),
                 typeof(DependencyPropertyHelper),
                 new PropertyMetadata(null, OnHtmlThemePropertyChanged));
 
-        public static SolidColorBrush GetHtmlContentScrollbarBackgroundColor(DependencyObject obj) { return (SolidColorBrush)obj.GetValue(HtmlContentScrollbarBackgroundColorProperty); }
-        public static void SetHtmlContentScrollbarBackgroundColor(DependencyObject obj, SolidColorBrush value) { obj.SetValue(HtmlContentScrollbarBackgroundColorProperty, value); }
+        public static Color GetHtmlContentScrollbarBackgroundColor(DependencyObject obj) { return (Color)obj.GetValue(HtmlContentScrollbarBackgroundColorProperty); }
+        public static void SetHtmlContentScrollbarBackgroundColor(DependencyObject obj, Color value) { obj.SetValue(HtmlContentScrollbarBackgroundColorProperty, value); }
 
         public static readonly DependencyProperty HtmlContentScrollbarColorProperty =
             DependencyProperty.RegisterAttached(
                 "HtmlContentScrollbarColor",
-                typeof(SolidColorBrush),
+                typeof(Color),
                 typeof(DependencyPropertyHelper),
                 new PropertyMetadata(null, OnHtmlThemePropertyChanged));
 
-        public static SolidColorBrush GetHtmlContentScrollbarColor(DependencyObject obj) { return (SolidColorBrush)obj.GetValue(HtmlContentScrollbarColorProperty); }
-        public static void SetHtmlContentScrollbarColor(DependencyObject obj, SolidColorBrush value) { obj.SetValue(HtmlContentScrollbarColorProperty, value); }
+        public static Color GetHtmlContentScrollbarColor(DependencyObject obj) { return (Color)obj.GetValue(HtmlContentScrollbarColorProperty); }
+        public static void SetHtmlContentScrollbarColor(DependencyObject obj, Color value) { obj.SetValue(HtmlContentScrollbarColorProperty, value); }
 
         public static readonly DependencyProperty HtmlContentFontFamilyProperty =
             DependencyProperty.RegisterAttached(
@@ -124,6 +136,7 @@ namespace WinBlur.App.Helpers
 
         private static string htmlStyleHeader;
         private static string htmlForegroundColor;
+        private static string htmlBackgroundColor;
         private static string htmlLinkColor;
         private static string htmlScrollbarBackgroundColor;
         private static string htmlScrollbarColor;
@@ -163,10 +176,11 @@ namespace WinBlur.App.Helpers
 
         private static string GetHtmlStyleHeader(DependencyObject obj)
         {
-            string fgColor = GetHtmlContentForeground(obj).Color.ToString();
+            string fgColor = GetHtmlContentForeground(obj).ToString();
+            string backgroundColor = GetHtmlContentBackground(obj).ToString();
             string linkColor = GetHtmlContentLinkColor(obj).Color.ToString();
-            string scrollbarBackgroundColor = GetHtmlContentScrollbarBackgroundColor(obj).Color.ToString();
-            string scrollbarColor = GetHtmlContentScrollbarColor(obj).Color.ToString();
+            string scrollbarBackgroundColor = GetHtmlContentScrollbarBackgroundColor(obj).ToString();
+            string scrollbarColor = GetHtmlContentScrollbarColor(obj).ToString();
             string fontFamily = string.Format("'{0}', 'Segoe UI Variable Text', 'Segoe UI', sans-serif", GetHtmlContentFontFamily(obj));
             int fontWeight = GetHtmlContentFontWeight(obj);
             int textSize = GetHtmlContentTextSize(obj);
@@ -174,6 +188,7 @@ namespace WinBlur.App.Helpers
             int columnWidth = GetHtmlContentColumnWidth(obj);
 
             if (fgColor != htmlForegroundColor ||
+                backgroundColor != htmlBackgroundColor ||
                 linkColor != htmlLinkColor ||
                 scrollbarBackgroundColor != htmlScrollbarBackgroundColor ||
                 scrollbarColor != htmlScrollbarColor ||
@@ -185,6 +200,7 @@ namespace WinBlur.App.Helpers
             {
                 // Style changed - update strings and return
                 htmlForegroundColor = fgColor;
+                htmlBackgroundColor = backgroundColor;
                 htmlLinkColor = linkColor;
                 htmlScrollbarBackgroundColor = scrollbarBackgroundColor;
                 htmlScrollbarColor = scrollbarColor;
@@ -195,6 +211,8 @@ namespace WinBlur.App.Helpers
                 htmlColumnWidth = columnWidth;
 
                 string fgColorNoAlpha = htmlForegroundColor.Substring(3); // Remove alpha channel
+                string backgroundColorNoAlpha = htmlBackgroundColor.Substring(3);
+                string bgColorOrTransparent = (GetHtmlContentBackground(obj) == Colors.Transparent) ? "transparent" : $"#{backgroundColorNoAlpha}";
                 string linkColorNoAlpha = htmlLinkColor.Substring(3);
                 string scrollbarBackgroundColorNoAlpha = htmlScrollbarBackgroundColor.Substring(3);
                 string scrollbarColorNoAlpha = htmlScrollbarColor.Substring(3);
@@ -205,6 +223,7 @@ namespace WinBlur.App.Helpers
                         <meta name=""viewport"" content=""initial-scale=1 minimum-scale=1"" />
                         <style type=""text/css"">
                             html {{
+                                background-color: {bgColorOrTransparent};
                                 color: #{fgColorNoAlpha};
                                 font-family: {htmlFontFamily};
                                 font-size: {textSizeEm}em;

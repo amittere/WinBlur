@@ -454,18 +454,6 @@ namespace WinBlur.App.ViewModel
             }
         }
 
-        public void RefreshArticleContent()
-        {
-            foreach (Article a in ArticleList)
-            {
-                a.ViewContent = "";
-                if (SelectedArticle == a)
-                {
-                    a.ViewContent = ReadingMode == ReadingMode.Text ? a.TextContent : a.FeedContent;
-                }
-            }
-        }
-
         #endregion
 
         #region Article Detail
