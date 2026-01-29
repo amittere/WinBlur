@@ -156,15 +156,21 @@ namespace WinBlur.App
 
         private void SelectSubscription(SubscriptionLabel label)
         {
-            if (splitView.DisplayMode == SplitViewDisplayMode.Overlay)
+            // Only handle the subscription change if the selection is different from
+            // what we already have. This can happen if the TreeView forgets the selection
+            // during a filter operation and we need to re-select it.
+            if (viewModel.SelectedSubscription != label)
             {
-                // Hide the pane if we're in the overlay mode
-                // since we've successfully chosen a thing
-                splitView.IsPaneOpen = false;
-            }
+                if (splitView.DisplayMode == SplitViewDisplayMode.Overlay)
+                {
+                    // Hide the pane if we're in the overlay mode
+                    // since we've successfully chosen a thing
+                    splitView.IsPaneOpen = false;
+                }
 
-            viewModel.SelectedSubscription = label;
-            ContentFrame.Navigate(typeof(FeedPage), label);
+                viewModel.SelectedSubscription = label;
+                ContentFrame.Navigate(typeof(FeedPage), label);
+            }
         }
 
         private void TreeViewItem_RightTapped(object sender, RightTappedRoutedEventArgs e)

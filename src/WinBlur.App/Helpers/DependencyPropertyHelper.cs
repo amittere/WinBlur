@@ -131,7 +131,15 @@ namespace WinBlur.App.Helpers
         // Handler for all related property changes
         private static void OnHtmlThemePropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            ReloadContent(obj, GetHtmlContent(obj));
+            // Work around a platform issue where sometimes we get a DataContextChanged event
+            // sometime after loading an article, causing bindings to get re-evaluated even though
+            // nothing changed. Only reload the content if the value actually changed and we have actual
+            // content to show.
+            string content = GetHtmlContent(obj);
+            if (e.NewValue != e.OldValue && !string.IsNullOrEmpty(content))
+            {
+                ReloadContent(obj, content);
+            }
         }
 
         private static string htmlStyleHeader;
@@ -154,7 +162,15 @@ namespace WinBlur.App.Helpers
                 string header = GetHtmlContentHeader(obj);
                 try
                 {
-                    wv.NavigateToString(string.Concat(style, content));
+                    if (App.TestModeHelper.TestMode)
+                    {
+                        // Dump stack trace for debug purposes
+                        wv.NavigateToString(string.Concat(style, $"<div>{System.Environment.StackTrace}</div>", content));
+                    }
+                    else
+                    {
+                        wv.NavigateToString(string.Concat(style, content));
+                    }
                 }
                 catch (Exception)
                 {
