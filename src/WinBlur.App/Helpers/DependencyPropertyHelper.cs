@@ -136,7 +136,7 @@ namespace WinBlur.App.Helpers
             // nothing changed. Only reload the content if the value actually changed and we have actual
             // content to show.
             string content = GetHtmlContent(obj);
-            if (e.NewValue != e.OldValue && !string.IsNullOrEmpty(content))
+            if (!e.NewValue.Equals(e.OldValue) && !string.IsNullOrEmpty(content))
             {
                 ReloadContent(obj, content);
             }
