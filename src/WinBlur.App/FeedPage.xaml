@@ -210,23 +210,26 @@
                                            Margin="0,15,10,0"
                                            Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
                                            Visibility="{x:Bind IsStarred, Mode=OneWay}" />
-                                <Border Grid.Column="3"
-                                        VerticalAlignment="Stretch"
-                                        Margin="0,2,-8,2"
-                                        CornerRadius="{StaticResource ControlCornerRadius}"
-                                        Visibility="{x:Bind ShowImagePreview}">
-                                    <Image Grid.Column="3"
-                                           Width="75"
-                                           VerticalAlignment="Stretch"
-                                           Stretch="UniformToFill"
-                                           Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
-                                           Visibility="{x:Bind ImageThumbnail, Converter={StaticResource NullToCollapsedConverter}}">
-                                        <Image.Source>
-                                            <BitmapImage DecodePixelWidth="192"
-                                                         UriSource="{x:Bind ImageThumbnail}" />
-                                        </Image.Source>
-                                    </Image>
-                                </Border>
+                                <Grid Grid.Column="3"
+                                      Width="75"
+                                      Margin="0,2,-8,2"
+                                      CornerRadius="{StaticResource ControlCornerRadius}"
+                                      Background="{ThemeResource ControlFillColorTertiaryBrush}"
+                                      Visibility="{x:Bind ShowImagePreview}" />
+                                <Grid Grid.Column="3"
+                                      Width="75"
+                                      Margin="0,2,-8,2"
+                                      CornerRadius="{StaticResource ControlCornerRadius}"
+                                      Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
+                                      Visibility="{x:Bind ShowImagePreview}">
+                                    <Grid.Background>
+                                        <ImageBrush Stretch="UniformToFill">
+                                            <ImageBrush.ImageSource>
+                                                <BitmapImage UriSource="{x:Bind ImageThumbnail}" />
+                                            </ImageBrush.ImageSource>
+                                        </ImageBrush>
+                                    </Grid.Background>
+                                </Grid>
                                 
                                 <!-- Keyboard accelerators that work on the currently focused item -->
                                 <Grid.KeyboardAccelerators>

@@ -959,7 +959,7 @@ namespace WinBlur.App.Model
                 }
 
                 // Parse images
-                if (t["secure_image_thumbnails"] is JObject imageThumbnails)
+                if (t["image_urls"] is JArray imageThumbnails)
                 {
                     a.ImageThumbnail = ParseThumbnail(imageThumbnails);
                 }
@@ -1097,11 +1097,11 @@ namespace WinBlur.App.Model
             return result;
         }
 
-        private Uri ParseThumbnail(JObject images)
+        private Uri ParseThumbnail(JArray images)
         {
             foreach (JToken image in images.Children())
             {
-                Uri value = ParseHelper.ParseValueRef<Uri>(((JProperty)image).Value, null);
+                Uri value = ParseHelper.ParseValueRef<Uri>(image, null);
                 if (value != null)
                 {
                     return value;
