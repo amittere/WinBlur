@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using WinBlur.App.ViewModel;
@@ -15,10 +16,11 @@ using Windows.Security.Credentials;
 using Windows.UI;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace WinBlur.App.Model
 {
-    public class NewsBlurClient
+    public partial class NewsBlurClient
     {
         #region Properties
 
@@ -891,10 +893,11 @@ namespace WinBlur.App.Model
                 }
                 else
                 {
-                    subtitle = Feeds[feedID].Title + " - " + author;
+                    subtitle = Feeds[feedID].Title + " \u2022 " + author;
                 }
                 string date = ParseHelper.ParseValueRef<string>(t["long_parsed_date"], null);
                 Uri articleLink = ParseHelper.ParseValueRef<Uri>(t["story_permalink"], null);
+                string storyContent = ParseHelper.ParseValueRef(t["story_content"], "");
 
                 Article a = new Article
                 {
@@ -904,9 +907,11 @@ namespace WinBlur.App.Model
                     IsRead = ParseHelper.ParseValueStruct(t["read_status"], 0) == 1,
                     IsStarred = ParseHelper.ParseValueStruct(t["starred"], false),
                     Title = WebUtility.HtmlDecode(title).Replace('\n', ' '),
+                    Subtitle = subtitle,
                     Author = WebUtility.HtmlDecode(author),
                     ContentHeader = CreateContentHeader(title, subtitle, date, articleLink),
-                    Content = ParseHelper.ParseValueRef(t["story_content"], ""),
+                    Content = storyContent,
+                    ContentPreview = HtmlToRawText(storyContent, 200),
                     ViewContent = "",
                     OriginalText = null,
                     Timestamp = ParseHelper.ParseValueStruct<long>(t["story_timestamp"], 0),
@@ -1420,6 +1425,26 @@ namespace WinBlur.App.Model
                 title,
                 subtitle,
                 date);
+        }
+
+        [GeneratedRegex("<.*?>")]
+        private static partial Regex HtmlTagRegex();
+
+        [GeneratedRegex(@"\s+")]
+        private static partial Regex WhitespaceTrimRegex();
+
+        private string HtmlToRawText(string html, int? maxLength = null)
+        {
+            string rawText = HtmlTagRegex().Replace(html, string.Empty);
+            rawText = WebUtility.HtmlDecode(rawText);
+            rawText = WhitespaceTrimRegex().Replace(rawText, " ").Trim();
+
+            if (maxLength.HasValue && rawText.Length > maxLength.Value)
+            {
+                rawText = rawText.Substring(0, maxLength.Value);
+            }
+
+            return rawText;
         }
 
         #endregion Helpers
