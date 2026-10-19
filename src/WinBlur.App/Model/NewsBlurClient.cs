@@ -911,7 +911,7 @@ namespace WinBlur.App.Model
                     Author = WebUtility.HtmlDecode(author),
                     ContentHeader = CreateContentHeader(title, subtitle, date, articleLink),
                     Content = storyContent,
-                    ContentPreview = HtmlToRawText(storyContent, 200),
+                    ContentPreview = HtmlToRawText(storyContent, 500),
                     ViewContent = "",
                     OriginalText = null,
                     Timestamp = ParseHelper.ParseValueStruct<long>(t["story_timestamp"], 0),

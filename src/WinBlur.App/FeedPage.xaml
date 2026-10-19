@@ -195,7 +195,8 @@
                                            Foreground="{StaticResource TextFillColorSecondaryBrush}"
                                            TextWrapping="WrapWholeWords"
                                            TextTrimming="WordEllipsis"
-                                           MaxLines="3"
+                                           MaxLines="{x:Bind local:App.Settings.StoryPreviewMaxLines}"
+                                           Visibility="{x:Bind local:App.Settings.StoryPreviewMaxLines, Converter={StaticResource DoubleToVisibilityConverter}}"
                                            Style="{StaticResource CaptionTextBlockStyle}" />
                                 <TextBlock Text="{x:Bind Subtitle}"
                                            Grid.Row="2"

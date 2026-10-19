@@ -114,6 +114,15 @@ namespace WinBlur.App.ViewModel
             get { return App.Settings.ShowImagePreviews; }
             set { App.Settings.ShowImagePreviews = value; NotifyPropertyChanged(nameof(ShowImagePreviews)); }
         }
+        public int StoryPreviewMaxLinesSelectedIndex
+        {
+            get { return StoryPreviewMaxLinesToIndex(App.Settings.StoryPreviewMaxLines); }
+            set
+            {
+                App.Settings.StoryPreviewMaxLines = IndexToStoryPreviewMaxLines(value);
+                NotifyPropertyChanged(nameof(StoryPreviewMaxLinesSelectedIndex));
+            }
+        }
 
         public bool ShowFeedFilterClearOverrides
         {
@@ -285,6 +294,24 @@ namespace WinBlur.App.ViewModel
             if (index == 3) return 120;
             if (index == 4) return 240;
             else return 30;
+        }
+
+        private int StoryPreviewMaxLinesToIndex(int lines)
+        {
+            if (lines == 0) return 0;
+            if (lines == 1) return 1;
+            if (lines == 3) return 2;
+            if (lines == 5) return 3;
+            return 0;
+        }
+
+        private int IndexToStoryPreviewMaxLines(int index)
+        {
+            if (index == 0) return 0;
+            if (index == 1) return 1;
+            if (index == 2) return 3;
+            if (index == 3) return 5;
+            return 0;
         }
     }
 }

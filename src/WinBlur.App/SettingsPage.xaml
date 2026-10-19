@@ -113,6 +113,14 @@
                         </toolkit:SettingsCard.HeaderIcon>
                         <ToggleSwitch IsOn="{x:Bind viewModel.ShowImagePreviews, Mode=TwoWay}" />
                     </toolkit:SettingsCard>
+                    <toolkit:SettingsCard Header="Show story previews">
+                        <ComboBox SelectedIndex="{x:Bind viewModel.StoryPreviewMaxLinesSelectedIndex, Mode=TwoWay}">
+                            <x:String>None</x:String>
+                            <x:String>Short (1 line)</x:String>
+                            <x:String>Medium (3 lines)</x:String>
+                            <x:String>Long (5 lines)</x:String>
+                        </ComboBox>
+                    </toolkit:SettingsCard>
 
                     <TextBlock Text="Stories" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
                     <toolkit:SettingsExpander Header="Default reading mode">

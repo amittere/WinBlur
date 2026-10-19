@@ -1087,6 +1087,7 @@
     <converters:BoolNegationConverter x:Key="BoolNegationConverter" />
     <converters:BoolToVisibilityConverter x:Key="BoolToCollapsedConverter" TrueValue="Collapsed" FalseValue="Visible"/>
     <converters:BoolToVisibilityConverter x:Key="BoolToVisibleConverter" TrueValue="Visible" FalseValue="Collapsed"/>
+    <converters:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" GreaterThan="0.0" />
     <converters:BoolToObjectConverter x:Key="BoolToDoubleConverter" TrueValue="1.0" FalseValue="0.0"/>
     <converters:BoolToObjectConverter x:Key="UnreadToOpacityConverter" TrueValue="0.5" FalseValue="1.0"/>
     <converters:BoolToObjectConverter x:Key="LikedToContentConverter" TrueValue="&#xE1CF;" FalseValue="&#xE1CE;"/>
