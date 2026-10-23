@@ -182,6 +182,13 @@ namespace WinBlur.App.Model
             set { showImagePreviews = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
         }
 
+        private int storyPreviewMaxLines = 0;
+        public int StoryPreviewMaxLines
+        {
+            get => storyPreviewMaxLines;
+            set { storyPreviewMaxLines = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
+        }
+
         public Dictionary<string, SortMode> SortModeSettings { get; private set; } = new Dictionary<string, SortMode>();
 
         public Dictionary<string, ReadingMode> ReadingModeSettings { get; private set; } = new Dictionary<string, ReadingMode>();
@@ -264,6 +271,7 @@ namespace WinBlur.App.Model
             feedFilterMode = LoadSetting(container, nameof(FeedFilterMode), FeedFilterMode);
             openLinksInBrowser = LoadSetting(container, nameof(OpenLinksInBrowser), OpenLinksInBrowser);
             showImagePreviews = LoadSetting(container, nameof(ShowImagePreviews), ShowImagePreviews);
+            storyPreviewMaxLines = LoadSetting(container, nameof(StoryPreviewMaxLines), StoryPreviewMaxLines);
             appTheme2 = LoadSetting(container, nameof(AppTheme2), AppTheme2);
             readingTheme = LoadSetting(container, nameof(ReadingTheme), ReadingTheme);
             readingTextSize = LoadSetting(container, nameof(ReadingTextSize), ReadingTextSize);
@@ -323,6 +331,7 @@ namespace WinBlur.App.Model
             SaveSetting(container, (int)FeedFilterMode, nameof(FeedFilterMode));
             SaveSetting(container, OpenLinksInBrowser, nameof(OpenLinksInBrowser));
             SaveSetting(container, ShowImagePreviews, nameof(ShowImagePreviews));
+            SaveSetting(container, StoryPreviewMaxLines, nameof(StoryPreviewMaxLines));
             SaveSetting(container, (int)AppTheme2, nameof(AppTheme2));
             SaveSetting(container, (int)ReadingTheme, nameof(ReadingTheme));
             SaveSetting(container, ReadingTextSize, nameof(ReadingTextSize));

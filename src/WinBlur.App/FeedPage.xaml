@@ -168,65 +168,77 @@
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="model:Article">
                             <Grid x:Name="RootGrid"
+                                  Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
                                   tk:FrameworkElementExtensions.AncestorType="ListViewItem">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Orientation="Vertical"
-                                            Grid.Column="1"
-                                            Margin="4,0"
-                                            Padding="0,10,15,10">
-                                    <TextBlock Text="{x:Bind Title}"
-                                               Grid.Row="0"
-                                               Grid.Column="1"
-                                               Margin="0,0,0,2"
-                                               TextWrapping="WrapWholeWords"
-                                               Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
-                                               Style="{StaticResource BaseTextBlockStyle}" />
-                                    <TextBlock Text="{x:Bind Subtitle}"
-                                               Grid.Row="1"
-                                               Grid.Column="1"
-                                               TextWrapping="WrapWholeWords"
-                                               Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
-                                               Style="{StaticResource CaptionTextBlockStyle}" />
-                                    <TextBlock Text="{x:Bind ShortDate}"
-                                               Grid.Row="2"
-                                               Grid.Column="1"
-                                               TextWrapping="WrapWholeWords"
-                                               Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
-                                               Style="{StaticResource CaptionTextBlockStyle}" />
-                                </StackPanel>
+                                <TextBlock Text="{x:Bind Title}"
+                                           Grid.Row="0"
+                                           Grid.ColumnSpan="2"
+                                           Margin="4,12,16,4"
+                                           TextWrapping="WrapWholeWords"
+                                           Style="{StaticResource BaseTextBlockStyle}" />
+                                <TextBlock Text="{x:Bind ContentPreview}"
+                                           Grid.Row="1"
+                                           Grid.ColumnSpan="2"
+                                           Margin="4,0,16,4"
+                                           Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                           TextWrapping="WrapWholeWords"
+                                           TextTrimming="WordEllipsis"
+                                           MaxLines="{x:Bind local:App.Settings.StoryPreviewMaxLines}"
+                                           Visibility="{x:Bind local:App.Settings.StoryPreviewMaxLines, Converter={StaticResource DoubleToVisibilityConverter}}"
+                                           Style="{StaticResource CaptionTextBlockStyle}" />
+                                <TextBlock Text="{x:Bind Subtitle}"
+                                           Grid.Row="2"
+                                           Margin="4,0,16,12"
+                                           Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                           TextWrapping="NoWrap"
+                                           Style="{StaticResource CaptionTextBlockStyle}" />
+                                <TextBlock Text="{x:Bind ShortDate}"
+                                           Grid.Row="2"
+                                           Grid.Column="1"
+                                           Margin="0,0,16,12"
+                                           Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}" />
+                                
                                 <TextBlock Text="&#xE082;"
                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
                                            Grid.Column="2"
-                                           Margin="0,15,10,0"
-                                           Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
+                                           Grid.RowSpan="3"
+                                           Margin="0,16,16,0"
                                            Visibility="{x:Bind IsStarred, Mode=OneWay}" />
-                                <Border Grid.Column="3"
-                                        VerticalAlignment="Stretch"
-                                        Margin="0,2,-8,2"
-                                        CornerRadius="{StaticResource ControlCornerRadius}"
-                                        Visibility="{x:Bind ShowImagePreview}">
-                                    <Image Grid.Column="3"
-                                           Width="75"
-                                           VerticalAlignment="Stretch"
-                                           Stretch="UniformToFill"
-                                           Opacity="{x:Bind IsRead, Converter={StaticResource UnreadToOpacityConverter}, Mode=OneWay}"
-                                           Visibility="{x:Bind ImageThumbnail, Converter={StaticResource NullToCollapsedConverter}}">
-                                        <Image.Source>
-                                            <BitmapImage DecodePixelWidth="192"
-                                                         UriSource="{x:Bind ImageThumbnail}" />
-                                        </Image.Source>
-                                    </Image>
-                                </Border>
+
+                                <Grid Grid.Column="3"
+                                      Grid.RowSpan="3"
+                                      Width="75"
+                                      Margin="0,2,-8,2"
+                                      CornerRadius="{StaticResource ControlCornerRadius}"
+                                      Background="{ThemeResource ControlFillColorTertiaryBrush}"
+                                      Visibility="{x:Bind ShowImagePreview}" />
+                                <Grid Grid.Column="3"
+                                      Grid.RowSpan="3"
+                                      Width="75"
+                                      Margin="0,2,-8,2"
+                                      CornerRadius="{StaticResource ControlCornerRadius}"
+                                      Visibility="{x:Bind ShowImagePreview}">
+                                    <Grid.Background>
+                                        <ImageBrush Stretch="UniformToFill">
+                                            <ImageBrush.ImageSource>
+                                                <BitmapImage UriSource="{x:Bind ImageThumbnail}" />
+                                            </ImageBrush.ImageSource>
+                                        </ImageBrush>
+                                    </Grid.Background>
+                                </Grid>
                                 
                                 <!-- Keyboard accelerators that work on the currently focused item -->
                                 <Grid.KeyboardAccelerators>

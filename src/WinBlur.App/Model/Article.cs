@@ -32,19 +32,11 @@ namespace WinBlur.App.Model
             set { _title = value; NotifyPropertyChanged(nameof(Title)); }
         }
 
+        private string _subtitle;
         public string Subtitle
         {
-            get
-            {
-                if (Author != "")
-                {
-                    return FeedTitle + " - " + Author;
-                }
-                else
-                {
-                    return FeedTitle;
-                }
-            }
+            get { return _subtitle; }
+            set { _subtitle = value; NotifyPropertyChanged(nameof(Subtitle)); }
         }
 
         private string _author;
@@ -64,6 +56,7 @@ namespace WinBlur.App.Model
 
         public string ContentHeader { get; set; } // Article title, subtitle and date placed above article content
         public string Content { get; set; } // HTML content from the RSS feed
+        public string ContentPreview { get; set; } // Preview of HTML content from the RSS feed, converted to raw text
         public string OriginalText { get; set; } // Result of NewsBlur's "Original Text"
 
         public string FeedContent { get { return Content; } }
