@@ -15,6 +15,7 @@ namespace WinBlur.App.ViewModel
         Site,
         Saved,
         Trending,
+        Read,
     }
 
     public class SubscriptionLabel : INotifyPropertyChanged

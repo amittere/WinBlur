@@ -208,6 +208,14 @@ namespace WinBlur.App.ViewModel
                 ParseFolder(folders, allSites, 0);
             }
 
+            Subscriptions.Add(new SubscriptionLabel
+            {
+                Title = "Read Stories",
+                IsFolder = true,
+                FolderIcon = "\ue73e",
+                Type = SubscriptionType.Read
+            });
+
             // Add shared/trending feeds
             Subscriptions.Add(new SubscriptionLabel
             {
@@ -445,6 +453,7 @@ namespace WinBlur.App.ViewModel
                         case SubscriptionType.Global:
                         case SubscriptionType.Trending:
                         case SubscriptionType.Saved:
+                        case SubscriptionType.Read:
                             return true;
                         case SubscriptionType.Social:
                             return (label.ParentLabel == null ||
@@ -477,6 +486,7 @@ namespace WinBlur.App.ViewModel
                         case SubscriptionType.Trending:
                         case SubscriptionType.Saved:
                         case SubscriptionType.Social:
+                        case SubscriptionType.Read:
                             return true;
                         case SubscriptionType.Site:
                             return (label.FilteredChildren.Count > 0 ||

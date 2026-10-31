@@ -92,6 +92,10 @@ namespace WinBlur.App.ViewModel
                         response = await App.Client.GetSavedStoriesByPage(token, currentPage, Tag);
                     }
                     break;
+
+                case SubscriptionType.Read:
+                    response = await App.Client.GetReadStoriesByPage(token, currentPage, NewestFirst);
+                    break;
             }
             if (response == null) throw new Exception("Empty response");
 

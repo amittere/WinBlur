@@ -227,6 +227,16 @@ namespace WinBlur.App.Model
             return await SendGetRequestAsync(requestUri, token);
         }
 
+        public async Task<string> GetReadStoriesByPage(
+            CancellationToken token,
+            int page = 1,
+            bool newestFirst = true)
+        {
+            string order = newestFirst ? "newest" : "oldest";
+            Uri requestUri = new Uri(m_baseUri, $"/reader/read_stories?page={page}&order={order}");
+            return await SendGetRequestAsync(requestUri, token);
+        }
+
         public async Task<string> GetSavedStoriesByPage(CancellationToken token, int page = 1, string tag = "")
         {
             Uri requestUri = new Uri(m_baseUri, string.Format("/reader/starred_stories?page={0}&tag={1}", page, tag));
