@@ -201,7 +201,7 @@ namespace WinBlur.App
                         {
                             Icon = new FontIcon
                             {
-                                Glyph = Converters.IconGlyphToString(Converters.IconGlyph.Folder)
+                                Glyph = "\uE8B7"
                             },
                             Text = folder.Title,
                             Tag = item,

@@ -200,8 +200,7 @@ namespace WinBlur.App.ViewModel
                 {
                     Title = "All Site Stories",
                     IsFolder = true,
-                    Glyph = Symbol.PreviewLink,
-                    FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.Sites),
+                    FolderIcon = "\uE12A",
                     Type = SubscriptionType.Site
                 };
                 Subscriptions.Add(allSites);
@@ -209,16 +208,38 @@ namespace WinBlur.App.ViewModel
                 ParseFolder(folders, allSites, 0);
             }
 
-            // Add "Global Site Stories" header
-            SubscriptionLabel global = new SubscriptionLabel
+            // Add shared/trending feeds
+            Subscriptions.Add(new SubscriptionLabel
             {
                 Title = "Global Shared Stories",
                 IsFolder = true,
-                Glyph = Symbol.World,
-                FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.Globe),
+                FolderIcon = "\ue909",
                 Type = SubscriptionType.Global
-            };
-            Subscriptions.Add(global);
+            });
+            Subscriptions.Add(new SubscriptionLabel
+            {
+                Title = "Widely Read Stories",
+                IsFolder = true,
+                FolderIcon = "\ue7b3",
+                Type = SubscriptionType.Trending,
+                TrendingStoryType = NewsBlurClient.TrendingStoryType.WellRead
+            });
+            Subscriptions.Add(new SubscriptionLabel
+            {
+                Title = "Long Reads",
+                IsFolder = true,
+                FolderIcon = "\ue708",
+                Type = SubscriptionType.Trending,
+                TrendingStoryType = NewsBlurClient.TrendingStoryType.LongReads
+            });
+            Subscriptions.Add(new SubscriptionLabel
+            {
+                Title = "Good Reads",
+                IsFolder = true,
+                FolderIcon = "\ue8e1",
+                Type = SubscriptionType.Trending,
+                TrendingStoryType = NewsBlurClient.TrendingStoryType.GoodReads
+            });
 
             // Parse friends
             if (pResponse["social_feeds"] is JArray friends && friends.Count > 0)
@@ -227,8 +248,7 @@ namespace WinBlur.App.ViewModel
                 {
                     Title = "All Shared Stories",
                     IsFolder = true,
-                    Glyph = Symbol.People,
-                    FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.People),
+                    FolderIcon = "\uE125",
                     Type = SubscriptionType.Social
                 };
                 SetCompressedState(allShared);
@@ -244,8 +264,7 @@ namespace WinBlur.App.ViewModel
                 {
                     Title = "All Saved Stories",
                     IsFolder = true,
-                    Glyph = Symbol.OutlineStar,
-                    FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.OutlineStar),
+                    FolderIcon = "\uE1CE",
                     Type = SubscriptionType.Saved
                 };
                 SetCompressedState(allSaved);
@@ -257,8 +276,7 @@ namespace WinBlur.App.ViewModel
                     {
                         Title = tag.Key,
                         IsFolder = false,
-                        Glyph = Symbol.Tag,
-                        FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.Tag),
+                        FolderIcon = "\uE1CB",
                         ParentFolder = allSaved.Title,
                         ParentLabel = allSaved,
                         Type = SubscriptionType.Saved
@@ -288,7 +306,7 @@ namespace WinBlur.App.ViewModel
                         ParentFolder = folder.Title,
                         ParentLabel = folder,
                         PhotoUri = f.PhotoURL,
-                        Glyph = Symbol.Contact,
+                        FolderIcon = "\ue77b",
                         Type = SubscriptionType.Social
                     };
                     SetCompressedState(label);
@@ -327,8 +345,7 @@ namespace WinBlur.App.ViewModel
                                 IsFolder = false,
                                 ParentFolder = (folder == null) ? "Top Level" : folder.Title,
                                 ParentLabel = folder,
-                                Glyph = Symbol.Globe,
-                                FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.Web),
+                                FolderIcon = "\uE774",
                                 PhotoUri = f.FaviconURL,
                                 Type = SubscriptionType.Site
                             });
@@ -366,8 +383,7 @@ namespace WinBlur.App.ViewModel
                         IsFolder = true,
                         ParentFolder = (folder == null) ? "Top Level" : folder.Title,
                         ParentLabel = folder,
-                        Glyph = Symbol.Folder,
-                        FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.Folder),
+                        FolderIcon = "\uE8B7",
                         Type = SubscriptionType.Site
                     };
                     SetCompressedState(label);
@@ -427,6 +443,7 @@ namespace WinBlur.App.ViewModel
                     switch (label.Type)
                     {
                         case SubscriptionType.Global:
+                        case SubscriptionType.Trending:
                         case SubscriptionType.Saved:
                             return true;
                         case SubscriptionType.Social:
@@ -457,6 +474,7 @@ namespace WinBlur.App.ViewModel
                     switch (label.Type)
                     {
                         case SubscriptionType.Global:
+                        case SubscriptionType.Trending:
                         case SubscriptionType.Saved:
                         case SubscriptionType.Social:
                             return true;
