@@ -123,6 +123,56 @@ namespace WinBlur.App.ViewModel
                 NotifyPropertyChanged(nameof(StoryPreviewMaxLinesSelectedIndex));
             }
         }
+        public bool ShowReadStories
+        {
+            get { return App.Settings.ShowReadStories; }
+            set
+            {
+                App.Settings.ShowReadStories = value;
+                MainViewModel.Instance.RefreshFeedVisibility();
+                NotifyPropertyChanged(nameof(ShowReadStories));
+            }
+        }
+        public bool ShowGlobalSharedStories
+        {
+            get { return App.Settings.ShowGlobalSharedStories; }
+            set
+            {
+                App.Settings.ShowGlobalSharedStories = value;
+                MainViewModel.Instance.RefreshFeedVisibility();
+                NotifyPropertyChanged(nameof(ShowGlobalSharedStories));
+            }
+        }
+        public bool ShowWidelyReadStories
+        {
+            get { return App.Settings.ShowWidelyReadStories; }
+            set
+            {
+                App.Settings.ShowWidelyReadStories = value;
+                MainViewModel.Instance.RefreshFeedVisibility();
+                NotifyPropertyChanged(nameof(ShowWidelyReadStories));
+            }
+        }
+        public bool ShowLongReads
+        {
+            get { return App.Settings.ShowLongReads; }
+            set
+            {
+                App.Settings.ShowLongReads = value;
+                MainViewModel.Instance.RefreshFeedVisibility();
+                NotifyPropertyChanged(nameof(ShowLongReads));
+            }
+        }
+        public bool ShowGoodReads
+        {
+            get { return App.Settings.ShowGoodReads; }
+            set
+            {
+                App.Settings.ShowGoodReads = value;
+                MainViewModel.Instance.RefreshFeedVisibility();
+                NotifyPropertyChanged(nameof(ShowGoodReads));
+            }
+        }
 
         public bool ShowFeedFilterClearOverrides
         {

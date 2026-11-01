@@ -189,6 +189,41 @@ namespace WinBlur.App.Model
             set { storyPreviewMaxLines = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
         }
 
+        private bool showReadStories = true;
+        public bool ShowReadStories
+        {
+            get => showReadStories;
+            set { showReadStories = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
+        }
+
+        private bool showGlobalSharedStories = true;
+        public bool ShowGlobalSharedStories
+        {
+            get => showGlobalSharedStories;
+            set { showGlobalSharedStories = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
+        }
+
+        private bool showWidelyReadStories = true;
+        public bool ShowWidelyReadStories
+        {
+            get => showWidelyReadStories;
+            set { showWidelyReadStories = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
+        }
+
+        private bool showLongReads = true;
+        public bool ShowLongReads
+        {
+            get => showLongReads;
+            set { showLongReads = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
+        }
+
+        private bool showGoodReads = true;
+        public bool ShowGoodReads
+        {
+            get => showGoodReads;
+            set { showGoodReads = value; SaveSetting(ApplicationData.Current.LocalSettings, value); }
+        }
+
         public Dictionary<string, SortMode> SortModeSettings { get; private set; } = new Dictionary<string, SortMode>();
 
         public Dictionary<string, ReadingMode> ReadingModeSettings { get; private set; } = new Dictionary<string, ReadingMode>();
@@ -272,6 +307,11 @@ namespace WinBlur.App.Model
             openLinksInBrowser = LoadSetting(container, nameof(OpenLinksInBrowser), OpenLinksInBrowser);
             showImagePreviews = LoadSetting(container, nameof(ShowImagePreviews), ShowImagePreviews);
             storyPreviewMaxLines = LoadSetting(container, nameof(StoryPreviewMaxLines), StoryPreviewMaxLines);
+            showReadStories = LoadSetting(container, nameof(ShowReadStories), ShowReadStories);
+            showGlobalSharedStories = LoadSetting(container, nameof(ShowGlobalSharedStories), ShowGlobalSharedStories);
+            showWidelyReadStories = LoadSetting(container, nameof(ShowWidelyReadStories), ShowWidelyReadStories);
+            showLongReads = LoadSetting(container, nameof(ShowLongReads), ShowLongReads);
+            showGoodReads = LoadSetting(container, nameof(ShowGoodReads), ShowGoodReads);
             appTheme2 = LoadSetting(container, nameof(AppTheme2), AppTheme2);
             readingTheme = LoadSetting(container, nameof(ReadingTheme), ReadingTheme);
             readingTextSize = LoadSetting(container, nameof(ReadingTextSize), ReadingTextSize);
@@ -332,6 +372,11 @@ namespace WinBlur.App.Model
             SaveSetting(container, OpenLinksInBrowser, nameof(OpenLinksInBrowser));
             SaveSetting(container, ShowImagePreviews, nameof(ShowImagePreviews));
             SaveSetting(container, StoryPreviewMaxLines, nameof(StoryPreviewMaxLines));
+            SaveSetting(container, ShowReadStories, nameof(ShowReadStories));
+            SaveSetting(container, ShowGlobalSharedStories, nameof(ShowGlobalSharedStories));
+            SaveSetting(container, ShowWidelyReadStories, nameof(ShowWidelyReadStories));
+            SaveSetting(container, ShowLongReads, nameof(ShowLongReads));
+            SaveSetting(container, ShowGoodReads, nameof(ShowGoodReads));
             SaveSetting(container, (int)AppTheme2, nameof(AppTheme2));
             SaveSetting(container, (int)ReadingTheme, nameof(ReadingTheme));
             SaveSetting(container, ReadingTextSize, nameof(ReadingTextSize));

@@ -107,6 +107,43 @@
                             </toolkit:SettingsCard>
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
+                    <toolkit:SettingsExpander Header="Special folders" Description="Choose which special folders appear in your feed list">
+                        <toolkit:SettingsExpander.HeaderIcon>
+                            <FontIcon Glyph="&#xe728;" />
+                        </toolkit:SettingsExpander.HeaderIcon>
+                        <toolkit:SettingsExpander.Items>
+                            <toolkit:SettingsCard Header="Read Stories">
+                                <toolkit:SettingsCard.HeaderIcon>
+                                    <FontIcon Glyph="&#xe73e;" />
+                                </toolkit:SettingsCard.HeaderIcon>
+                                <ToggleSwitch IsOn="{x:Bind viewModel.ShowReadStories, Mode=TwoWay}" />
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard Header="Global Shared Stories">
+                                <toolkit:SettingsCard.HeaderIcon>
+                                    <FontIcon Glyph="&#xe909;" />
+                                </toolkit:SettingsCard.HeaderIcon>
+                                <ToggleSwitch IsOn="{x:Bind viewModel.ShowGlobalSharedStories, Mode=TwoWay}" />
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard Header="Widely Read Stories">
+                                <toolkit:SettingsCard.HeaderIcon>
+                                    <FontIcon Glyph="&#xe7b3;" />
+                                </toolkit:SettingsCard.HeaderIcon>
+                                <ToggleSwitch IsOn="{x:Bind viewModel.ShowWidelyReadStories, Mode=TwoWay}" />
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard Header="Long Reads">
+                                <toolkit:SettingsCard.HeaderIcon>
+                                    <FontIcon Glyph="&#xe708;" />
+                                </toolkit:SettingsCard.HeaderIcon>
+                                <ToggleSwitch IsOn="{x:Bind viewModel.ShowLongReads, Mode=TwoWay}" />
+                            </toolkit:SettingsCard>
+                            <toolkit:SettingsCard Header="Good Reads">
+                                <toolkit:SettingsCard.HeaderIcon>
+                                    <FontIcon Glyph="&#xe8e1;" />
+                                </toolkit:SettingsCard.HeaderIcon>
+                                <ToggleSwitch IsOn="{x:Bind viewModel.ShowGoodReads, Mode=TwoWay}" />
+                            </toolkit:SettingsCard>
+                        </toolkit:SettingsExpander.Items>
+                    </toolkit:SettingsExpander>
                     <toolkit:SettingsCard Header="Show image previews">
                         <toolkit:SettingsCard.HeaderIcon>
                             <FontIcon Glyph="&#xE91B;" />
@@ -114,6 +151,9 @@
                         <ToggleSwitch IsOn="{x:Bind viewModel.ShowImagePreviews, Mode=TwoWay}" />
                     </toolkit:SettingsCard>
                     <toolkit:SettingsCard Header="Show story previews">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon Glyph="&#xea37;" />
+                        </toolkit:SettingsCard.HeaderIcon>
                         <ComboBox SelectedIndex="{x:Bind viewModel.StoryPreviewMaxLinesSelectedIndex, Mode=TwoWay}">
                             <x:String>None</x:String>
                             <x:String>Short (1 line)</x:String>
@@ -179,9 +219,15 @@
                         </toolkit:SettingsExpander.Items>
                     </toolkit:SettingsExpander>
                     <toolkit:SettingsCard Header="Prompt before marking all as read">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon Glyph="&#xe897;" />
+                        </toolkit:SettingsCard.HeaderIcon>
                         <ToggleSwitch x:Name="readAllPromptSwitch" IsOn="{x:Bind viewModel.ReadAllPromptEnabled, Mode=TwoWay}" />
                     </toolkit:SettingsCard>
-                    <toolkit:SettingsCard Header="After marking a site/folder as read, automatically open the next site/folder">
+                    <toolkit:SettingsCard Header="After marking a feed or folder as read, automatically open the next feed or folder">
+                        <toolkit:SettingsCard.HeaderIcon>
+                            <FontIcon Glyph="&#xe838;" />
+                        </toolkit:SettingsCard.HeaderIcon>
                         <ToggleSwitch x:Name="goToNextSubscriptionSwitch" IsOn="{x:Bind viewModel.GoToNextSubscriptionAfterMarkingAsRead, Mode=TwoWay}" />
                     </toolkit:SettingsCard>
 

@@ -444,61 +444,108 @@ namespace WinBlur.App.ViewModel
 
         private bool FilterFeed(FeedMode mode, SubscriptionLabel label)
         {
-            switch (mode)
+            if (label == null) return false;
+            switch (label.Type)
             {
-                case FeedMode.Unread:
-                    if (label == null) return false;
-                    switch (label.Type)
+                case SubscriptionType.Global:
+                    return App.Settings.ShowGlobalSharedStories;
+
+                case SubscriptionType.Trending:
+                    switch (label.TrendingStoryType)
                     {
-                        case SubscriptionType.Global:
-                        case SubscriptionType.Trending:
-                        case SubscriptionType.Saved:
-                        case SubscriptionType.Read:
-                            return true;
-                        case SubscriptionType.Social:
-                            return (label.ParentLabel == null ||
-                                    label.ID == App.Client.MyUserID ||
-                                    label.Equals(SelectedSubscription) ||
-                                    label.HasUnreadStories);
-                        case SubscriptionType.Site:
-                            return (label.ParentLabel == null ||
-                                    label.Equals(SelectedSubscription) ||
-                                    label.HasUnreadStories);
+                        case NewsBlurClient.TrendingStoryType.WellRead:
+                            return App.Settings.ShowWidelyReadStories;
+                        case NewsBlurClient.TrendingStoryType.LongReads:
+                            return App.Settings.ShowLongReads;
+                        case NewsBlurClient.TrendingStoryType.GoodReads:
+                            return App.Settings.ShowGoodReads;
                         default:
                             return false;
                     }
 
-                case FeedMode.All:
-                default:
+                case SubscriptionType.Read:
+                    return App.Settings.ShowReadStories;
+
+                case SubscriptionType.Saved:
                     return true;
+
+                case SubscriptionType.Social:
+                    if (mode == FeedMode.Unread)
+                    {
+                        return (label.ParentLabel == null ||
+                                label.ID == App.Client.MyUserID ||
+                                label.Equals(SelectedSubscription) ||
+                                label.HasUnreadStories);
+                    }
+                    else
+                    {
+                        return true;
+                    }
+
+                case SubscriptionType.Site:
+                    if (mode == FeedMode.Unread)
+                    {
+                        return (label.ParentLabel == null ||
+                                label.Equals(SelectedSubscription) ||
+                                label.HasUnreadStories);
+                    }
+                    else
+                    {
+                        return true;
+                    }
+
+                default:
+                    return false;
             }
         }
 
         private bool FilterFolder(FeedMode mode, SubscriptionLabel label)
         {
-            switch (mode)
+            if (label == null) return false;
+            switch (label.Type)
             {
-                case FeedMode.Unread:
-                    if (label == null) return false;
-                    switch (label.Type)
+                case SubscriptionType.Global:
+                    return App.Settings.ShowGlobalSharedStories;
+
+                case SubscriptionType.Trending:
+                    switch (label.TrendingStoryType)
                     {
-                        case SubscriptionType.Global:
-                        case SubscriptionType.Trending:
-                        case SubscriptionType.Saved:
-                        case SubscriptionType.Social:
-                        case SubscriptionType.Read:
-                            return true;
-                        case SubscriptionType.Site:
-                            return (label.FilteredChildren.Count > 0 ||
-                                    label.Equals(SelectedSubscription));
+                        case NewsBlurClient.TrendingStoryType.WellRead:
+                            return App.Settings.ShowWidelyReadStories;
+                        case NewsBlurClient.TrendingStoryType.LongReads:
+                            return App.Settings.ShowLongReads;
+                        case NewsBlurClient.TrendingStoryType.GoodReads:
+                            return App.Settings.ShowGoodReads;
                         default:
                             return false;
                     }
 
-                case FeedMode.All:
-                default:
+                case SubscriptionType.Read:
+                    return App.Settings.ShowReadStories;
+
+                case SubscriptionType.Saved:
+                case SubscriptionType.Social:
                     return true;
+                
+                case SubscriptionType.Site:
+                    if (mode == FeedMode.Unread)
+                    {
+                        return (label.FilteredChildren.Count > 0 ||
+                                label.Equals(SelectedSubscription));
+                    }
+                    else
+                    {
+                        return true;
+                    }
+
+                default:
+                    return false;
             }
+        }
+
+        public void RefreshFeedVisibility()
+        {
+            FilterSubscriptions(App.Settings.FeedFilterMode);
         }
 
         private void FilterSubscriptions(FeedMode mode, SubscriptionLabel label = null)
