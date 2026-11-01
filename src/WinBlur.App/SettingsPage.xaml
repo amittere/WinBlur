@@ -26,9 +26,11 @@
     </Page.Resources>
 
     <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot">
+    <Grid x:Name="LayoutRoot"
+          Style="{StaticResource CardGridStyle}"
+          Margin="0,0,8,8">
         <ScrollViewer>
-            <Grid Margin="24,12">
+            <Grid Margin="24">
                 <StackPanel MaxWidth="1000" HorizontalAlignment="Stretch" Spacing="3">
                     <TextBlock Text="Settings" Style="{StaticResource TitleTextBlockStyle}" />
 
