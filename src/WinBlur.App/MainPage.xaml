@@ -45,11 +45,13 @@
                    DisplayMode="CompactInline"
                    IsTabStop="False">
             <SplitView.Pane>
-                <Grid x:Name="SplitViewPaneGrid" Visibility="{x:Bind splitView.IsPaneOpen, Mode=OneWay}">
+                <Grid x:Name="SplitViewPaneGrid"
+                      Margin="1,0,-2,0"
+                      Visibility="{x:Bind splitView.IsPaneOpen, Mode=OneWay}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="48" />
                         <RowDefinition Height="*" />
-                        <RowDefinition Height="48" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="48" />
@@ -224,9 +226,10 @@
                     <ListView x:Name="SettingsListView"
                               Grid.Row="2"
                               Grid.ColumnSpan="2"
+                              Margin="0,0,0,4"
                               SelectionChanged="SettingsListView_SelectionChanged">
                         <ListView.Items>
-                            <x:String>Settings</x:String>
+                            <x:String></x:String>
                         </ListView.Items>
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -238,7 +241,7 @@
                                     <TextBlock Text="&#xE713;"
                                                FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                FontSize="18"
-                                               Margin="28,0,0,0"
+                                               Margin="0,0,0,0"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center" />
                                     <TextBlock Text="Settings"
@@ -256,7 +259,6 @@
                 <Grid x:Name="ContentGrid">
                     <!-- Content that appears when no feed is selected -->
                     <Grid Style="{StaticResource CardGridStyle}"
-                          Margin="0,0,8,8"
                           Visibility="{x:Bind ContentFrame.CurrentSourcePageType, Converter={StaticResource NullToVisibleConverter}, Mode=OneWay}">
                         <StackPanel HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
@@ -284,7 +286,7 @@
         <Button x:Name="SplitViewToggleButton"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Left"
-                Margin="0,4,0,0"
+                Margin="1,4,0,0"
                 Style="{StaticResource SplitViewToggleButtonStyle}"
                 Click="SplitViewToggleButton_Click"
                 TabIndex="1"/>
