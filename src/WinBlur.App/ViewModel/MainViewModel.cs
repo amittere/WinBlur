@@ -200,8 +200,7 @@ namespace WinBlur.App.ViewModel
                 {
                     Title = "All Site Stories",
                     IsFolder = true,
-                    Glyph = Symbol.PreviewLink,
-                    FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.Sites),
+                    FolderIcon = "\uE12A",
                     Type = SubscriptionType.Site
                 };
                 Subscriptions.Add(allSites);
@@ -209,16 +208,46 @@ namespace WinBlur.App.ViewModel
                 ParseFolder(folders, allSites, 0);
             }
 
-            // Add "Global Site Stories" header
-            SubscriptionLabel global = new SubscriptionLabel
+            Subscriptions.Add(new SubscriptionLabel
+            {
+                Title = "Read Stories",
+                IsFolder = true,
+                FolderIcon = "\ue73e",
+                Type = SubscriptionType.Read
+            });
+
+            // Add shared/trending feeds
+            Subscriptions.Add(new SubscriptionLabel
             {
                 Title = "Global Shared Stories",
                 IsFolder = true,
-                Glyph = Symbol.World,
-                FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.Globe),
+                FolderIcon = "\ue909",
                 Type = SubscriptionType.Global
-            };
-            Subscriptions.Add(global);
+            });
+            Subscriptions.Add(new SubscriptionLabel
+            {
+                Title = "Widely Read Stories",
+                IsFolder = true,
+                FolderIcon = "\ue7b3",
+                Type = SubscriptionType.Trending,
+                TrendingStoryType = NewsBlurClient.TrendingStoryType.WellRead
+            });
+            Subscriptions.Add(new SubscriptionLabel
+            {
+                Title = "Long Reads",
+                IsFolder = true,
+                FolderIcon = "\ue708",
+                Type = SubscriptionType.Trending,
+                TrendingStoryType = NewsBlurClient.TrendingStoryType.LongReads
+            });
+            Subscriptions.Add(new SubscriptionLabel
+            {
+                Title = "Good Reads",
+                IsFolder = true,
+                FolderIcon = "\ue8e1",
+                Type = SubscriptionType.Trending,
+                TrendingStoryType = NewsBlurClient.TrendingStoryType.GoodReads
+            });
 
             // Parse friends
             if (pResponse["social_feeds"] is JArray friends && friends.Count > 0)
@@ -227,8 +256,7 @@ namespace WinBlur.App.ViewModel
                 {
                     Title = "All Shared Stories",
                     IsFolder = true,
-                    Glyph = Symbol.People,
-                    FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.People),
+                    FolderIcon = "\uE125",
                     Type = SubscriptionType.Social
                 };
                 SetCompressedState(allShared);
@@ -244,8 +272,7 @@ namespace WinBlur.App.ViewModel
                 {
                     Title = "All Saved Stories",
                     IsFolder = true,
-                    Glyph = Symbol.OutlineStar,
-                    FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.OutlineStar),
+                    FolderIcon = "\uE1CE",
                     Type = SubscriptionType.Saved
                 };
                 SetCompressedState(allSaved);
@@ -257,8 +284,7 @@ namespace WinBlur.App.ViewModel
                     {
                         Title = tag.Key,
                         IsFolder = false,
-                        Glyph = Symbol.Tag,
-                        FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.Tag),
+                        FolderIcon = "\uE1CB",
                         ParentFolder = allSaved.Title,
                         ParentLabel = allSaved,
                         Type = SubscriptionType.Saved
@@ -288,7 +314,7 @@ namespace WinBlur.App.ViewModel
                         ParentFolder = folder.Title,
                         ParentLabel = folder,
                         PhotoUri = f.PhotoURL,
-                        Glyph = Symbol.Contact,
+                        FolderIcon = "\ue77b",
                         Type = SubscriptionType.Social
                     };
                     SetCompressedState(label);
@@ -327,8 +353,7 @@ namespace WinBlur.App.ViewModel
                                 IsFolder = false,
                                 ParentFolder = (folder == null) ? "Top Level" : folder.Title,
                                 ParentLabel = folder,
-                                Glyph = Symbol.Globe,
-                                FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.Web),
+                                FolderIcon = "\uE774",
                                 PhotoUri = f.FaviconURL,
                                 Type = SubscriptionType.Site
                             });
@@ -366,8 +391,7 @@ namespace WinBlur.App.ViewModel
                         IsFolder = true,
                         ParentFolder = (folder == null) ? "Top Level" : folder.Title,
                         ParentLabel = folder,
-                        Glyph = Symbol.Folder,
-                        FolderIcon = Converters.IconGlyphToString(Converters.IconGlyph.Folder),
+                        FolderIcon = "\uE8B7",
                         Type = SubscriptionType.Site
                     };
                     SetCompressedState(label);
@@ -420,57 +444,108 @@ namespace WinBlur.App.ViewModel
 
         private bool FilterFeed(FeedMode mode, SubscriptionLabel label)
         {
-            switch (mode)
+            if (label == null) return false;
+            switch (label.Type)
             {
-                case FeedMode.Unread:
-                    if (label == null) return false;
-                    switch (label.Type)
+                case SubscriptionType.Global:
+                    return App.Settings.ShowGlobalSharedStories;
+
+                case SubscriptionType.Trending:
+                    switch (label.TrendingStoryType)
                     {
-                        case SubscriptionType.Global:
-                        case SubscriptionType.Saved:
-                            return true;
-                        case SubscriptionType.Social:
-                            return (label.ParentLabel == null ||
-                                    label.ID == App.Client.MyUserID ||
-                                    label.Equals(SelectedSubscription) ||
-                                    label.HasUnreadStories);
-                        case SubscriptionType.Site:
-                            return (label.ParentLabel == null ||
-                                    label.Equals(SelectedSubscription) ||
-                                    label.HasUnreadStories);
+                        case NewsBlurClient.TrendingStoryType.WellRead:
+                            return App.Settings.ShowWidelyReadStories;
+                        case NewsBlurClient.TrendingStoryType.LongReads:
+                            return App.Settings.ShowLongReads;
+                        case NewsBlurClient.TrendingStoryType.GoodReads:
+                            return App.Settings.ShowGoodReads;
                         default:
                             return false;
                     }
 
-                case FeedMode.All:
-                default:
+                case SubscriptionType.Read:
+                    return App.Settings.ShowReadStories;
+
+                case SubscriptionType.Saved:
                     return true;
+
+                case SubscriptionType.Social:
+                    if (mode == FeedMode.Unread)
+                    {
+                        return (label.ParentLabel == null ||
+                                label.ID == App.Client.MyUserID ||
+                                label.Equals(SelectedSubscription) ||
+                                label.HasUnreadStories);
+                    }
+                    else
+                    {
+                        return true;
+                    }
+
+                case SubscriptionType.Site:
+                    if (mode == FeedMode.Unread)
+                    {
+                        return (label.ParentLabel == null ||
+                                label.Equals(SelectedSubscription) ||
+                                label.HasUnreadStories);
+                    }
+                    else
+                    {
+                        return true;
+                    }
+
+                default:
+                    return false;
             }
         }
 
         private bool FilterFolder(FeedMode mode, SubscriptionLabel label)
         {
-            switch (mode)
+            if (label == null) return false;
+            switch (label.Type)
             {
-                case FeedMode.Unread:
-                    if (label == null) return false;
-                    switch (label.Type)
+                case SubscriptionType.Global:
+                    return App.Settings.ShowGlobalSharedStories;
+
+                case SubscriptionType.Trending:
+                    switch (label.TrendingStoryType)
                     {
-                        case SubscriptionType.Global:
-                        case SubscriptionType.Saved:
-                        case SubscriptionType.Social:
-                            return true;
-                        case SubscriptionType.Site:
-                            return (label.FilteredChildren.Count > 0 ||
-                                    label.Equals(SelectedSubscription));
+                        case NewsBlurClient.TrendingStoryType.WellRead:
+                            return App.Settings.ShowWidelyReadStories;
+                        case NewsBlurClient.TrendingStoryType.LongReads:
+                            return App.Settings.ShowLongReads;
+                        case NewsBlurClient.TrendingStoryType.GoodReads:
+                            return App.Settings.ShowGoodReads;
                         default:
                             return false;
                     }
 
-                case FeedMode.All:
-                default:
+                case SubscriptionType.Read:
+                    return App.Settings.ShowReadStories;
+
+                case SubscriptionType.Saved:
+                case SubscriptionType.Social:
                     return true;
+                
+                case SubscriptionType.Site:
+                    if (mode == FeedMode.Unread)
+                    {
+                        return (label.FilteredChildren.Count > 0 ||
+                                label.Equals(SelectedSubscription));
+                    }
+                    else
+                    {
+                        return true;
+                    }
+
+                default:
+                    return false;
             }
+        }
+
+        public void RefreshFeedVisibility()
+        {
+            FilterSubscriptions(App.Settings.FeedFilterMode);
         }
 
         private void FilterSubscriptions(FeedMode mode, SubscriptionLabel label = null)

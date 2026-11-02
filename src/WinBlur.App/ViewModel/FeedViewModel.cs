@@ -334,6 +334,7 @@ namespace WinBlur.App.ViewModel
             {
                 Feeds = feeds,
                 Type = Subscription.Type,
+                TrendingStoryType = Subscription.TrendingStoryType,
                 IsFolder = Subscription.IsFolder,
                 Tag = (Subscription.Type == SubscriptionType.Saved) ? Subscription.Title : "",
                 NewestFirst = SortModeHelpers.IsNewestFirst(mode),

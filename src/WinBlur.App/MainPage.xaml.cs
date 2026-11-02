@@ -169,6 +169,7 @@ namespace WinBlur.App
                 }
 
                 viewModel.SelectedSubscription = label;
+                SettingsListView.SelectedItem = null;
                 ContentFrame.Navigate(typeof(FeedPage), label);
             }
         }
@@ -201,7 +202,7 @@ namespace WinBlur.App
                         {
                             Icon = new FontIcon
                             {
-                                Glyph = Converters.IconGlyphToString(Converters.IconGlyph.Folder)
+                                Glyph = "\uE8B7"
                             },
                             Text = folder.Title,
                             Tag = item,
@@ -285,11 +286,14 @@ namespace WinBlur.App
             await KeyboardShortcutsDialog.ShowAsync();
         }
 
-        private void Settings_Click(object sender, RoutedEventArgs e)
+        private void SettingsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Clear selected item in Tree View so state is consistent.
-            TreeView.SelectedItem = null;
-            ContentFrame.Navigate(typeof(SettingsPage), null);
+            if (e.AddedItems.Count > 0)
+            {
+                // Clear selected item in Tree View so state is consistent.
+                viewModel.SelectedSubscription = null;
+                ContentFrame.Navigate(typeof(SettingsPage), null);
+            }
         }
 
         private void FeedMarkedAsRead(object sender, EventArgs e)

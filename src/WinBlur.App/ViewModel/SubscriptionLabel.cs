@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using WinBlur.App.Model;
 
 namespace WinBlur.App.ViewModel
 {
@@ -12,7 +13,9 @@ namespace WinBlur.App.ViewModel
         Global,
         Social,
         Site,
-        Saved
+        Saved,
+        Trending,
+        Read,
     }
 
     public class SubscriptionLabel : INotifyPropertyChanged
@@ -21,24 +24,10 @@ namespace WinBlur.App.ViewModel
 
         public Uri PhotoUri { get; set; }
         public string FolderIcon { get; set; }
-        public Symbol Glyph { get; set; }
-        public IconElement Icon
-        {
-            get
-            {
-                if (PhotoUri != null)
-                {
-                    var image = new BitmapImage { DecodePixelWidth = 100, UriSource = PhotoUri };
-                    return new ImageIcon { Source = image };
-                }
-                else
-                {
-                    return new SymbolIcon { Symbol = Glyph };
-                }
-            }
-        }
+
 
         public SubscriptionType Type { get; set; }
+        public NewsBlurClient.TrendingStoryType TrendingStoryType { get; set; }
 
         public int FolderDepth { get; set; }
         public bool IsFolder { get; set; }

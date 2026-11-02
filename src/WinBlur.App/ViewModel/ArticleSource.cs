@@ -15,6 +15,7 @@ namespace WinBlur.App.ViewModel
         List<Article> articles = new List<Article>();
 
         public SubscriptionType Type { get; set; }
+        public NewsBlurClient.TrendingStoryType TrendingStoryType { get; set; }
         public bool IsFolder { get; set; }
         public bool UnreadOnly { get; set; }
         public bool NewestFirst { get; set; }
@@ -48,6 +49,11 @@ namespace WinBlur.App.ViewModel
                 case SubscriptionType.Global:
                     response = await App.Client.GetMultiSocialStoriesByPage(
                         token, currentPage, UnreadOnly, NewestFirst, true);
+                    break;
+
+                case SubscriptionType.Trending:
+                    response = await App.Client.GetTrendingStoriesByPage(
+                        token, TrendingStoryType, currentPage, UnreadOnly, NewestFirst);
                     break;
 
                 case SubscriptionType.Social:
@@ -85,6 +91,10 @@ namespace WinBlur.App.ViewModel
                     {
                         response = await App.Client.GetSavedStoriesByPage(token, currentPage, Tag);
                     }
+                    break;
+
+                case SubscriptionType.Read:
+                    response = await App.Client.GetReadStoriesByPage(token, currentPage, NewestFirst);
                     break;
             }
             if (response == null) throw new Exception("Empty response");

@@ -149,23 +149,6 @@ namespace WinBlur.App.Model
         }
 
         public async Task<string> GetSingleSiteStoriesByPage(
-            int id, 
-            int page = 1,
-            bool unreadOnly = true, 
-            bool newestFirst = true, 
-            bool includeHidden = false,
-            bool includeStoryContent = true)
-        {
-            string filter = unreadOnly ? "unread" : "all";
-            string order = newestFirst ? "newest" : "oldest";
-
-            Uri requestUri = new Uri(m_baseUri, 
-                string.Format("/reader/feed/{0}?page={1}&read_filter={2}&order={3}", 
-                id, page, filter, order));
-            return await SendGetRequestAsync(requestUri);
-        }
-
-        public async Task<string> GetSingleSiteStoriesByPage(
             CancellationToken token,
             int id,
             int page = 1,
@@ -181,28 +164,6 @@ namespace WinBlur.App.Model
                 string.Format("/reader/feed/{0}?page={1}&read_filter={2}&order={3}",
                 id, page, filter, order));
             return await SendGetRequestAsync(requestUri, token);
-        }
-
-        public async Task<string> GetMultiSiteStoriesByPage(
-            IEnumerable<int> ids, 
-            int page = 1, 
-            bool unreadOnly = true, 
-            bool newestFirst = true,
-            bool includeHidden = false)
-        {
-            string filter = unreadOnly ? "unread" : "all";
-            string order = newestFirst ? "newest" : "oldest";
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("/reader/river_stories?read_filter={0}&order={1}&page={2}&include_hidden={3}", 
-                filter, order, page, includeHidden);
-            foreach (int id in ids)
-            {
-                sb.AppendFormat("&feeds={0}", id);
-            }
-
-            Uri requestUri = new Uri(m_baseUri, sb.ToString());
-            return await SendGetRequestAsync(requestUri);
         }
 
         public async Task<string> GetMultiSiteStoriesByPage(
@@ -228,9 +189,52 @@ namespace WinBlur.App.Model
             return await SendGetRequestAsync(requestUri, token);
         }
 
-        public async Task<string> GetSavedStoriesByPage(int page = 1, string tag = "")
+        public enum TrendingStoryType
         {
-            return await GetSavedStoriesByPage(CancellationToken.None, page, tag);
+            None,
+            WellRead,
+            LongReads,
+            GoodReads,
+        }
+
+        private string TrendingStoryTypeToString(TrendingStoryType type)
+        {
+            switch (type)
+            {
+                case TrendingStoryType.WellRead:
+                    return "well_read";
+                case TrendingStoryType.LongReads:
+                    return "long_reads";
+                case TrendingStoryType.GoodReads:
+                    return "good_reads";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+        }
+
+        public async Task<string> GetTrendingStoriesByPage(
+            CancellationToken token,
+            TrendingStoryType type,
+            int page = 1,
+            bool unreadOnly = true,
+            bool newestFirst = true)
+        {
+            string trendingType = TrendingStoryTypeToString(type);
+            string filter = unreadOnly ? "unread" : "all";
+            string order = newestFirst ? "newest" : "oldest";
+            Uri requestUri = new Uri(m_baseUri,
+                $"/reader/trending_stories?trending_type={trendingType}&page={page}&read_filter={filter}&order={order}");
+            return await SendGetRequestAsync(requestUri, token);
+        }
+
+        public async Task<string> GetReadStoriesByPage(
+            CancellationToken token,
+            int page = 1,
+            bool newestFirst = true)
+        {
+            string order = newestFirst ? "newest" : "oldest";
+            Uri requestUri = new Uri(m_baseUri, $"/reader/read_stories?page={page}&order={order}");
+            return await SendGetRequestAsync(requestUri, token);
         }
 
         public async Task<string> GetSavedStoriesByPage(CancellationToken token, int page = 1, string tag = "")
