@@ -546,6 +546,8 @@ namespace WinBlur.App
             settings.IsGeneralAutofillEnabled = false;
             settings.IsSwipeNavigationEnabled = false;
             settings.IsPasswordAutosaveEnabled = false;
+            settings.IsPinchZoomEnabled = false;
+            settings.IsZoomControlEnabled = false;
         }
 
         private async void articleTextView_NavigationStarting(WebView2 sender, CoreWebView2NavigationStartingEventArgs args)
