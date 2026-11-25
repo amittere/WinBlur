@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using WinBlur.App.ViewModel;
+using WinBlur.Shared;
 using Windows.Security.Credentials;
 using Windows.Storage;
 using Windows.UI;
@@ -36,7 +37,7 @@ namespace WinBlur.App.Model
             get
             {
                 PasswordCredential cred = RetrieveLoginCredentials();
-                return (cred != null) || !string.IsNullOrEmpty(LoginUsername);
+                return NewsBlurOAuth.HasTokens || (cred != null) || !string.IsNullOrEmpty(LoginUsername);
             }
         }
 
@@ -511,7 +512,7 @@ namespace WinBlur.App.Model
             try
             {
                 var vault = new PasswordVault();
-                IReadOnlyList<PasswordCredential> credentialList = vault.RetrieveAll();
+                IReadOnlyList<PasswordCredential> credentialList = vault.FindAllByResource("WinBlur");
                 foreach (PasswordCredential cred in credentialList)
                 {
                     vault.Remove(cred);
@@ -534,7 +535,7 @@ namespace WinBlur.App.Model
             try
             {
                 var vault = new PasswordVault();
-                IReadOnlyList<PasswordCredential> credentialList = vault.RetrieveAll();
+                IReadOnlyList<PasswordCredential> credentialList = vault.FindAllByResource("WinBlur");
                 if (credentialList != null && credentialList.Count > 0)
                 {
                     return credentialList[0];

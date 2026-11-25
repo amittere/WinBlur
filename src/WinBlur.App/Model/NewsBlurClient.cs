@@ -16,6 +16,7 @@ using Windows.Security.Credentials;
 using Windows.UI;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
+using Windows.Web.Http.Headers;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace WinBlur.App.Model
@@ -1278,32 +1279,96 @@ namespace WinBlur.App.Model
 
         #region Helpers
 
-        private async Task<string> SendGetRequestAsync(Uri requestUri)
+        private async Task<string> SendGetRequestAsync(Uri requestUri, CancellationToken token = default)
         {
-            return await SendGetRequestAsync(requestUri, CancellationToken.None);
+            var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+            if (NewsBlurOAuth.HasTokens)
+            {
+                string accessToken = await NewsBlurOAuth.GetAccessTokenAsync(token);
+                if (accessToken == null) throw new InvalidOperationException("Not logged in.");
+                request.Headers.Authorization = new HttpCredentialsHeaderValue("Bearer", accessToken);
+            }
+            else
+            {
+                bool IsLoggedIn = HasValidSessionCookie();
+                if (!IsLoggedIn)
+                {
+                    // We have no valid cookie. Check to see if we have credentials saved
+                    // If so, attempt to login
+                    PasswordCredential cred = App.Settings.RetrieveLoginCredentials();
+                    if (cred != null)
+                    {
+                        cred.RetrievePassword();
+                        string s = await App.Client.Login(cred.UserName, cred.Password);
+                        JObject json = JObject.Parse(s);
+                        if ((int)json["code"] == 1 && (bool)json["authenticated"] == true)
+                        {
+                            IsLoggedIn = true;
+                        }
+                    }
+                    else if (App.Settings.LoginUsername != "")
+                    {
+                        string s = await App.Client.Login(App.Settings.LoginUsername, "");
+                        JObject json = JObject.Parse(s);
+                        if ((int)json["code"] == 1 && (bool)json["authenticated"] == true)
+                        {
+                            IsLoggedIn = true;
+                        }
+                    }
+                }
+
+                if (!IsLoggedIn)
+                {
+                    // Logging in failed - clear login creds and crash so next launch forces a new login.
+                    App.Settings.ClearLoginCredentials();
+                    throw new Exception("Not logged in!");
+                }
+            }
+
+
+            HttpResponseMessage response = await m_httpClient.SendRequestAsync(request).AsTask(token);
+            token.ThrowIfCancellationRequested();
+
+            response.EnsureSuccessStatusCode();
+
+            string str = await response.Content.ReadAsStringAsync().AsTask(token);
+            token.ThrowIfCancellationRequested();
+
+            return str;
         }
 
-        private async Task<string> SendGetRequestAsync(Uri requestUri, CancellationToken token)
+        private async Task<string> SendPostRequestAsync(Uri requestUri, IHttpContent requestData, CancellationToken token = default)
         {
-            bool IsLoggedIn = false;
-
-            // If the http filter has no cookies
-            HttpCookieCollection cookies = m_httpFilter.CookieManager.GetCookies(m_baseUri);
-            if (cookies.Count > 0)
+            using var request = new HttpRequestMessage(HttpMethod.Post, requestUri);
+            request.Content = requestData;
+            if (requestUri.AbsolutePath != "/api/login" && requestUri.AbsolutePath != "/api/signup" && NewsBlurOAuth.HasTokens)
             {
-                foreach (HttpCookie cookie in cookies)
-                {
-                    if (cookie.Name != "newsblur_sessionid")
-                    {
-                        // Skip other cookies
-                        continue;
-                    }
+                string accessToken = await NewsBlurOAuth.GetAccessTokenAsync(token);
+                if (accessToken == null) throw new InvalidOperationException("Not logged in.");
+                request.Headers.Authorization = new HttpCredentialsHeaderValue("Bearer", accessToken);
+            }
 
+            HttpResponseMessage response = await m_httpClient.SendRequestAsync(request).AsTask(token);
+            token.ThrowIfCancellationRequested();
+
+            response.EnsureSuccessStatusCode();
+
+            string str = await response.Content.ReadAsStringAsync().AsTask(token);
+            token.ThrowIfCancellationRequested();
+
+            return str;
+        }
+
+        public bool HasValidSessionCookie()
+        {
+            bool hasValidCookie = false;
+            foreach (HttpCookie cookie in m_httpFilter.CookieManager.GetCookies(m_baseUri))
+            {
+                if (cookie.Name == "newsblur_sessionid")
+                {
                     if (IsValidCookie(cookie))
                     {
-                        // We already have a cookie - set login flag
-                        IsLoggedIn = true;
-                        break;
+                        hasValidCookie = true;
                     }
                     else
                     {
@@ -1312,67 +1377,7 @@ namespace WinBlur.App.Model
                     }
                 }
             }
-
-            if (!IsLoggedIn)
-            {
-                // We have no valid cookie. Check to see if we have credentials saved
-                // If so, attempt to login
-                PasswordCredential cred = App.Settings.RetrieveLoginCredentials();
-                if (cred != null)
-                {
-                    cred.RetrievePassword();
-                    string s = await App.Client.Login(cred.UserName, cred.Password);
-                    JObject json = JObject.Parse(s);
-                    if ((int)json["code"] == 1 && (bool)json["authenticated"] == true)
-                    {
-                        IsLoggedIn = true;
-                    }
-                }
-                else if (App.Settings.LoginUsername != "")
-                {
-                    string s = await App.Client.Login(App.Settings.LoginUsername, "");
-                    JObject json = JObject.Parse(s);
-                    if ((int)json["code"] == 1 && (bool)json["authenticated"] == true)
-                    {
-                        IsLoggedIn = true;
-                    }
-                }
-            }
-
-            if (!IsLoggedIn)
-            {
-                // Logging in failed - clear login creds and crash so next launch forces a new login.
-                App.Settings.ClearLoginCredentials();
-                throw new Exception("Not logged in!");
-            }
-
-            HttpResponseMessage response = await m_httpClient.GetAsync(requestUri).AsTask(token);
-            token.ThrowIfCancellationRequested();
-
-            response.EnsureSuccessStatusCode();
-
-            string str = await response.Content.ReadAsStringAsync().AsTask(token);
-            token.ThrowIfCancellationRequested();
-
-            return str;
-        }
-
-        private async Task<string> SendPostRequestAsync(Uri requestUri, IHttpContent requestData)
-        {
-            return await SendPostRequestAsync(requestUri, requestData, CancellationToken.None);
-        }
-
-        private async Task<string> SendPostRequestAsync(Uri requestUri, IHttpContent requestData, CancellationToken token)
-        {
-            HttpResponseMessage response = await m_httpClient.PostAsync(requestUri, requestData).AsTask(token);
-            token.ThrowIfCancellationRequested();
-
-            response.EnsureSuccessStatusCode();
-
-            string str = await response.Content.ReadAsStringAsync().AsTask(token);
-            token.ThrowIfCancellationRequested();
-
-            return str;
+            return hasValidCookie;
         }
 
         public void DeleteCookies()

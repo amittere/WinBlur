@@ -1,11 +1,17 @@
-﻿using Microsoft.UI;
+﻿using Microsoft.Security.Authentication.OAuth;
+using Microsoft.UI;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.AppLifecycle;
 using System;
 using System.IO;
 using WinBlur.App.Helpers;
 using WinBlur.App.Model;
+using WinBlur.Shared;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
+using AppInstance = Microsoft.Windows.AppLifecycle.AppInstance;
 
 namespace WinBlur.App
 {
@@ -19,6 +25,8 @@ namespace WinBlur.App
         public static NewsBlurClient Client { get; set; }
         public static Settings Settings { get; set; }
         public static TestModeHelper TestModeHelper { get; private set; }
+        private AppInstance appInstance;
+        private DispatcherQueue dispatcherQueue;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -35,20 +43,14 @@ namespace WinBlur.App
         /// <param name="args">Details about the launch request and process.</param>
         protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            // TODO This code defaults the app to a single instance app. If you need multi instance app, remove this part.
-            // Read: https://docs.microsoft.com/en-us/windows/apps/windows-app-sdk/migrate-to-windows-app-sdk/guides/applifecycle#single-instancing-in-applicationonlaunched
-            // If this is the first instance launched, then register it as the "main" instance.
-            // If this isn't the first instance launched, then "main" will already be registered,
-            // so retrieve it.
-            var mainInstance = Microsoft.Windows.AppLifecycle.AppInstance.FindOrRegisterForKey("main");
-            var activatedEventArgs = Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent().GetActivatedEventArgs();
+            dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            appInstance = AppInstance.GetCurrent();
+            appInstance.Activated += OnActivated;
 
-            // If the instance that's executing the OnLaunched handler right now
-            // isn't the "main" instance.
+            var mainInstance = AppInstance.FindOrRegisterForKey("main");
             if (!mainInstance.IsCurrent)
             {
-                // Redirect the activation (and args) to the "main" instance, and exit.
-                await mainInstance.RedirectActivationToAsync(activatedEventArgs);
+                await mainInstance.RedirectActivationToAsync(appInstance.GetActivatedEventArgs());
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
                 return;
             }
@@ -65,7 +67,7 @@ namespace WinBlur.App
             TestModeHelper = new TestModeHelper();
             TestModeHelper.AddAccelerator(Window.RootFrame);
 
-            if (Settings.LoginSaved)
+            if (Settings.LoginSaved || Client.HasValidSessionCookie())
             {
                 Window.RootFrame.Navigate(typeof(MainPage), args.Arguments);
             }
@@ -78,6 +80,24 @@ namespace WinBlur.App
 
             WindowHandle = WinRT.Interop.WindowNative.GetWindowHandle(Window);
             SetWindowIcon();
+        }
+
+        private void OnActivated(object sender, AppActivationArguments args)
+        {
+            if (args.Kind == ExtendedActivationKind.Protocol)
+            {
+                var protocolArgs = (ProtocolActivatedEventArgs)args.Data;
+                dispatcherQueue.TryEnqueue(() =>
+                {
+                    if (protocolArgs.Uri.Authority == NewsBlurOAuth.CallbackAuthority)
+                    {
+                        if (OAuth2Manager.CompleteAuthRequest(protocolArgs.Uri))
+                        {
+                            Window.Activate();
+                        }
+                    }
+                });
+            }
         }
 
         private void SetWindowIcon()

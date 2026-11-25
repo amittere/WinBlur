@@ -212,6 +212,10 @@ namespace WinBlur.App.ViewModel
         {
             get
             {
+                if (NewsBlurOAuth.HasTokens && App.Client.Users.TryGetValue(App.Client.MyUserID, out var user))
+                {
+                    return user.Username ?? string.Empty;
+                }
                 if (!string.IsNullOrEmpty(App.Settings.LoginUsername))
                 {
                     return App.Settings.LoginUsername;
@@ -301,15 +305,22 @@ namespace WinBlur.App.ViewModel
 
         public async Task SignOut()
         {
+            BackgroundTaskManager.UnregisterBackgroundTask();
             try
             {
-                await App.Client.Logout();
-                // We don't really care if this succeeds or not, because it just
-                // invalidates the cookie.
+                if (!NewsBlurOAuth.HasTokens)
+                {
+                    // We don't really care if this succeeds or not, because it just
+                    // invalidates the cookie.
+                    await App.Client.Logout();
+                }
             }
             catch (Exception)
             {
             }
+
+            // Clear the OAuth credential even if server logout is unavailable.
+            await NewsBlurOAuth.ClearAsync();
 
             // Clear out settings
             App.Settings.DeleteSettings();

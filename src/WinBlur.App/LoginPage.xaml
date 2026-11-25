@@ -16,7 +16,7 @@
                     HorizontalAlignment="Center" 
                     VerticalAlignment="Bottom"
                     Grid.Row="0"
-                    Margin="0,0,0,25">
+                    Margin="0,0,0,30">
             <Image Source="Assets/AppLogo.svg"
                    Width="100"
                    Height="100"
@@ -34,21 +34,15 @@
         
         <StackPanel x:Name="splashPanel"
                     Orientation="Vertical"
+                    Spacing="8"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
                     Grid.Row="1"
-                    Margin="0,25,0,0"
-                    Visibility="Visible">
-            <Button Content="Create Free Account"
+                    Visibility="{Binding IsSigningIn, Converter={StaticResource BoolToCollapsedConverter}}">
+            <Button Content="Sign in with NewsBlur"
+                    MinWidth="200"
+                    HorizontalAlignment="Center"
                     Style="{StaticResource AccentButtonStyle}"
-                    Width="200"
-                    HorizontalAlignment="Center"
-                    Margin="0,0,0,10"
-                    Click="CreateAccountButton_Click"/>
-            <Button Content="Sign In"
-                    Width="200"
-                    HorizontalAlignment="Center"
-                    Margin="0,0,0,10"
                     Click="LoginButton_Click"/>
             <HyperlinkButton Content="What's NewsBlur?"
                              NavigateUri="http://www.newsblur.com"
@@ -58,130 +52,24 @@
 
         <StackPanel x:Name="loginPanel"
                     Orientation="Vertical"
+                    Spacing="12"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
                     Grid.Row="1"
-                    Margin="0,25,0,0"
-                    Visibility="Collapsed">
-                        
-            <TextBox x:Name="usernameBox"
-                     PlaceholderText="Username"
-                     InputScope="Text"
-                     IsSpellCheckEnabled="False"
-                     IsTextPredictionEnabled="False"
-                     Width="300"
-                     HorizontalAlignment="Center"
-                     Padding="10"
-                     Margin="0,0,0,10"
-                     KeyUp="usernameBox_KeyUp"/>
-            
-            <PasswordBox x:Name="passwordBox"
-                         PlaceholderText="Password (optional)"
-                         Width="300"
-                         HorizontalAlignment="Center"
-                         Padding="10"
-                         Margin="0,0,0,10"
-                         KeyUp="passwordBox_KeyUp"/>
-
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0"
-                        Content="Cancel"
-                        HorizontalAlignment="Stretch"
-                        Margin="0,0,5,5"
-                        Click="Back_Click"/>
-                <Button x:Name="submitLoginButton"
-                        Grid.Column="1"
-                        Content="Sign In"
-                        Style="{StaticResource AccentButtonStyle}"
-                        HorizontalAlignment="Stretch"
-                        Margin="5,0,0,5"
-                        Click="SubmitLoginButton_Click"/>
-            </Grid>
-        </StackPanel>
-
-        <StackPanel x:Name="createAccountPanel"
-                    Orientation="Vertical"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Top"
-                    Grid.Row="1"
-                    Margin="0,25,0,0"
-                    Visibility="Collapsed">
-            <TextBox x:Name="createUsernameBox"
-                     PlaceholderText="Username"
-                     InputScope="Text"
-                     IsSpellCheckEnabled="False"
-                     IsTextPredictionEnabled="False"
-                     Width="300"
-                     HorizontalAlignment="Center"
-                     Padding="10"
-                     Margin="0,0,0,10"
-                     KeyUp="createUsernameBox_KeyUp"/>
-            <TextBox x:Name="createEmailBox"
-                     PlaceholderText="Email"
-                     InputScope="EmailSmtpAddress"
-                     IsSpellCheckEnabled="False"
-                     IsTextPredictionEnabled="False"
-                     Width="300"
-                     HorizontalAlignment="Center"
-                     Padding="10"
-                     Margin="0,0,0,10"
-                     KeyUp="createEmailBox_KeyUp"/>
-            <PasswordBox x:Name="createPasswordBox"
-                         PlaceholderText="Password (optional)"
-                         Width="300"
-                         HorizontalAlignment="Center"
-                         Padding="10"
-                         Margin="0,0,0,10"
-                         KeyUp="createPasswordBox_KeyUp"/>
-            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="0"
-                        Content="Cancel"
-                        HorizontalAlignment="Stretch"
-                        Margin="0,0,5,5"
-                        Click="Back_Click"/>
-                <Button x:Name="submitCreateAccountButton"
-                        Grid.Column="1"
-                        Content="Create Account"
-                        Style="{StaticResource AccentButtonStyle}"
-                        HorizontalAlignment="Stretch"
-                        Margin="5,0,0,5"
-                        Click="SubmitCreateAccountButton_Click"/>
-            </Grid>
-        </StackPanel>
-
-        <Grid 
-            x:Name="signInOverlay"
-            Grid.Row="0" Grid.RowSpan="2" 
-            Background="{ThemeResource SystemControlChromeMediumAcrylicElementMediumBrush}"
-            Opacity="0.9"
-            Visibility="{Binding IsSigningIn, Converter={StaticResource BoolToVisibleConverter}}">
-
-            <StackPanel 
-                Orientation="Vertical"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
+                    Visibility="{Binding IsSigningIn, Converter={StaticResource BoolToVisibleConverter}}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="{Binding SignInProgressText}" Margin="0,0,0,2"/>
                 <muxc:ProgressRing 
-                    x:Name="subscriptionLoadingProgressRing"
-                    Width="40"
-                    Height="40"
+                    Width="16"
+                    Height="16"
                     Foreground="{StaticResource SystemAccentColor}"
-                    IsActive="{Binding IsSigningIn}"
-                    Margin="0,0,0,5"/>
-                <TextBlock 
-                    x:Name="subscriptionLoadingText"
-                    Text="{Binding SignInProgressText}"
-                    Style="{StaticResource BodyTextBlockStyle}"/>
+                    IsActive="{Binding IsSigningIn}"/>
             </StackPanel>
-
-        </Grid>
+            <Button Grid.Column="0"
+                    Content="Cancel"
+                    MinWidth="200"
+                    HorizontalAlignment="Center"
+                    Click="LoginCancelButton_Click"/>
+        </StackPanel>
     </Grid>
 </Page>

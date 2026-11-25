@@ -50,6 +50,9 @@
         <uap:LockScreen Notification="badge" BadgeLogo="Assets\BadgeLogo.png"/>
       </uap:VisualElements>
       <Extensions>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="amittere-winblur" />
+        </uap:Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="WinBlur.BackgroundTasks.BadgeUpdateTask">
           <BackgroundTasks>
             <Task Type="general"/>

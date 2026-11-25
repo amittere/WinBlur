@@ -12,13 +12,7 @@ namespace WinBlur.App.Helpers
 
         public static async void RegisterBackgroundTask()
         {
-            foreach (var task in BackgroundTaskRegistration.AllTasks)
-            {
-                if ((task.Value.Name == s_backgroundTaskName) || (task.Value.Name == s_backgroundTaskNameOld))
-                {
-                    task.Value.Unregister(false);
-                }
-            }
+            UnregisterTasks(false);
 
             if (App.Settings.BackgroundTaskEnabled)
             {
@@ -46,6 +40,22 @@ namespace WinBlur.App.Helpers
             else
             {
                 ClearLiveTiles();
+            }
+        }
+
+        public static void UnregisterBackgroundTask()
+        {
+            UnregisterTasks(true);
+        }
+
+        private static void UnregisterTasks(bool cancelTask)
+        {
+            foreach (var task in BackgroundTaskRegistration.AllTasks)
+            {
+                if ((task.Value.Name == s_backgroundTaskName) || (task.Value.Name == s_backgroundTaskNameOld))
+                {
+                    task.Value.Unregister(cancelTask);
+                }
             }
         }
 
